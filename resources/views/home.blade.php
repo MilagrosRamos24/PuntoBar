@@ -46,14 +46,7 @@
 }
      
 
-        /* TÍTULO */
-
-        h1 {
-            font-size: 23px;
-            color: #c5bcae;
-            margin-bottom: 32px;
-        }
-
+    
         /* TARJETA */
 
         .login-card {
@@ -62,6 +55,8 @@
             border-radius: 20px;
             padding: 40px;
             text-align: left;
+            position: relative;
+            top: -60px;
         }
 
         .login-card h2 {
@@ -178,8 +173,7 @@
          alt="Punto Bar - Gestión de Bares"
          class="logo-imagen">
 </div>
-        <!-- TÍTULO -->
-        <h1>Gestión de mesas y comandas</h1>
+       
 
         <!-- LOGIN -->
         <section class="login-card">
@@ -195,8 +189,8 @@
                 <!-- ADMINISTRADOR -->
                 <a href="/admin/login" class="opcion">
 
-                    <div class="icono">
-                        ♙
+                    <div class="icono" aria-hidden="true">
+                        🤵
                     </div>
 
                     <h3>Administrador</h3>
@@ -210,8 +204,8 @@
                 <!-- MOZO -->
                 <a href="/mozo/login" class="opcion">
 
-                    <div class="icono">
-                        ♜
+                    <div class="icono" aria-hidden="true">
+                        🍽️
                     </div>
 
                     <h3>Mozo</h3>
