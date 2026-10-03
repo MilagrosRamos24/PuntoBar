@@ -1,0 +1,49 @@
+/* Tema compartido de Punto Bar. No requiere compilar con Vite. */
+:root {
+    color-scheme: dark;
+    --pb-fondo: #12110f;
+    --pb-superficie: #1a1815;
+    --pb-texto: #eee9e1;
+    --pb-secundario: #b8aea0;
+    --pb-borde: #403628;
+    --pb-campo-borde: #635442;
+    --pb-acento: #e9a365;
+    --pb-acento-hover: #f4b880;
+    --pb-radio: 20px;
+}
+* { box-sizing: border-box; }
+body { margin: 0; min-height: 100vh; background: var(--pb-fondo); color: var(--pb-texto); font-family: Arial, Helvetica, sans-serif; }
+.pb-shell { width: min(92%, 440px); margin: 0 auto; padding: 10px 0 28px; }
+.pb-shell--home { width: min(92%, 760px); }
+.pb-shell--panel { width: min(92%, 900px); padding-top: 24px; }
+.logo { display: block; width: min(100%, 190px); height: auto; margin: 0 auto; }
+.card { background: var(--pb-superficie); border: 1px solid var(--pb-borde); border-radius: var(--pb-radio); padding: 22px; }
+h1, h2 { font-size: 22px; margin: 0 0 6px; }
+p { color: var(--pb-secundario); font-size: 14px; line-height: 1.4; margin: 8px 0; }
+.badge { color: var(--pb-acento); font-size: 12px; letter-spacing: 1px; text-transform: uppercase; }
+label { display: block; font-size: 14px; margin: 12px 0 6px; }
+input:not([type="checkbox"]):not([type="radio"]), select, textarea { width: 100%; padding: 10px 12px; font: inherit; font-size: 15px; background: var(--pb-fondo); border: 1px solid var(--pb-campo-borde); border-radius: 8px; color: var(--pb-texto); }
+input::placeholder, textarea::placeholder { color: var(--pb-secundario); }
+:where(input, select, textarea, button, a):focus-visible { outline: 2px solid var(--pb-acento); outline-offset: 3px; }
+button, .boton { display: block; cursor: pointer; width: 100%; padding: 11px; border: 0; border-radius: 10px; background: var(--pb-acento); color: #21170e; font-family: inherit; font-weight: bold; font-size: 15px; margin-top: 16px; transition: background .2s ease; }
+button:hover, .boton:hover { background: var(--pb-acento-hover); }
+button:disabled { opacity: .6; cursor: not-allowed; }
+a { color: var(--pb-acento); }
+.back { display: block; text-align: center; margin-top: 14px; font-size: 14px; }
+.error { border: 1px solid #d88a80; background: #382321; color: #ffd2cb; padding: 12px; border-radius: 8px; margin: 16px 0; font-size: 14px; }
+.error p { color: inherit; margin: 4px 0; }
+.show { display: flex; align-items: center; gap: 8px; margin-top: 12px; }
+.show input { width: auto; accent-color: var(--pb-acento); }
+.descripcion { margin-bottom: 22px; }
+.opciones { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 20px; }
+.opcion { background: var(--pb-fondo); border: 1px solid var(--pb-borde); border-radius: 12px; min-height: 155px; padding: 24px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; text-decoration: none; color: var(--pb-texto); transition: border-color .2s ease, background .2s ease; }
+.opcion:hover { border-color: var(--pb-acento); background: #191613; }
+.icono { display: flex; align-items: center; justify-content: center; width: 58px; height: 58px; border-radius: 50%; background: #29231c; color: var(--pb-acento); font-size: 25px; margin-bottom: 14px; }
+.opcion h3 { font-size: 20px; margin: 0 0 5px; }
+.opcion p { margin: 0; }
+.modules { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 24px; }
+.module { padding: 16px; background: var(--pb-fondo); border: 1px solid var(--pb-borde); border-radius: 10px; }
+.module p { margin: 6px 0 0; }
+@media (max-width: 650px) { .opciones, .modules { grid-template-columns: 1fr; } .opcion { min-height: 135px; padding: 20px; } }
+@media (max-width: 420px) { .card { padding: 18px; } }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }

@@ -1,5 +1,6 @@
 @extends('admin.layout')
 @section('title', 'Panel de administración')
+@section('shell-class', 'pb-shell--panel')
 @section('content')
 <section class="card">
 <p class="badge">Administración</p><h1>Hola, {{ auth()->user()->name }}</h1>
