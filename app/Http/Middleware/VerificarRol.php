@@ -50,6 +50,14 @@ class VerificarRol
             abort(403, 'No tenés permiso para acceder a esta sección.');
         }
 
-        return $next($request);
+        $response = $next($request);
+
+        // Las páginas protegidas no se guardan en la caché del navegador.
+        // Así, después de cerrar sesión, el botón "Atrás" no vuelve a mostrarlas.
+        $response->headers->set('Cache-Control', 'no-cache, no-store, must-revalidate, max-age=0');
+        $response->headers->set('Pragma', 'no-cache');
+        $response->headers->set('Expires', 'Sat, 01 Jan 2000 00:00:00 GMT');
+
+        return $response;
     }
 }

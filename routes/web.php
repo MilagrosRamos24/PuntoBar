@@ -44,9 +44,8 @@ Route::middleware(VerificarRol::class . ':mozo')->group(function () {
 Route::middleware(VerificarRol::class . ':admin,mozo')->group(function () {
 
     // Temporal: después lo reemplazaremos por el verdadero módulo Mesas
-    Route::get('/mesas', function () {
-        return 'Acceso correcto. Bienvenido al módulo de mesas.';
-    })->name('mesas');
+    Route::view('/mesas', 'mesas.index')
+        ->name('mesas');
 });
 
 // ====================
