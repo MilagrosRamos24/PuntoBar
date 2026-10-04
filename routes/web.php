@@ -4,6 +4,8 @@ use App\Http\Controllers\AdminLoginController;
 use App\Http\Controllers\MozoAuthController;
 use App\Http\Middleware\VerificarRol;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\MesaController;
+use App\Http\Controllers\AdminMesaController;
 
 Route::view('/', 'home')->name('home');
 
@@ -43,9 +45,11 @@ Route::middleware(VerificarRol::class . ':mozo')->group(function () {
 
 Route::middleware(VerificarRol::class . ':admin,mozo')->group(function () {
 
-    // Temporal: después lo reemplazaremos por el verdadero módulo Mesas
-    Route::view('/mesas', 'mesas.index')
-        ->name('mesas');
+    Route::get('/mesas', [MesaController::class, 'index'])
+    ->name('mesas');
+
+    Route::put('/mesas/{mesa}/estado', [MesaController::class, 'cambiarEstado'])
+    ->name('mesas.estado');
 });
 
 // ====================
@@ -57,8 +61,12 @@ Route::middleware(VerificarRol::class . ':admin')
     ->name('admin.')
     ->group(function () {
 
-        Route::view('/panel', 'admin.dashboard')
-            ->name('dashboard');
+        Route::resource('mesas', AdminMesaController::class)
+            ->except(['show']);
+
+        Route::get('/panel', function () {
+    return redirect()->route('mesas');
+})->name('dashboard');
 
         Route::post('/logout', [AdminLoginController::class, 'destroy'])
             ->name('logout');
