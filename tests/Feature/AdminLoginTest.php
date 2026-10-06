@@ -14,12 +14,14 @@ class AdminLoginTest extends TestCase {
     public function test_form_is_available(): void {
         $this->get('/admin/login')->assertOk()->assertSee('Usuario')->assertSee('Contraseña');
     }
+
     public function test_admin_can_login_and_view_panel(): void {
-        $user = $this->administrator();
-        $this->post('/admin/login', ['username'=>'ADMIN', 'password'=>'ClavePrueba123!'])->assertRedirect('/admin/panel');
+     $user = $this->administrator();
+        $this->post('/admin/login', ['username'=>'ADMIN', 'password'=>'ClavePrueba123!'])->assertRedirect(route('mesas'));
         $this->assertAuthenticatedAs($user);
-        $this->get('/admin/panel')->assertOk()->assertSee($user->name);
-    }
+        $this->get(route('mesas'))->assertOk()->assertSee('Vista de administrador');
+        $this->get('/admin/panel')->assertRedirect(route('mesas'));
+}
     public function test_incorrect_password_is_rejected(): void {
         $this->administrator();
         $this->from('/admin/login')->post('/admin/login', ['username'=>'admin','password'=>'incorrecta'])->assertRedirect('/admin/login')->assertSessionHasErrors('username')->assertSessionMissing('_old_input.password');

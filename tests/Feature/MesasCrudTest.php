@@ -60,17 +60,28 @@ class MesasCrudTest extends TestCase
         $this->assertDatabaseHas('mesas', ['id' => $mesa->id]);
     }
 
-    public function test_cuatro_estados_validos_y_rechazo_de_estado_desconocido(): void
-    {
-        $mesa = Mesa::create($this->datos());
-        $this->actingAs($this->usuario('mozo'));
-        foreach (array_keys(Mesa::ESTADOS) as $estado) {
-            $this->put('/mesas/'.$mesa->id.'/estado', ['estado' => $estado])->assertSessionHasNoErrors();
-            $this->assertDatabaseHas('mesas', ['id' => $mesa->id, 'estado' => $estado]);
-        }
-        $this->put('/mesas/'.$mesa->id.'/estado', ['estado' => 'inventado'])->assertSessionHasErrors('estado');
-        $this->get('/mesas')->assertOk()->assertSee('Pendiente de cierre');
+   public function test_cuatro_estados_validos_y_rechazo_de_estado_inventado(): void
+{
+    $mozo = $this->usuario('mozo');
+
+    $mesa = Mesa::create($this->datos());
+    $mesa->forceFill(['mozo_id' => $mozo->id])->save();
+
+    $this->actingAs($mozo);
+
+    foreach (array_keys(Mesa::ESTADOS) as $estado) {
+        $this->put('/mesas/'.$mesa->id.'/estado', ['estado' => $estado])
+            ->assertRedirect(route('mesas'))
+            ->assertSessionHasNoErrors();
+
+        $this->assertDatabaseHas('mesas', ['id' => $mesa->id, 'estado' => $estado]);
     }
+
+    $this->put('/mesas/'.$mesa->id.'/estado', ['estado' => 'inventado'])
+        ->assertSessionHasErrors('estado');
+
+    $this->get('/mesas')->assertOk()->assertSee('Pendiente de cierre');
+}
 
     public function test_editar_no_cambia_el_estado_anterior_ni_el_mozo_inactivo_sin_pedirlo(): void
     {
