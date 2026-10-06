@@ -6,6 +6,7 @@ use App\Http\Middleware\VerificarRol;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MesaController;
 use App\Http\Controllers\AdminMesaController;
+use App\Http\Controllers\ComandaController;
 
 Route::view('/', 'home')->name('home');
 
@@ -55,6 +56,27 @@ Route::middleware(VerificarRol::class . ':admin,mozo')->group(function () {
     ->name('mesas.show');
 });
 
+    // Comandas (PB-10 a PB-14)
+    Route::post('/mesas/{mesa}/comandas', [ComandaController::class, 'store'])
+        ->name('comandas.store');
+
+    Route::get('/comandas/{comanda}', [ComandaController::class, 'show'])
+        ->name('comandas.show');
+
+    Route::post('/comandas/{comanda}/productos', [ComandaController::class, 'agregarProducto'])
+        ->name('comandas.productos.store');
+
+    Route::patch('/comandas/{comanda}/productos/{detalle}', [ComandaController::class, 'actualizarDetalle'])
+        ->scopeBindings()
+        ->name('comandas.productos.update');
+
+    Route::delete('/comandas/{comanda}/productos/{detalle}', [ComandaController::class, 'quitarDetalle'])
+        ->scopeBindings()
+        ->name('comandas.productos.destroy');
+
+    Route::post('/comandas/{comanda}/cerrar', [ComandaController::class, 'cerrar'])
+        ->name('comandas.cerrar');
+        
 // ====================
 // SOLO ADMINISTRADOR (Módulos III y IV, productos y descuento)
 // ====================
