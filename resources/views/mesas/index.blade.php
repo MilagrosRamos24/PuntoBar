@@ -5,31 +5,25 @@
 
     $mesasLibres = $mesas->where('estado', 'libre')->count();
 
-    $mesasAlertas = $mesas->where('estado', 'alerta')->count();
+    $mesasAlertas = $mesas->where('estado', 'pendiente_de_cierre')->count();
 
     $nombreUsuario = auth()->user()->name ?? 'Usuario';
 
     $estadoInfo = [
-        'libre' => [
-            'label' => 'Libre',
-            'clase' => 'libre',
-        ],
-        'esperando_pedido' => [
-            'label' => 'En espera de pedido',
-            'clase' => 'espera',
-        ],
-        'espera' => [
-            'label' => 'En espera de pedido',
-            'clase' => 'espera',
-        ],
-        'atendida' => [
-            'label' => 'Atendida',
-            'clase' => 'atendida',
-        ],
-        'alerta' => [
-            'label' => 'Alerta de atención',
-            'clase' => 'alerta',
-        ],
+        'ocupada' => [
+    'label' => 'En espera de pedido',
+    'clase' => 'ocupada',
+],
+
+'reservada' => [
+    'label' => 'Mesa atendida',
+    'clase' => 'reservada',
+],
+
+'pendiente_de_cierre' => [
+    'label' => 'Alerta de atención',
+    'clase' => 'pendiente_de_cierre',
+],
     ];
 @endphp
 
@@ -1054,6 +1048,82 @@
 
 }
 
+    
+        /* Libre: azul original */
+.mesa-icono.libre {
+    color: #5ba8ff;
+    background: rgba(30, 115, 220, .16);
+    border-color: #287ad7;
+}
+
+.estado.libre {
+    color: #fff;
+    background: #1976d2;
+}
+
+.mesa-total.libre strong {
+    color: #3193f5;
+}
+
+/* Ocupada: amarillo original de "En espera" */
+.mesa-icono.ocupada {
+    color: #ffd03b;
+    background: rgba(220, 165, 20, .14);
+    border-color: #dca91e;
+}
+
+.estado.ocupada {
+    color: #21190d;
+    background: #ffc42f;
+}
+
+.mesa-total.ocupada strong {
+    color: #ffd03b;
+}
+
+/* Reservada: verde original de "Atendida" */
+.mesa-icono.reservada {
+    color: #45d77d;
+    background: rgba(24, 180, 86, .13);
+    border-color: #1fb85e;
+}
+
+.estado.reservada {
+    color: #102117;
+    background: #32cf6a;
+}
+
+.mesa-total.reservada strong {
+    color: #35d878;
+}
+
+/* Pendiente de cierre: rojo original de "Alerta" */
+.mesa-icono.pendiente_de_cierre {
+    color: #ff6970;
+    background: rgba(205, 55, 65, .15);
+    border-color: #dc4650;
+}
+
+.estado.pendiente_de_cierre {
+    color: #fff;
+    background: #d9434b;
+}
+
+.mesa-total.pendiente_de_cierre strong {
+    color: #ff5962;
+}
+
+.mesa.pendiente_de_cierre {
+    border: 2px solid #df7b48;
+}
+        .estado-form { margin-top: 16px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+        .estado-form label { width: 100%; color: #cfc3b8; font-size: 13px; }
+        .estado-form select, .estado-form button { padding: 8px; border-radius: 6px; border: 1px solid #80634e; background: #211812; color: #f1e9df; }
+        .estado-form select { flex: 1; min-width: 120px; }
+        .estado-form button { cursor: pointer; }
+        .estado-form :focus-visible { outline: 3px solid #e2a15c; outline-offset: 2px; }
+        .feedback-mesas { padding: 16px; margin-bottom: 20px; border: 1px solid #80634e; border-radius: 8px; color: #f1e9df; }
+
     </style>
 
 </head>
@@ -1136,6 +1206,8 @@
     ========================= --}}
 
     <main class="contenido">
+        @if(session('success'))<p class="feedback-mesas" role="status">{{ session('success') }}</p>@endif
+        @if($errors->any())<div class="feedback-mesas" role="alert">@foreach($errors->all() as $error)<p>{{ $error }}</p>@endforeach</div>@endif
 
 
         {{-- ESTADÍSTICAS --}}
@@ -1158,7 +1230,7 @@
 
             <div class="estadistica">
                 <strong>{{ $mesasAlertas }}</strong>
-                <span>Alertas</span>
+                <span>Pendientes de cierre</span>
             </div>
 
         </section>
@@ -1294,21 +1366,51 @@
 
                     </div>
 
+                    @if(
+                        $esAdmin ||
+                        (int) $mesa->mozo_id === (int) auth()->id()
+                        )
 
-                    @if ($esAdmin)
 
-                        <div class="mesa-acciones">
-
-                            <a
-                                href="{{ route('admin.mesas.edit', $mesa) }}"
-                                class="btn-mesa"
-                            >
-                                Editar
-                            </a>
-
-                        </div>
+                    <form class="estado-form" action="{{ route('mesas.estado', $mesa) }}" method="POST">
+                        @csrf
+                        @method('PUT')
+                        <label for="estado-mesa-{{ $mesa->id }}">Estado de la mesa {{ $mesa->numero }}</label>
+                        <select id="estado-mesa-{{ $mesa->id }}" name="estado" required>
+                            @if(!array_key_exists($mesa->estado, \App\Models\Mesa::ESTADOS))
+                                <option value="" selected disabled>Elegí un nuevo estado</option>
+                            @endif
+                            @foreach(\App\Models\Mesa::ESTADOS as $valor => $texto)
+                                <option value="{{ $valor }}" @selected($mesa->estado === $valor)>{{ $texto }}</option>
+                            @endforeach
+                        </select>
+                        <button type="submit">Actualizar</button>
+                    </form>
 
                     @endif
+
+
+
+                    @if ($esAdmin)
+                    <div class="mesa-acciones">
+                        <a
+                         href="{{ route('admin.mesas.show', $mesa) }}"
+                         class="btn-mesa"
+                         > Consultar
+                        </a>
+                        <a
+                         href="{{ route('admin.mesas.edit', $mesa) }}"
+                          class="btn-mesa"> Editar
+                        </a>
+                    </div>
+                    @elseif ((int) $mesa->mozo_id === (int) auth()->id())
+                    <div class="mesa-acciones">
+                         <a
+                          href="{{ route('mesas.show', $mesa) }}"
+                           class="btn-mesa"> Acceder a mi mesa
+                         </a>
+                        </div>
+                        @endif
 
                 </article>
 
@@ -1329,33 +1431,27 @@
              LEYENDA
         ========================= --}}
 
-        <section class="leyenda">
+        <section class="leyenda" aria-label="Estados de mesa">
+    <div class="leyenda-item">
+        <span class="punto azul"></span>
+        Libre
+    </div>
 
-            <div class="leyenda-item">
-                <span class="punto azul"></span>
-                Libre
-            </div>
+    <div class="leyenda-item">
+        <span class="punto amarillo"></span>
+        En espera de pedido
+    </div>
 
-            <div class="leyenda-item">
-                <span class="punto amarillo"></span>
-                En espera de pedido
-            </div>
+    <div class="leyenda-item">
+        <span class="punto verde"></span>
+        Mesa atendida
+    </div>
 
-            <div class="leyenda-item">
-                <span class="punto verde"></span>
-                Atendida
-            </div>
-
-            <div class="leyenda-item">
-                <span class="punto rojo"></span>
-                Alerta de atención
-            </div>
-
-            <div class="leyenda-alerta">
-                Alerta: más de 25 minutos sin atención
-            </div>
-
-        </section>
+    <div class="leyenda-item">
+        <span class="punto rojo"></span>
+        Alerta de atención
+    </div>
+</section>
 
 
         {{-- =========================
@@ -1434,6 +1530,12 @@ document.addEventListener('DOMContentLoaded', function () {
         `;
     }
 
+    const escaparTexto = (valor) => {
+        const elemento = document.createElement('span');
+        elemento.textContent = valor;
+        return elemento.innerHTML;
+    };
+
     // Seleccionar solamente cuando el usuario haga clic.
     mesas.forEach(function (mesa) {
 
@@ -1455,22 +1557,22 @@ document.addEventListener('DOMContentLoaded', function () {
             if (textoSeleccion) {
                 textoSeleccion.innerHTML = `
                     Mesa seleccionada:
-                    <strong>${numero}</strong>
+                    <strong>${escaparTexto(numero)}</strong>
 
                     <span style="color:#776c63;"> · </span>
 
                     Mozo:
-                    <strong>${mozo}</strong>
+                    <strong>${escaparTexto(mozo)}</strong>
 
                     <span style="color:#776c63;"> · </span>
 
                     Estado:
-                    <strong>${estado}</strong>
+                    <strong>${escaparTexto(estado)}</strong>
 
                     <span style="color:#776c63;"> · </span>
 
                     Personas:
-                    <strong>${personas}</strong>
+                    <strong>${escaparTexto(personas)}</strong>
                 `;
             }
 

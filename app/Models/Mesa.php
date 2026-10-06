@@ -3,19 +3,30 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\User;
 
 class Mesa extends Model
 {
-    protected $fillable = [
-        'numero',
-        'estado',
-        'mozo_id',
-        'cantidad_personas',
-    ];
+    public const ESTADOS = [
+    'libre' => 'Libre',
+    'ocupada' => 'En espera de pedido',
+    'reservada' => 'Mesa atendida',
+    'pendiente_de_cierre' => 'Alerta de atención',
+];
+
+    protected $fillable = ['numero', 'estado', 'mozo_id', 'cantidad_personas'];
+
+    protected function casts(): array
+    {
+        return ['numero' => 'integer', 'cantidad_personas' => 'integer'];
+    }
 
     public function mozo()
     {
         return $this->belongsTo(User::class, 'mozo_id');
+    }
+
+    public function getEstadoTextoAttribute(): string
+    {
+        return self::ESTADOS[$this->estado] ?? ucfirst(str_replace('_', ' ', $this->estado));
     }
 }

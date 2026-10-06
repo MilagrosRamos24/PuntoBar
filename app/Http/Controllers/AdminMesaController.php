@@ -3,86 +3,89 @@
 namespace App\Http\Controllers;
 
 use App\Models\Mesa;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class AdminMesaController extends Controller
 {
-    /**
-     * Mostrar todas las mesas.
-     */
     public function index()
     {
-        $mesas = Mesa::with('mozo')
-            ->orderBy('numero')
-            ->get();
-
+        $mesas = Mesa::with('mozo')->orderBy('numero')->get();
         return view('admin.mesas.index', compact('mesas'));
     }
 
-    /**
-     * Mostrar formulario para crear una mesa.
-     */
+    private function formulario(?Mesa $mesa = null): array
+    {
+        $estados = Mesa::ESTADOS;
+        // Conservar estados anteriores hasta que el administrador decida cambiarlos.
+        if ($mesa && !array_key_exists($mesa->estado, $estados)) {
+            $estados[$mesa->estado] = $mesa->estado_texto . ' (estado anterior)';
+        }
+        $mozos = User::where('role', 'mozo')->where('estado', 'activo')->orderBy('name')->get();
+        return compact('mesa', 'estados', 'mozos');
+    }
+
     public function create()
     {
-        return view('admin.mesas.create');
+        return view('admin.mesas.create', $this->formulario());
     }
 
-    /**
-     * Guardar una nueva mesa.
-     */
+    private function datos(Request $request, ?Mesa $mesa = null): array
+    {
+        $estados = array_keys(Mesa::ESTADOS);
+        if ($mesa) {
+            $estados[] = $mesa->estado;
+        }
+        $datos = $request->validate([
+            'numero' => ['required', 'integer', 'min:1', 'max:2147483647', Rule::unique('mesas', 'numero')->ignore($mesa)],
+            'estado' => ['required', Rule::in($estados)],
+            'mozo_id' => ['nullable', 'integer', Rule::exists('users', 'id')->where(function ($query) use ($mesa) {
+                $query->where('role', 'mozo')->where(function ($query) use ($mesa) {
+                    $query->where('estado', 'activo');
+                    if ($mesa && $mesa->mozo_id) {
+                        $query->orWhere('id', $mesa->mozo_id);
+                    }
+                });
+            })],
+            'cantidad_personas' => ['required', 'integer', 'min:0', 'max:2147483647'],
+        ], [
+            'numero.unique' => 'Ya existe una mesa con ese número.',
+            'mozo_id.exists' => 'Seleccioná un mozo activo válido.',
+            'estado.in' => 'Seleccioná un estado válido.',
+            'cantidad_personas.min' => 'La cantidad de personas no puede ser negativa.',
+        ]);
+        $datos['mozo_id'] = $datos['mozo_id'] ?? null;
+        return $datos;
+    }
+
     public function store(Request $request)
     {
-        $request->validate([
-            'numero' => 'required|integer|min:1|unique:mesas,numero',
-        ]);
-
-        Mesa::create([
-            'numero' => $request->numero,
-            'estado' => 'libre',
-            'mozo_id' => null,
-            'cantidad_personas' => 0,
-        ]);
-
-        return redirect()
-            ->route('admin.mesas.index')
-            ->with('success', 'Mesa creada correctamente.');
+        $mesa = Mesa::create($this->datos($request));
+        return redirect()->route('admin.mesas.show', $mesa)->with('success', 'Mesa creada correctamente.');
     }
 
-    /**
-     * Mostrar formulario para editar una mesa.
-     */
+    public function show(Mesa $mesa)
+    {
+        $mesa->load('mozo');
+        return view('admin.mesas.show', compact('mesa'));
+    }
+
     public function edit(Mesa $mesa)
     {
-        return view('admin.mesas.edit', compact('mesa'));
+        $mesa->load('mozo');
+        return view('admin.mesas.edit', $this->formulario($mesa));
     }
 
-    /**
-     * Actualizar una mesa.
-     */
     public function update(Request $request, Mesa $mesa)
     {
-        $request->validate([
-            'numero' => 'required|integer|min:1|unique:mesas,numero,' . $mesa->id,
-        ]);
-
-        $mesa->update([
-            'numero' => $request->numero,
-        ]);
-
-        return redirect()
-            ->route('admin.mesas.index')
-            ->with('success', 'Mesa actualizada correctamente.');
+        $mesa->update($this->datos($request, $mesa));
+        return redirect()->route('admin.mesas.show', $mesa)->with('success', 'Mesa actualizada correctamente.');
     }
 
-    /**
-     * Eliminar una mesa.
-     */
     public function destroy(Mesa $mesa)
     {
         $mesa->delete();
-
-        return redirect()
-            ->route('admin.mesas.index')
-            ->with('success', 'Mesa eliminada correctamente.');
+        return redirect()->route('admin.mesas.index')->with('success', 'Mesa eliminada correctamente.');
     }
 }

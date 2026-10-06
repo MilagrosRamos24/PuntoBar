@@ -1,0 +1,25 @@
+*{box-sizing:border-box}body{margin:0;background:#120d0a;color:#f1e9df;font-family:Arial,Helvetica,sans-serif}.cabecera{display:flex;justify-content:space-between;align-items:center;gap:20px;padding:16px 32px;background:#1b1410;border-bottom:1px solid #4a3020}.cabecera img{width:150px;max-height:65px;object-fit:contain}nav,.acciones,.encabezado{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.contenido{max-width:1300px;margin:auto;padding:32px}.encabezado{justify-content:space-between;margin-bottom:24px}h1{margin:0 0 14px}p{color:#c1afa0;line-height:1.5}a,button{display:inline-block;padding:10px 14px;border:1px solid #725039;border-radius:8px;background:transparent;color:#efd3b9;font:inherit;text-decoration:none;cursor:pointer}a:hover,button:hover{background:#38271b}a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #e2a15c;outline-offset:3px}.primario{background:#8b572f;color:white}.peligro{color:#ffa5a0;border-color:#9b4e49}.tarjeta{background:#1b1410;border:1px solid #4a3020;border-radius:14px;padding:24px}.formulario{max-width:650px;margin:auto}.campo{margin:20px 0}label{display:block;margin-bottom:8px}input,select{width:100%;background:#120d0a;color:#f1e9df;border:1px solid #80634e;border-radius:8px;padding:12px;font:inherit}.ayuda{font-size:14px}form{margin:0}.mensaje,.errores{padding:16px;border-radius:8px;line-height:1.6}.mensaje{background:#193522;color:#b1e6c0}.errores{background:#44201e;color:#ffd1ce}.tabla{padding:0;overflow-x:auto}table{width:100%;border-collapse:collapse;min-width:750px}th,td{text-align:left;padding:16px;border-bottom:1px solid #4a3020}thead{background:#281c14}.estado{display:inline-block;border-radius:20px;padding:7px 12px;background:#403329;color:#f1e9df}.estado.libre{background:#173b22;color:#9ae6ad}.estado.ocupada{background:#4b2b10;color:#ffc58e}.estado.reservada{background:#12324e;color:#9ed2ff}.estado.pendiente_de_cierre{background:#4d1f24;color:#ffadb6}dt{color:#baa698;margin-top:22px}dd{margin:10px 0 22px}.acciones{margin-top:12px}td .acciones{margin:0}@media(max-width:650px){.cabecera{padding:16px;flex-direction:column;align-items:flex-start}.contenido{padding:20px 14px}.tarjeta.formulario{padding:20px}nav{gap:8px}a,button{padding:9px 11px}}
+
+/* Libre: azul */
+.estado.libre {
+    background: #1976d2;
+    color: #fff;
+}
+
+/* En espera de pedido: amarillo */
+.estado.ocupada {
+    background: #ffc42f;
+    color: #21190d;
+}
+
+/* Mesa atendida: verde */
+.estado.reservada {
+    background: #32cf6a;
+    color: #102117;
+}
+
+/* Alerta de atención: rojo */
+.estado.pendiente_de_cierre {
+    background: #d9434b;
+    color: #fff;
+}

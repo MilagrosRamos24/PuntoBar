@@ -50,6 +50,9 @@ Route::middleware(VerificarRol::class . ':admin,mozo')->group(function () {
 
     Route::put('/mesas/{mesa}/estado', [MesaController::class, 'cambiarEstado'])
     ->name('mesas.estado');
+    
+    Route::get('/mesas/{mesa}', [MesaController::class, 'show'])
+    ->name('mesas.show');
 });
 
 // ====================
@@ -61,8 +64,7 @@ Route::middleware(VerificarRol::class . ':admin')
     ->name('admin.')
     ->group(function () {
 
-        Route::resource('mesas', AdminMesaController::class)
-            ->except(['show']);
+        Route::resource('mesas', AdminMesaController::class);
 
         Route::get('/panel', function () {
     return redirect()->route('mesas');
