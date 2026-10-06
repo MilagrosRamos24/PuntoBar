@@ -80,7 +80,7 @@ class MesasCrudTest extends TestCase
     $this->put('/mesas/'.$mesa->id.'/estado', ['estado' => 'inventado'])
         ->assertSessionHasErrors('estado');
 
-    $this->get('/mesas')->assertOk()->assertSee('Pendiente de cierre');
+    $this->get('/mesas')->assertOk()->assertSee('Alerta de atención');
 }
 
     public function test_editar_no_cambia_el_estado_anterior_ni_el_mozo_inactivo_sin_pedirlo(): void

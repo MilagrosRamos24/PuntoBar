@@ -25,6 +25,11 @@ class Mesa extends Model
         return $this->belongsTo(User::class, 'mozo_id');
     }
 
+        public function comandaAbierta()
+    {
+        return $this->hasOne(Comanda::class)->where('estado', 'abierta');
+    }
+
     public function getEstadoTextoAttribute(): string
     {
         return self::ESTADOS[$this->estado] ?? ucfirst(str_replace('_', ' ', $this->estado));
