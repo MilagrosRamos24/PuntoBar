@@ -23,3 +23,31 @@
     background: #d9434b;
     color: #fff;
 }
+
+/* Libre: azul */
+.estado.libre {
+    background: #1976d2;
+    color: #fff;
+}
+
+/* En espera de pedido: amarillo */
+.estado.ocupada,
+.estado.espera,
+.estado.esperando_pedido {
+    background: #ffc42f;
+    color: #21190d;
+}
+
+/* Mesa atendida: verde */
+.estado.reservada,
+.estado.atendida {
+    background: #32cf6a;
+    color: #102117;
+}
+
+/* Alerta de atención: rojo */
+.estado.pendiente_de_cierre,
+.estado.alerta {
+    background: #d9434b;
+    color: #fff;
+}

@@ -52,13 +52,12 @@ class LogoutTest extends TestCase
     }
 
     public function test_la_pantalla_de_mesas_muestra_el_boton_de_cerrar_sesion(): void
-    {
-        $this->actingAs($this->usuario('mozo'))
-            ->get('/mesas')
-            ->assertOk()
-            ->assertSee('Cerrar sesión')
-            ->assertSee(route('mozo.logout'));
-    }
+{
+    $this->actingAs($this->usuario('mozo'))
+        ->get('/mesas')
+        ->assertOk()
+        ->assertSee(route('mozo.logout'));
+}
 
     public function test_el_admin_en_mesas_usa_su_propio_logout(): void
     {

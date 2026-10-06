@@ -8,23 +8,43 @@
     $mesasAlertas = $mesas->where('estado', 'pendiente_de_cierre')->count();
 
     $nombreUsuario = auth()->user()->name ?? 'Usuario';
+$estadoInfo = [
+    'libre' => [
+        'label' => 'Libre',
+        'clase' => 'libre',
+    ],
 
-    $estadoInfo = [
-        'ocupada' => [
-    'label' => 'En espera de pedido',
-    'clase' => 'ocupada',
-],
+    'ocupada' => [
+        'label' => 'En espera de pedido',
+        'clase' => 'espera',
+    ],
+    'espera' => [
+        'label' => 'En espera de pedido',
+        'clase' => 'espera',
+    ],
+    'esperando_pedido' => [
+        'label' => 'En espera de pedido',
+        'clase' => 'espera',
+    ],
 
-'reservada' => [
-    'label' => 'Mesa atendida',
-    'clase' => 'reservada',
-],
+    'reservada' => [
+        'label' => 'Mesa atendida',
+        'clase' => 'atendida',
+    ],
+    'atendida' => [
+        'label' => 'Mesa atendida',
+        'clase' => 'atendida',
+    ],
 
-'pendiente_de_cierre' => [
-    'label' => 'Alerta de atención',
-    'clase' => 'pendiente_de_cierre',
-],
-    ];
+    'pendiente_de_cierre' => [
+        'label' => 'Alerta de atención',
+        'clase' => 'alerta',
+    ],
+    'alerta' => [
+        'label' => 'Alerta de atención',
+        'clase' => 'alerta',
+    ],
+];
 @endphp
 
 <!DOCTYPE html>
