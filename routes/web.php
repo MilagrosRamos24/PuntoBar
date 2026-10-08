@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MesaController;
 use App\Http\Controllers\AdminMesaController;
 use App\Http\Controllers\ComandaController;
+use App\Http\Controllers\AdminProductoController;
+use App\Http\Controllers\ActualizacionMasivaPreciosController;
 
 Route::view('/', 'home')->name('home');
 
@@ -87,6 +89,18 @@ Route::middleware(VerificarRol::class . ':admin')
     ->group(function () {
 
         Route::resource('mesas', AdminMesaController::class);
+                // Productos (catálogo, baja/alta y actualización masiva de precios)
+        Route::post('productos/actualizacion-masiva/vista-previa', [ActualizacionMasivaPreciosController::class, 'vistaPrevia'])
+            ->name('productos.masiva.vista-previa');
+
+        Route::post('productos/actualizacion-masiva', [ActualizacionMasivaPreciosController::class, 'aplicar'])
+            ->name('productos.masiva.aplicar');
+
+        Route::patch('productos/{producto}/estado', [AdminProductoController::class, 'cambiarEstado'])
+            ->name('productos.estado');
+
+        Route::resource('productos', AdminProductoController::class)
+            ->only(['index', 'store', 'update']);
 
         Route::get('/panel', function () {
     return redirect()->route('mesas');
