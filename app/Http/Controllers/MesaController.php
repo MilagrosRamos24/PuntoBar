@@ -16,7 +16,7 @@ class MesaController extends Controller
             ->get();
 
         // Catálogo para agregar productos desde la ventana de la comanda.
-        $productos = Producto::activos()
+        $productos = Producto::disponibles()
             ->orderBy('categoria')
             ->orderBy('nombre')
             ->get()
