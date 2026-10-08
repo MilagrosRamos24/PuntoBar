@@ -170,7 +170,13 @@
         @endif
     </section>
 
-    <p class="volver"><a href="{{ route('mesas') }}">← Volver a mesas</a></p>
+     <p class="volver">
+        @if (auth()->user()->role === 'admin')
+            <a href="{{ route('admin.comandas.index') }}">← Volver al historial</a>
+        @else
+            <a href="{{ route('mesas') }}">← Volver a mesas</a>
+        @endif
+    </p>
 
 </div>
 @endsection

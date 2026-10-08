@@ -1178,10 +1178,11 @@
                     Productos
                 </a>
 
-                <span class="nav-item">
-                    <span class="nav-icon">▤</span>
-                    Comandas
-                </span>
+                <a href="{{ route('admin.comandas.index') }}" class="nav-item">
+                <span class="nav-icon">▤</span>
+                Comandas
+                </a>
+
 
             @endif
 
