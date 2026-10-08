@@ -9,6 +9,7 @@ use App\Http\Controllers\AdminMesaController;
 use App\Http\Controllers\ComandaController;
 use App\Http\Controllers\AdminProductoController;
 use App\Http\Controllers\ActualizacionMasivaPreciosController;
+use App\Http\Controllers\AdminComandaController;
 
 Route::view('/', 'home')->name('home');
 
@@ -108,4 +109,7 @@ Route::middleware(VerificarRol::class . ':admin')
 
         Route::post('/logout', [AdminLoginController::class, 'destroy'])
             ->name('logout');
+            
+         Route::get('/comandas', [AdminComandaController::class, 'index'])
+        ->name('comandas.index');
     });
