@@ -1168,10 +1168,10 @@
 
             @if ($esAdmin)
 
-                <span class="nav-item">
+                <a href="{{ route('admin.mozos.index') }}" class="nav-item">
                     <span class="nav-icon">♙</span>
                     Mozos
-                </span>
+                </a>
 
                             <a href="{{ route('admin.productos.index') }}" class="nav-item">
                     <span class="nav-icon">♜</span>
@@ -1238,33 +1238,29 @@
 
         {{-- ADMINISTRAR MESAS --}}
 
-        @if ($esAdmin)
+       @if ($esAdmin)
+    <div class="barra-acciones">
+        <details class="admin-menu">
+            <summary>
+                ⚙ Administrar ▾
+            </summary>
 
-            <div class="barra-acciones">
+            <div class="admin-dropdown">
+                <a href="{{ route('admin.mesas.create') }}">
+                    ⊕ &nbsp; Agregar mesa
+                </a>
 
-                <details class="admin-menu">
+                <a href="{{ route('admin.mesas.index') }}">
+                    ☷ &nbsp; Gestionar mesas
+                </a>
 
-                    <summary>
-                        ⚙ Administrar mesas ▾
-                    </summary>
-
-                    <div class="admin-dropdown">
-
-                        <a href="{{ route('admin.mesas.create') }}">
-                            ⊕ &nbsp; Agregar mesa
-                        </a>
-
-                        <a href="{{ route('admin.mesas.index') }}">
-                            ☷ &nbsp; Gestionar mesas
-                        </a>
-
-                    </div>
-
-                </details>
-
+                <a href="{{ route('admin.mozos.index') }}">
+                    ☷ &nbsp; Gestionar mozos
+                </a>
             </div>
-
-        @endif
+        </details>
+    </div>
+    @endif
 
 
         {{-- =========================

@@ -25,10 +25,10 @@
         </a>
 
         {{-- MÓDULO MOZOS --}}
-        <div class="module">
-            <strong>Mozos</strong>
-            <p>Gestión del personal · Próximamente</p>
-        </div>
+        <a href="{{ route('admin.mozos.index') }}" class="module">
+             <strong>Mozos</strong>
+             <p>Gestión del personal</p>
+            </a>
 
         {{-- MÓDULO COMANDAS --}}
         <div class="module">

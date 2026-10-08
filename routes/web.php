@@ -10,6 +10,7 @@ use App\Http\Controllers\ComandaController;
 use App\Http\Controllers\AdminProductoController;
 use App\Http\Controllers\ActualizacionMasivaPreciosController;
 use App\Http\Controllers\AdminComandaController;
+use App\Http\Controllers\AdminMozoController;
 
 Route::view('/', 'home')->name('home');
 
@@ -90,6 +91,9 @@ Route::middleware(VerificarRol::class . ':admin')
     ->group(function () {
 
         Route::resource('mesas', AdminMesaController::class);
+        // Gestión de mozos.
+        Route::resource('mozos', AdminMozoController::class)
+        ->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
                 // Productos (catálogo, baja/alta y actualización masiva de precios)
         Route::post('productos/actualizacion-masiva/vista-previa', [ActualizacionMasivaPreciosController::class, 'vistaPrevia'])
             ->name('productos.masiva.vista-previa');
