@@ -34,12 +34,14 @@ class ComandaTest extends TestCase
 
     private function producto(string $nombre, float $precio, string $estado = 'activo'): Producto
     {
-        return Producto::create([
-            'nombre' => $nombre,
-            'categoria' => 'bebida',
-            'precio' => $precio,
-            'estado' => $estado,
-        ]);
+       return Producto::create([
+        'nombre' => $nombre,
+        'categoria' => 'bebida',
+        'tipo' => 'preparacion',
+        'precio' => $precio,
+        'estado' => $estado,
+    ]);
+
     }
 
     private function comandaAbierta(User $mozo, Mesa $mesa): Comanda

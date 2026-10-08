@@ -10,6 +10,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 class ComandaController extends Controller
@@ -81,6 +82,7 @@ class ComandaController extends Controller
     /**
      * PB-11: agregar un producto con su cantidad.
      * Si el producto ya está en la comanda, se suma la cantidad.
+     * Si el producto lleva stock, se verifica que alcance y se descuenta.
      */
     public function agregarProducto(Request $request, Comanda $comanda): RedirectResponse
     {
@@ -105,6 +107,9 @@ class ComandaController extends Controller
 
         DB::transaction(function () use ($comanda, $datos) {
             $producto = Producto::findOrFail($datos['producto_id']);
+            $cantidad = (int) $datos['cantidad'];
+
+            $this->descontarOFallar($producto, $cantidad);
 
             $detalle = $comanda->detalles()->firstOrNew(['producto_id' => $producto->id]);
 
@@ -114,7 +119,7 @@ class ComandaController extends Controller
                 $detalle->cantidad = 0;
             }
 
-            $detalle->cambiarCantidad($detalle->cantidad + (int) $datos['cantidad']);
+            $detalle->cambiarCantidad($detalle->cantidad + $cantidad);
 
             $comanda->recalcularTotales();
         });
@@ -124,6 +129,7 @@ class ComandaController extends Controller
 
     /**
      * PB-12: cambiar la cantidad de un producto.
+     * Si aumenta, se descuenta la diferencia del stock; si baja, se devuelve.
      */
     public function actualizarDetalle(Request $request, Comanda $comanda, DetalleComanda $detalle): RedirectResponse
     {
@@ -140,7 +146,16 @@ class ComandaController extends Controller
         ]);
 
         DB::transaction(function () use ($comanda, $detalle, $datos) {
-            $detalle->cambiarCantidad((int) $datos['cantidad']);
+            $nuevaCantidad = (int) $datos['cantidad'];
+            $diferencia = $nuevaCantidad - $detalle->cantidad;
+
+            if ($diferencia > 0) {
+                $this->descontarOFallar($detalle->producto, $diferencia);
+            } elseif ($diferencia < 0) {
+                $detalle->producto->devolverStock(-$diferencia);
+            }
+
+            $detalle->cambiarCantidad($nuevaCantidad);
             $comanda->recalcularTotales();
         });
 
@@ -148,7 +163,7 @@ class ComandaController extends Controller
     }
 
     /**
-     * PB-12: quitar un producto de la comanda.
+     * PB-12: quitar un producto de la comanda. Si lleva stock, se devuelve.
      */
     public function quitarDetalle(Request $request, Comanda $comanda, DetalleComanda $detalle): RedirectResponse
     {
@@ -159,6 +174,7 @@ class ComandaController extends Controller
         }
 
         DB::transaction(function () use ($comanda, $detalle) {
+            $detalle->producto->devolverStock($detalle->cantidad);
             $detalle->delete();
             $comanda->recalcularTotales();
         });
@@ -214,6 +230,25 @@ class ComandaController extends Controller
         $esMozoDeLaComanda = $usuario->role === 'mozo' && (int) $comanda->mozo_id === (int) $usuario->id;
 
         abort_unless($esAdministrador || $esMozoDeLaComanda, 403, 'Esta comanda no es de tu mesa.');
+    }
+
+    /**
+     * Descuenta stock o corta la operación con un mensaje para el mozo.
+     * Al lanzar la excepción dentro de la transacción, no se guarda nada.
+     */
+    private function descontarOFallar(Producto $producto, int $cantidad): void
+    {
+        if ($producto->descontarStock($cantidad)) {
+            return;
+        }
+
+        $disponible = (int) $producto->fresh()->stock;
+
+        throw ValidationException::withMessages([
+            'cantidad' => $disponible > 0
+                ? "Solo quedan {$disponible} unidades de {$producto->nombre}."
+                : "{$producto->nombre} no tiene stock disponible.",
+        ]);
     }
 
     /**

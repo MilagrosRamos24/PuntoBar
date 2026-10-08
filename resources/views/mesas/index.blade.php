@@ -1678,7 +1678,7 @@
 
                             <div>
                                 <label for="producto-{{ $comanda->id }}">Producto</label>
-                                <select id="producto-{{ $comanda->id }}" name="producto_id" required>
+                                                               <select id="producto-{{ $comanda->id }}" name="producto_id" required>
                                     <option value="" disabled @selected(! ($esLaComandaActual && old('producto_id')))>Elegí un producto</option>
                                     @foreach ($productos as $categoria => $lista)
                                         <optgroup label="{{ \App\Models\Producto::CATEGORIAS[$categoria] ?? ucfirst($categoria) }}">
@@ -1687,12 +1687,12 @@
                                                     value="{{ $producto->id }}"
                                                     @selected($esLaComandaActual && old('producto_id') == $producto->id)
                                                 >
-                                                    {{ $producto->nombre }} · {{ $pesos($producto->precio) }}
+                                                    {{ $producto->nombre }} · {{ $pesos($producto->precio) }}{{ $producto->llevaStock() ? ' · quedan ' . $producto->stock : '' }}
                                                 </option>
                                             @endforeach
                                         </optgroup>
                                     @endforeach
-                                </select>
+                                </select> 
                             </div>
 
                             <div>

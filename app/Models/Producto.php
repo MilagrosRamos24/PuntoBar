@@ -69,6 +69,46 @@ class Producto extends Model
         return ! $this->llevaStock() || $this->stock > 0;
     }
 
+     /**
+     * Descuenta stock al cargar el producto en una comanda.
+     * Devuelve false si no alcanza. Las preparaciones no descuentan nada.
+     * La verificación y el descuento se hacen en una sola consulta, así dos
+     * mozos no pueden vender la misma última unidad al mismo tiempo.
+     */
+    public function descontarStock(int $cantidad): bool
+    {
+        if (! $this->llevaStock()) {
+            return true;
+        }
+
+        $actualizados = static::whereKey($this->id)
+            ->where('stock', '>=', $cantidad)
+            ->decrement('stock', $cantidad);
+
+        if ($actualizados > 0) {
+            $this->stock -= $cantidad;
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Devuelve stock cuando se quita un producto o se baja su cantidad.
+     */
+    public function devolverStock(int $cantidad): void
+    {
+        if (! $this->llevaStock() || $cantidad <= 0) {
+            return;
+        }
+
+        static::whereKey($this->id)->increment('stock', $cantidad);
+
+        $this->stock += $cantidad;
+    }
+
+
     /**
      * Uso: Producto::activos()->get()
      */
