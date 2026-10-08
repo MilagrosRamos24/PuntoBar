@@ -1173,10 +1173,10 @@
                     Mozos
                 </span>
 
-                <span class="nav-item">
+                            <a href="{{ route('admin.productos.index') }}" class="nav-item">
                     <span class="nav-icon">♜</span>
                     Productos
-                </span>
+                </a>
 
                 <span class="nav-item">
                     <span class="nav-icon">▤</span>
