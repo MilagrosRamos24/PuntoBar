@@ -1276,21 +1276,27 @@
             @forelse ($mesas as $mesa)
 
                 @php
-
-                    $estado = $estadoInfo[$mesa->estado] ?? [
-                        'label' => ucfirst($mesa->estado),
-                        'clase' => 'libre',
-                    ];
-
-                    $claseEstado = $estado['clase'];
-
-                    $esMiMesa = (int) $mesa->mozo_id === (int) auth()->id();
-
-                    $puedeOperar = $esAdmin || $esMiMesa;
-
-                    $comanda = $mesa->comandaAbierta;
-
-                @endphp
+                $estado = $estadoInfo[$mesa->estado] ?? [
+                'label' => $mesa->estado_texto,
+                'clase' => 'libre',
+                ];
+                
+                $claseEstado = $estado['clase'];
+                
+                $esMiMesa =
+                auth()->user()->role === 'mozo' &&
+                (int) $mesa->mozo_id === (int) auth()->id();
+                $puedeOperar = $esAdmin || $esMiMesa;
+                
+                $comanda = $mesa->comandaAbierta;
+                
+                $puedeAtender =
+                auth()->user()->role === 'mozo' &&
+                auth()->user()->estado === 'activo' &&
+                $mesa->estado === 'libre' &&
+                !$comanda &&
+                ($mesa->mozo_id === null || $esMiMesa);
+                  @endphp
 
 
                 <article
@@ -1301,6 +1307,8 @@
                     data-mesa-estado="{{ $estado['label'] }}"
                     data-mesa-personas="{{ $mesa->cantidad_personas }}"
                     data-comanda-id="{{ $comanda?->id }}"
+                    data-atender-url="{{ route('mesas.atender', $mesa) }}"
+                    data-puede-atender="{{ $puedeAtender ? '1' : '0' }}"
                 >
 
                     <div class="mesa-titulo">
@@ -1500,12 +1508,14 @@
                     ▤ &nbsp; Ver comanda
                 </button>
 
-                <button
-                    type="button"
-                    class="btn-principal btn-atencion"
-                >
-                    ◷ &nbsp; Registrar atención
-                </button>
+                @if(auth()->user()->role === 'mozo')
+                <form id="form-registrar-atencion" method="POST">
+                    @csrf
+                    <button type="submit" class="btn-principal btn-atencion">
+                        ◷ &nbsp; Registrar atención
+                    </button>
+                </form>
+                @endif
 
                 <button
                     type="button"
@@ -1777,6 +1787,33 @@ document.addEventListener('DOMContentLoaded', function () {
     const textoSeleccion = document.getElementById('texto-seleccion');
 
     let mesaSeleccionada = null;
+
+    const formAtencion = document.getElementById('form-registrar-atencion');
+    if (formAtencion) {
+    formAtencion.addEventListener('submit', function (evento) {
+        if (!mesaSeleccionada) {
+            evento.preventDefault();
+            alert('Primero seleccioná una mesa.');
+            return;
+        }
+
+        if (mesaSeleccionada.dataset.puedeAtender !== '1') {
+            evento.preventDefault();
+            alert('Solo podés tomar una mesa libre sin encargado o asignada a vos.');
+            return;
+        }
+
+        const url = mesaSeleccionada.dataset.atenderUrl;
+
+        if (!url) {
+            evento.preventDefault();
+            alert('No se encontró la dirección para registrar la atención.');
+            return;
+        }
+
+        formAtencion.action = url;
+    });
+}
 
     const escaparTexto = (valor) => {
         const elemento = document.createElement('span');
