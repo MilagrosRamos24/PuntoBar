@@ -44,7 +44,7 @@ class AdminLoginTest extends TestCase {
         $this->actingAs($this->administrator('mozo'))->get('/admin/panel')->assertForbidden();
     }
     public function test_logout_ends_access(): void {
-        $this->actingAs($this->administrator())->post('/admin/logout')->assertRedirect('/admin/login');
+        $this->actingAs($this->administrator())->post('/admin/logout')->assertRedirect(route('home'));
         $this->assertGuest();
         $this->get('/admin/panel')->assertRedirect('/admin/login');
     }

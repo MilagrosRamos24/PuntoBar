@@ -1,0 +1,33 @@
+/* Notificaciones de stock · Punto Bar (campana del menú y panel del administrador) */
+
+/* ---------- Campana (se usa en varias pantallas, por eso trae sus propios valores) ---------- */
+.pn-campana { position: relative; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; width: 40px; height: 40px; border: 1px solid var(--pb-borde, #403628); border-radius: 12px; color: var(--pb-secundario, #b8aea0); text-decoration: none; transition: border-color .15s, color .15s; }
+.pn-campana svg { width: 20px; height: 20px; }
+.pn-campana:hover, .pn-campana.is-activa { border-color: var(--pb-acento, #e9a365); color: var(--pb-acento, #e9a365); }
+.pn-contador { position: absolute; top: -7px; right: -7px; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 999px; background: var(--pb-acento, #e9a365); color: #21170e; font-size: 11px; font-weight: 700; line-height: 18px; text-align: center; }
+
+/* ---------- Panel ---------- */
+.pn-aviso { margin: 0 0 20px; padding: 12px 16px; background: rgba(116, 140, 83, .18); border: 1px solid rgba(169, 191, 134, .35); border-radius: 12px; color: var(--ok); }
+.pn-resumen { margin: 0 0 16px; font-size: 14px; color: var(--muted); }
+.pn-resumen strong { color: var(--text); }
+.pn-lista { display: flex; flex-direction: column; gap: 12px; }
+.pn-item { display: flex; align-items: center; gap: 16px; padding: 18px 20px; background: var(--card); border: 1px solid var(--line); border-radius: 16px; }
+.pn-item.is-nueva { border-color: var(--accent); }
+.pn-icono { display: flex; align-items: center; justify-content: center; flex-shrink: 0; width: 40px; height: 40px; border-radius: 50%; background: rgba(233, 163, 101, .15); color: var(--warn); font-size: 18px; font-weight: 700; }
+.pn-cuerpo { flex: 1; min-width: 0; }
+.pn-titulo { margin: 0; font-size: 15px; line-height: 1.4; color: var(--text); }
+.pn-titulo strong { font-weight: 700; }
+.pn-detalle { margin: 4px 0 0; font-size: 13px; line-height: 1.5; color: var(--muted-2); }
+.pn-acciones { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+.pn-acciones form { margin: 0; }
+.pn-vacio { display: flex; flex-direction: column; gap: 6px; align-items: center; padding: 56px 24px; text-align: center; background: var(--card); border: 1px dashed var(--line); border-radius: 20px; color: var(--muted); }
+.pn-vacio strong { font-size: 16px; color: var(--text); }
+.pn-paginas { display: flex; justify-content: space-between; gap: 12px; margin-top: 20px; }
+.pn-paginas a, .pn-paginas span { display: inline-flex; align-items: center; height: 34px; padding: 0 14px; border: 1px solid var(--line); border-radius: 10px; font-size: 13px; font-weight: 600; color: var(--text); text-decoration: none; transition: border-color .15s; }
+.pn-paginas a:hover { border-color: var(--accent); }
+.pn-paginas span { opacity: .45; }
+
+@media (max-width: 720px) {
+    .pn-item { flex-wrap: wrap; }
+    .pn-acciones { width: 100%; }
+}
