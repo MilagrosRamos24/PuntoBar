@@ -41,6 +41,7 @@
                     <a href="{{ route('admin.mesas.index') }}">Gestión de mesas</a>
                     <a href="{{ route('admin.productos.index') }}" aria-current="page">Productos</a>
                 </nav>
+                   <x-campana-notificaciones />
                 <form method="POST" action="{{ route('admin.logout') }}">
                     @csrf
                     <button type="submit" class="pp-link-btn">Cerrar sesión</button>

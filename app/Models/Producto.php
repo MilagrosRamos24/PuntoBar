@@ -44,12 +44,19 @@ class Producto extends Model
     protected static function booted(): void
     {
         // Una preparación nunca tiene stock, entre por donde entre el dato.
-        static::saving(function (Producto $producto) {
+               static::saving(function (Producto $producto) {
             if ($producto->tipo === 'preparacion') {
                 $producto->stock = null;
             }
         });
+
+        // Si el stock llegó a cero (o se repuso), el aviso para el administrador se actualiza solo,
+        // venga el cambio de donde venga.
+        static::updated(function (Producto $producto) {
+            NotificacionStock::sincronizar($producto);
+        });
     }
+
 
     public function llevaStock(): bool
     {
@@ -85,12 +92,15 @@ class Producto extends Model
             ->where('stock', '>=', $cantidad)
             ->decrement('stock', $cantidad);
 
-        if ($actualizados > 0) {
+               if ($actualizados > 0) {
             $this->stock -= $cantidad;
+
+            // El descuento usa una consulta directa, que no dispara los eventos del modelo:
+            // se avisa a mano para que, si el stock llegó a cero, se genere la notificación.
+            NotificacionStock::sincronizarConBase($this->id);
 
             return true;
         }
-
         return false;
     }
 
@@ -103,9 +113,12 @@ class Producto extends Model
             return;
         }
 
-        static::whereKey($this->id)->increment('stock', $cantidad);
+               static::whereKey($this->id)->increment('stock', $cantidad);
 
         $this->stock += $cantidad;
+
+        // Igual que arriba: si el producto estaba sin stock, se cierra su aviso.
+        NotificacionStock::sincronizarConBase($this->id);
     }
 
 

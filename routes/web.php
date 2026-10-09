@@ -11,6 +11,7 @@ use App\Http\Controllers\AdminProductoController;
 use App\Http\Controllers\ActualizacionMasivaPreciosController;
 use App\Http\Controllers\AdminComandaController;
 use App\Http\Controllers\AdminMozoController;
+use App\Http\Controllers\AdminNotificacionStockController;
 
 Route::view('/', 'home')->name('home');
 
@@ -108,6 +109,13 @@ Route::middleware(VerificarRol::class . ':admin')
 
         Route::resource('productos', AdminProductoController::class)
             ->only(['index', 'store', 'update']);
+
+                    // Notificaciones de stock (solo administrador)
+        Route::get('notificaciones', [AdminNotificacionStockController::class, 'index'])
+            ->name('notificaciones.index');
+
+        Route::patch('notificaciones/{notificacion}/leida', [AdminNotificacionStockController::class, 'marcarLeida'])
+            ->name('notificaciones.leida');
 
         Route::get('/panel', function () {
     return redirect()->route('mesas');
