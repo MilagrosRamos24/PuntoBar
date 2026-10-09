@@ -1036,6 +1036,28 @@
             width: 100%;
         }
 
+        .comanda-acciones-finales {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 22px;
+        }
+
+        .comanda-acciones-finales .comanda-cierre {
+            margin-top: 0;
+        }
+
+        .comanda-acciones-finales .btn-principal {
+            width: 100%;
+        }
+
+        @media (max-width: 600px) {
+
+            .comanda-acciones-finales {
+                grid-template-columns: 1fr;
+            }
+        }
+
         .sr-only {
             position: absolute;
             width: 1px;
@@ -1251,31 +1273,31 @@
         </section>
 
 
-        {{-- ADMINISTRAR MESAS --}}
+        {{-- ADMINISTRAR --}}
 
-       @if ($esAdmin)
-    <div class="barra-acciones">
-        <details class="admin-menu">
-            <summary>
-                ⚙ Administrar ▾
-            </summary>
+        @if ($esAdmin)
+            <div class="barra-acciones">
+                <details class="admin-menu">
+                    <summary>
+                        ⚙ Administrar ▾
+                    </summary>
 
-            <div class="admin-dropdown">
-                <a href="{{ route('admin.mesas.create') }}">
-                    ⊕ &nbsp; Agregar mesa
-                </a>
+                    <div class="admin-dropdown">
+                        <a href="{{ route('admin.mesas.create') }}">
+                            ⊕ &nbsp; Agregar mesa
+                        </a>
 
-                <a href="{{ route('admin.mesas.index') }}">
-                    ☷ &nbsp; Gestionar mesas
-                </a>
+                        <a href="{{ route('admin.mesas.index') }}">
+                            ☷ &nbsp; Gestionar mesas
+                        </a>
 
-                <a href="{{ route('admin.mozos.index') }}">
-                    ☷ &nbsp; Gestionar mozos
-                </a>
+                        <a href="{{ route('admin.mozos.index') }}">
+                            ☷ &nbsp; Gestionar mozos
+                        </a>
+                    </div>
+                </details>
             </div>
-        </details>
-    </div>
-    @endif
+        @endif
 
 
         {{-- =========================
@@ -1287,27 +1309,28 @@
             @forelse ($mesas as $mesa)
 
                 @php
-                $estado = $estadoInfo[$mesa->estado] ?? [
-                'label' => $mesa->estado_texto,
-                'clase' => 'libre',
-                ];
-                
-                $claseEstado = $estado['clase'];
-                
-                $esMiMesa =
-                auth()->user()->role === 'mozo' &&
-                (int) $mesa->mozo_id === (int) auth()->id();
-                $puedeOperar = $esAdmin || $esMiMesa;
-                
-                $comanda = $mesa->comandaAbierta;
-                
-                $puedeAtender =
-                auth()->user()->role === 'mozo' &&
-                auth()->user()->estado === 'activo' &&
-                $mesa->estado === 'libre' &&
-                !$comanda &&
-                ($mesa->mozo_id === null || $esMiMesa);
-                  @endphp
+                    $estado = $estadoInfo[$mesa->estado] ?? [
+                        'label' => $mesa->estado_texto,
+                        'clase' => 'libre',
+                    ];
+
+                    $claseEstado = $estado['clase'];
+
+                    $esMiMesa =
+                        auth()->user()->role === 'mozo' &&
+                        (int) $mesa->mozo_id === (int) auth()->id();
+
+                    $puedeOperar = $esAdmin || $esMiMesa;
+
+                    $comanda = $mesa->comandaAbierta;
+
+                    $puedeAtender =
+                        auth()->user()->role === 'mozo' &&
+                        auth()->user()->estado === 'activo' &&
+                        $mesa->estado === 'libre' &&
+                        ! $comanda &&
+                        ($mesa->mozo_id === null || $esMiMesa);
+                @endphp
 
 
                 <article
@@ -1519,13 +1542,13 @@
                     ▤ &nbsp; Ver comanda
                 </button>
 
-                @if(auth()->user()->role === 'mozo')
-                <form id="form-registrar-atencion" method="POST">
-                    @csrf
-                    <button type="submit" class="btn-principal btn-atencion">
-                        ◷ &nbsp; Registrar atención
-                    </button>
-                </form>
+                @if (auth()->user()->role === 'mozo')
+                    <form id="form-registrar-atencion" method="POST">
+                        @csrf
+                        <button type="submit" class="btn-principal btn-atencion">
+                            ◷ &nbsp; Registrar atención
+                        </button>
+                    </form>
                 @endif
 
                 <button
@@ -1699,7 +1722,7 @@
 
                             <div>
                                 <label for="producto-{{ $comanda->id }}">Producto</label>
-                                                               <select id="producto-{{ $comanda->id }}" name="producto_id" required>
+                                <select id="producto-{{ $comanda->id }}" name="producto_id" required>
                                     <option value="" disabled @selected(! ($esLaComandaActual && old('producto_id')))>Elegí un producto</option>
                                     @foreach ($productos as $categoria => $lista)
                                         <optgroup label="{{ \App\Models\Producto::CATEGORIAS[$categoria] ?? ucfirst($categoria) }}">
@@ -1713,7 +1736,7 @@
                                             @endforeach
                                         </optgroup>
                                     @endforeach
-                                </select> 
+                                </select>
                             </div>
 
                             <div>
@@ -1769,18 +1792,27 @@
 
                     </div>
 
-                    <form
-                        method="POST"
-                        action="{{ route('comandas.cerrar', $comanda) }}"
-                        class="comanda-cierre"
-                        id="form-cerrar-comanda-{{ $comanda->id }}"
-                        data-mesa-numero="{{ $mesa->numero }}"
-                    >
-                        @csrf
-                        <button type="submit" class="btn-principal btn-atencion">
-                            ✓ &nbsp; Cerrar comanda
+                    <div class="comanda-acciones-finales">
+
+                        {{-- "Listo": cierra la ventana y la comanda sigue abierta --}}
+                        <button type="button" class="btn-principal" data-cerrar-modal>
+                            Listo
                         </button>
-                    </form>
+
+                        <form
+                            method="POST"
+                            action="{{ route('comandas.cerrar', $comanda) }}"
+                            class="comanda-cierre"
+                            id="form-cerrar-comanda-{{ $comanda->id }}"
+                            data-mesa-numero="{{ $mesa->numero }}"
+                        >
+                            @csrf
+                            <button type="submit" class="btn-principal btn-atencion">
+                                ✓ &nbsp; Cerrar comanda
+                            </button>
+                        </form>
+
+                    </div>
 
                 </div>
 
@@ -1799,32 +1831,37 @@ document.addEventListener('DOMContentLoaded', function () {
 
     let mesaSeleccionada = null;
 
+    // =========================
+    // REGISTRAR ATENCIÓN (mozo toma una mesa)
+    // =========================
+
     const formAtencion = document.getElementById('form-registrar-atencion');
+
     if (formAtencion) {
-    formAtencion.addEventListener('submit', function (evento) {
-        if (!mesaSeleccionada) {
-            evento.preventDefault();
-            alert('Primero seleccioná una mesa.');
-            return;
-        }
+        formAtencion.addEventListener('submit', function (evento) {
+            if (!mesaSeleccionada) {
+                evento.preventDefault();
+                alert('Primero seleccioná una mesa.');
+                return;
+            }
 
-        if (mesaSeleccionada.dataset.puedeAtender !== '1') {
-            evento.preventDefault();
-            alert('Solo podés tomar una mesa libre sin encargado o asignada a vos.');
-            return;
-        }
+            if (mesaSeleccionada.dataset.puedeAtender !== '1') {
+                evento.preventDefault();
+                alert('Solo podés tomar una mesa libre sin encargado o asignada a vos.');
+                return;
+            }
 
-        const url = mesaSeleccionada.dataset.atenderUrl;
+            const url = mesaSeleccionada.dataset.atenderUrl;
 
-        if (!url) {
-            evento.preventDefault();
-            alert('No se encontró la dirección para registrar la atención.');
-            return;
-        }
+            if (!url) {
+                evento.preventDefault();
+                alert('No se encontró la dirección para registrar la atención.');
+                return;
+            }
 
-        formAtencion.action = url;
-    });
-}
+            formAtencion.action = url;
+        });
+    }
 
     const escaparTexto = (valor) => {
         const elemento = document.createElement('span');
@@ -1915,11 +1952,13 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // Cerrar con la ×, haciendo clic afuera o con Escape.
+    // Cerrar con la ×, con "Listo", haciendo clic afuera o con Escape.
     document.querySelectorAll('.modal-comanda').forEach(function (modal) {
 
-        modal.querySelector('[data-cerrar-modal]').addEventListener('click', function () {
-            cerrarComanda(modal);
+        modal.querySelectorAll('[data-cerrar-modal]').forEach(function (boton) {
+            boton.addEventListener('click', function () {
+                cerrarComanda(modal);
+            });
         });
 
         modal.addEventListener('click', function (evento) {

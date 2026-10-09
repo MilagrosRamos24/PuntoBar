@@ -193,6 +193,18 @@
 
         .nota { color: #8f837a; font-size: 13px; line-height: 1.5; }
 
+        .btn-volver {
+            justify-self: start; 
+            color: #c7bdb4;
+            text-decoration: none;
+            font-size: 15px;
+        }
+
+        .btn-volver:hover { 
+            color: #f0a15f;
+         }
+
+
         :focus-visible { outline: 3px solid #e2a15c; outline-offset: 2px; }
 
         @media (max-width: 900px) {
@@ -232,6 +244,7 @@
     </header>
 
     <main class="contenido">
+        <a href="{{ route('mesas') }}" class="btn-volver"> ← Volver a mesas</a>
 
         @if (session('success'))
             <div class="aviso ok" role="status">{{ session('success') }}</div>
