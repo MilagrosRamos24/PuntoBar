@@ -7,6 +7,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\DB;
 
 class AdminProductoController extends Controller
 {
@@ -36,9 +37,15 @@ class AdminProductoController extends Controller
             ->with('success', 'Producto creado correctamente.');
     }
 
-    public function update(Request $request, Producto $producto): RedirectResponse
+        public function update(Request $request, Producto $producto): RedirectResponse
     {
-        $producto->update($this->validar($request, $producto));
+        $datos = $this->validar($request, $producto);
+
+        // Todo en una transacción y con la fila bloqueada: si el stock llega a cero, el aviso se
+        // guarda junto con el cambio, y no se pisa un descuento hecho en ese mismo instante.
+        DB::transaction(function () use ($producto, $datos) {
+            Producto::whereKey($producto->id)->lockForUpdate()->firstOrFail()->update($datos);
+        });
 
         return redirect()
             ->route('admin.productos.index')
