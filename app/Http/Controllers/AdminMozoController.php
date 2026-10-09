@@ -175,7 +175,18 @@ class AdminMozoController extends Controller
             ->route('admin.mozos.index')
             ->with('success', 'Mozo dado de baja correctamente.');
     }
-
+    /**
+     * * Reactivar un mozo conservando sus datos y contraseña. */
+    public function habilitar(User $mozo)
+    {
+    $this->verificarMozo($mozo);
+     $mozo->estado = 'activo';
+     $mozo->save();
+     return redirect()
+        ->route('admin.mozos.index')
+        ->with('success', 'Mozo habilitado correctamente.');
+        }
+        
     /**
      * Impedir que este módulo modifique administradores.
      */

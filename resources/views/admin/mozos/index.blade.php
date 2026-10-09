@@ -49,18 +49,28 @@
                             </a>
 
                             @if($mozo->estado === 'activo')
-                                <form
-                                    action="{{ route('admin.mozos.destroy', $mozo) }}"
-                                    method="POST"
-                                    onsubmit="return confirm('¿Dar de baja a este mozo? No podrá ingresar al sistema. Su historial se conservará.');"
-                                >
-                                    @csrf
-                                    @method('DELETE')
-
-                                    <button type="submit" class="peligro">
-                                        Dar de baja
-                                    </button>
-                                </form>
+                            <form
+                            action="{{ route('admin.mozos.destroy', $mozo) }}"
+                            method="POST"
+                            onsubmit="return confirm('¿Dar de baja a este mozo? Su historial se conservará.');"
+                            >
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="peligro">
+                                 Dar de baja
+                                </button>
+                            </form>
+                            @else
+                            <form
+                            action="{{ route('admin.mozos.habilitar', $mozo) }}"
+                            method="POST"
+                            >
+                            @csrf
+                            @method('PATCH')
+                            <button type="submit" class="primario">
+                                 Habilitar
+                                </button>
+                            </form>
                             @endif
                         </div>
                     </td>

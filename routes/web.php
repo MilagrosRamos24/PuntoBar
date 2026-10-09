@@ -92,6 +92,8 @@ Route::middleware(VerificarRol::class . ':admin')
 
         Route::resource('mesas', AdminMesaController::class);
         // Gestión de mozos.
+        Route::patch('mozos/{mozo}/habilitar', [AdminMozoController::class, 'habilitar'])
+        ->name('mozos.habilitar');
         Route::resource('mozos', AdminMozoController::class)
         ->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
                 // Productos (catálogo, baja/alta y actualización masiva de precios)
