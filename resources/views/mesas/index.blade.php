@@ -1155,42 +1155,53 @@
         </div>
 
 
-        <nav class="navegacion">
+<nav class="navegacion">
 
-            <a
-                href="{{ route('mesas') }}"
-                class="nav-item activo"
-            >
-                <span class="nav-icon">▣</span>
-                Mesas
-            </a>
+    <a
+        href="{{ route('mesas') }}"
+        class="nav-item {{ !$soloMisMesas ? 'activo' : '' }}"
+        @if (!$soloMisMesas) aria-current="page" @endif
+    >
+        <span class="nav-icon">▣</span>
+        Mesas
+    </a>
 
+    @if (auth()->user()->role === 'mozo')
+        <a
+            href="{{ route('mesas', ['vista' => 'mis-mesas']) }}"
+            class="nav-item {{ $soloMisMesas ? 'activo' : '' }}"
+            @if ($soloMisMesas) aria-current="page" @endif
+        >
+            <span class="nav-icon">▣</span>
+            Mis mesas
+        </a>
+    @endif
 
-            @if ($esAdmin)
+    @if ($esAdmin)
 
-                <a href="{{ route('admin.mozos.index') }}" class="nav-item">
-                    <span class="nav-icon">♙</span>
-                    Mozos
-                </a>
+        <a href="{{ route('admin.mozos.index') }}" class="nav-item">
+            <span class="nav-icon">♙</span>
+            Mozos
+        </a>
 
-                            <a href="{{ route('admin.productos.index') }}" class="nav-item">
-                    <span class="nav-icon">♜</span>
-                    Productos
-                </a>
+        <a href="{{ route('admin.productos.index') }}" class="nav-item">
+            <span class="nav-icon">♜</span>
+            Productos
+        </a>
 
-                <a href="{{ route('admin.comandas.index') }}" class="nav-item">
-                <span class="nav-icon">▤</span>
-                Comandas
-                </a>
+        <a href="{{ route('admin.comandas.index') }}" class="nav-item">
+            <span class="nav-icon">▤</span>
+            Comandas
+        </a>
 
-                <a href="{{ route('admin.descuento.edit') }}" class="nav-item">
-                <span class="nav-icon">％</span>
-                Descuento
-                </a>
+        <a href="{{ route('admin.descuento.edit') }}" class="nav-item">
+            <span class="nav-icon">％</span>
+            Descuento
+        </a>
 
-            @endif
+    @endif
 
-        </nav>
+</nav>
 
 
         <div class="usuario">

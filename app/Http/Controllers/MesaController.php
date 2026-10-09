@@ -47,7 +47,6 @@ class MesaController extends Controller
         'soloMisMesas'
     ));
 }
-
     public function show(Request $request, Mesa $mesa)
     {
         $this->verificarAcceso($request, $mesa);
