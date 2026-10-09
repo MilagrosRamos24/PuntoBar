@@ -314,6 +314,7 @@
                 <a href="{{ $comandas->previousPageUrl() ?? '#' }}" class="btn" @if ($comandas->onFirstPage()) aria-disabled="true" @endif>← Anteriores</a>
                 <span>Página {{ $comandas->currentPage() }} de {{ $comandas->lastPage() }}</span>
                 <a href="{{ $comandas->nextPageUrl() ?? '#' }}" class="btn" @if (! $comandas->hasMorePages()) aria-disabled="true" @endif>Siguientes →</a>
+                <a href="{{ route('admin.descuento.edit') }}" class="nav-item">Descuento</a>
             </nav>
         @endif
 
