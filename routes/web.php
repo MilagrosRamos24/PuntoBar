@@ -39,6 +39,8 @@ Route::post('/mozo/login', [MozoAuthController::class, 'login'])
 // ====================
 
 Route::middleware(VerificarRol::class . ':mozo')->group(function () {
+    Route::post('/mesas/{mesa}/atender', [MesaController::class, 'atender'])
+    ->name('mesas.atender');
 
     Route::post('/mozo/logout', [MozoAuthController::class, 'logout'])
         ->name('mozo.logout');

@@ -5,28 +5,34 @@ namespace App\Http\Controllers;
 use App\Models\Mesa;
 use App\Models\Producto;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 
 class MesaController extends Controller
 {
     public function index(Request $request)
-    {
-        $mesas = Mesa::with(['mozo', 'comandaAbierta.detalles.producto'])
-            ->orderBy('numero')
-            ->get();
+{
+    $mesas = Mesa::with([
+        'mozo',
+        'comandaAbierta.detalles.producto',
+    ])
+        ->orderBy('numero')
+        ->get();
 
-        // Catálogo para agregar productos desde la ventana de la comanda.
-        $productos = Producto::disponibles()
-            ->orderBy('categoria')
-            ->orderBy('nombre')
-            ->get()
-            ->groupBy('categoria');
+    $productos = Producto::disponibles()
+        ->orderBy('categoria')
+        ->orderBy('nombre')
+        ->get()
+        ->groupBy('categoria');
 
-        // Si viene ?comanda=ID, la ventana de esa comanda se abre al cargar la página.
-        $comandaParaAbrir = $request->integer('comanda') ?: null;
+    $comandaParaAbrir = $request->integer('comanda') ?: null;
 
-        return view('mesas.index', compact('mesas', 'productos', 'comandaParaAbrir'));
-    }
+    return view(
+        'mesas.index',
+        compact('mesas', 'productos', 'comandaParaAbrir')
+    );
+}
 
     public function show(Request $request, Mesa $mesa)
     {
@@ -55,6 +61,64 @@ class MesaController extends Controller
             ->with('success', 'Estado actualizado correctamente.');
     }
 
+    /**
+     * Tomar una mesa libre y registrar al mozo encargado.
+     */
+    public function atender(Request $request, Mesa $mesa)
+    {
+        $usuario = $request->user();
+
+        abort_unless(
+            $usuario &&
+            $usuario->role === 'mozo' &&
+            $usuario->estado === 'activo',
+            403,
+            'No tenés permiso para atender esta mesa.'
+        );
+
+        DB::transaction(function () use ($mesa, $usuario) {
+            $mesaActual = Mesa::whereKey($mesa->id)
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            if ($mesaActual->estado !== 'libre') {
+                throw ValidationException::withMessages([
+                    'mesa' => 'La mesa ya no está libre. Actualizá la pantalla.',
+                ]);
+            }
+
+            if (
+                $mesaActual->mozo_id !== null &&
+                (int) $mesaActual->mozo_id !== (int) $usuario->id
+            ) {
+                throw ValidationException::withMessages([
+                    'mesa' => 'El administrador asignó esta mesa a otro mozo.',
+                ]);
+            }
+
+            if ($mesaActual->comandaAbierta()->exists()) {
+                throw ValidationException::withMessages([
+                    'mesa' => 'Esta mesa tiene una comanda abierta y no se puede tomar.',
+                ]);
+            }
+
+            $mesaActual->update([
+                'mozo_id' => $usuario->id,
+                'estado' => 'ocupada',
+            ]);
+        });
+
+        return redirect()
+            ->route('mesas')
+            ->with(
+                'success',
+                'Ahora sos el encargado de la mesa '.$mesa->numero.'.'
+            );
+    }
+
+    /**
+     * Permitir acceso al administrador o al mozo asignado.
+     */
     private function verificarAcceso(Request $request, Mesa $mesa): void
     {
         $usuario = $request->user();
