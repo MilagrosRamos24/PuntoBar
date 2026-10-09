@@ -13,10 +13,22 @@ class MesaController extends Controller
 {
     public function index(Request $request)
 {
-    $mesas = Mesa::with([
+    $usuario = $request->user();
+
+    // El filtro solo se aplica a los mozos.
+    $soloMisMesas = $usuario->role === 'mozo'
+        && $request->query('vista') === 'mis-mesas';
+
+    $consulta = Mesa::with([
         'mozo',
         'comandaAbierta.detalles.producto',
-    ])
+    ]);
+
+    if ($soloMisMesas) {
+        $consulta->where('mozo_id', $usuario->id);
+    }
+
+    $mesas = $consulta
         ->orderBy('numero')
         ->get();
 
@@ -28,12 +40,13 @@ class MesaController extends Controller
 
     $comandaParaAbrir = $request->integer('comanda') ?: null;
 
-    return view(
-        'mesas.index',
-        compact('mesas', 'productos', 'comandaParaAbrir')
-    );
+    return view('mesas.index', compact(
+        'mesas',
+        'productos',
+        'comandaParaAbrir',
+        'soloMisMesas'
+    ));
 }
-
     public function show(Request $request, Mesa $mesa)
     {
         $this->verificarAcceso($request, $mesa);
