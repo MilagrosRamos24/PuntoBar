@@ -12,6 +12,7 @@ use App\Http\Controllers\ActualizacionMasivaPreciosController;
 use App\Http\Controllers\AdminComandaController;
 use App\Http\Controllers\AdminMozoController;
 use App\Http\Controllers\AdminNotificacionStockController;
+use App\Http\Controllers\AdminDescuentoController;
 
 Route::view('/', 'home')->name('home');
 
@@ -40,6 +41,8 @@ Route::post('/mozo/login', [MozoAuthController::class, 'login'])
 // ====================
 
 Route::middleware(VerificarRol::class . ':mozo')->group(function () {
+    Route::post('/mesas/{mesa}/atender', [MesaController::class, 'atender'])
+    ->name('mesas.atender');
 
     Route::post('/mozo/logout', [MozoAuthController::class, 'logout'])
         ->name('mozo.logout');
@@ -126,4 +129,10 @@ Route::middleware(VerificarRol::class . ':admin')
             
          Route::get('/comandas', [AdminComandaController::class, 'index'])
         ->name('comandas.index');
+
+         Route::get('/descuento', [AdminDescuentoController::class, 'edit'])
+        ->name('descuento.edit');
+
+    Route::put('/descuento', [AdminDescuentoController::class, 'update'])
+        ->name('descuento.update');
     });
