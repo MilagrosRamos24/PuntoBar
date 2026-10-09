@@ -23,8 +23,7 @@ class LogoutTest extends TestCase
     {
         $this->actingAs($this->usuario('mozo'))
             ->post('/mozo/logout')
-            ->assertRedirect(route('mozo.login'));
-
+            ->assertRedirect(route('home'));
         $this->assertGuest();
     }
 
