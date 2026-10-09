@@ -4,7 +4,7 @@
 .pn-campana { position: relative; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; width: 40px; height: 40px; border: 1px solid var(--pb-borde, #403628); border-radius: 12px; color: var(--pb-secundario, #b8aea0); text-decoration: none; transition: border-color .15s, color .15s; }
 .pn-campana svg { width: 20px; height: 20px; }
 .pn-campana:hover, .pn-campana.is-activa { border-color: var(--pb-acento, #e9a365); color: var(--pb-acento, #e9a365); }
-.pn-contador { position: absolute; top: -7px; right: -7px; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 999px; background: var(--pb-acento, #e9a365); color: #21170e; font-size: 11px; font-weight: 700; line-height: 18px; text-align: center; }
+.pn-campana .pn-contador { position: absolute; top: -7px; right: -7px; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 999px; background: var(--pb-acento, #e9a365); color: #21170e; font-size: 11px; font-weight: 700; line-height: 18px; text-align: center; }
 
 /* ---------- Panel ---------- */
 .pn-aviso { margin: 0 0 20px; padding: 12px 16px; background: rgba(116, 140, 83, .18); border: 1px solid rgba(169, 191, 134, .35); border-radius: 12px; color: var(--ok); }
@@ -26,6 +26,23 @@
 .pn-paginas a, .pn-paginas span { display: inline-flex; align-items: center; height: 34px; padding: 0 14px; border: 1px solid var(--line); border-radius: 10px; font-size: 13px; font-weight: 600; color: var(--text); text-decoration: none; transition: border-color .15s; }
 .pn-paginas a:hover { border-color: var(--accent); }
 .pn-paginas span { opacity: .45; }
+
+
+/* ---------- Aviso en el panel principal del administrador ---------- */
+.pn-banner { display: flex; align-items: center; gap: 16px; margin: 0 0 24px; padding: 16px 20px; background: rgba(233, 163, 101, .08); border: 1px solid var(--pb-acento, #e9a365); border-radius: 16px; color: var(--pb-texto, #eee9e1); }
+.pn-banner-icono { display: flex; align-items: center; justify-content: center; flex-shrink: 0; width: 36px; height: 36px; border-radius: 50%; background: rgba(233, 163, 101, .18); color: var(--pb-acento, #e9a365); font-size: 17px; font-weight: 700; }
+.pn-banner-cuerpo { flex: 1; min-width: 0; }
+.pn-banner-titulo { display: block; font-size: 15px; font-weight: 700; }
+.pn-banner-lista { margin: 6px 0 0; padding: 0; list-style: none; font-size: 13px; line-height: 1.6; color: var(--pb-secundario, #b8aea0); }
+.pn-banner-lista strong { color: var(--pb-texto, #eee9e1); }
+.pn-banner-lista span { opacity: .75; }
+.pn-banner-enlace { flex-shrink: 0; padding: 9px 16px; border: 1px solid var(--pb-acento, #e9a365); border-radius: 10px; color: var(--pb-acento, #e9a365); font-size: 14px; font-weight: 600; text-decoration: none; transition: background .15s; }
+.pn-banner-enlace:hover { background: rgba(233, 163, 101, .15); }
+
+@media (max-width: 720px) {
+    .pn-banner { flex-wrap: wrap; }
+    .pn-banner-enlace { width: 100%; text-align: center; }
+}
 
 @media (max-width: 720px) {
     .pn-item { flex-wrap: wrap; }

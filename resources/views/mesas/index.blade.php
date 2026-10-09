@@ -1182,11 +1182,13 @@
                 <span class="nav-icon">▤</span>
                 Comandas
                 </a>
-
+                
                 <a href="{{ route('admin.descuento.edit') }}" class="nav-item">
                 <span class="nav-icon">％</span>
                 Descuento
                 </a>
+
+                <x-campana-notificaciones />
 
             @endif
 
@@ -1239,6 +1241,7 @@
 
         </section>
 
+ <x-aviso-notificaciones />
 
         {{-- ADMINISTRAR MESAS --}}
 
