@@ -52,15 +52,14 @@ class MozoAuthController extends Controller
     }
 
     /**
-     * Cerrar sesión del mozo.
-     */
+    * Cerrar sesión y volver a la selección de perfiles.
+    */
     public function logout(Request $request)
     {
         Auth::logout();
-
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-
-        return redirect()->route('mozo.login');
+        return redirect()->route('home');
     }
+        
 }
