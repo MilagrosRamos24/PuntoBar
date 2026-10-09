@@ -11,6 +11,7 @@ use App\Http\Controllers\AdminProductoController;
 use App\Http\Controllers\ActualizacionMasivaPreciosController;
 use App\Http\Controllers\AdminComandaController;
 use App\Http\Controllers\AdminMozoController;
+use App\Http\Controllers\AdminDescuentoController;
 
 Route::view('/', 'home')->name('home');
 
@@ -118,4 +119,10 @@ Route::middleware(VerificarRol::class . ':admin')
             
          Route::get('/comandas', [AdminComandaController::class, 'index'])
         ->name('comandas.index');
+
+         Route::get('/descuento', [AdminDescuentoController::class, 'edit'])
+        ->name('descuento.edit');
+
+    Route::put('/descuento', [AdminDescuentoController::class, 'update'])
+        ->name('descuento.update');
     });

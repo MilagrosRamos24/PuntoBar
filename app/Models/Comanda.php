@@ -84,8 +84,8 @@ class Comanda extends Model
      * cuando el subtotal supera un tope definido por el administrador).
      * Por ahora devuelve 0: se completa cuando exista ConfiguracionDescuento.
      */
-    protected function calcularDescuento(float $subtotal): float
+     protected function calcularDescuento(float $subtotal): float
     {
-        return 0.0;
+        return ConfiguracionDescuento::actual()->calcularDescuento($subtotal);
     }
 }

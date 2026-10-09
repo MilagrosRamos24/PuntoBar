@@ -1183,6 +1183,10 @@
                 Comandas
                 </a>
 
+                <a href="{{ route('admin.descuento.edit') }}" class="nav-item">
+                <span class="nav-icon">％</span>
+                Descuento
+                </a>
 
             @endif
 
