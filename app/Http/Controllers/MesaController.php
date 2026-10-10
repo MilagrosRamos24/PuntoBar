@@ -118,7 +118,8 @@ class MesaController extends Controller
             $mesaActual->update([
                 'mozo_id' => $usuario->id,
                 'estado' => 'ocupada',
-            ]);
+                'inicio_espera' => now(),
+                ]);
         });
 
         return redirect()
