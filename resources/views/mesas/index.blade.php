@@ -1143,6 +1143,21 @@
         .estado-form button { cursor: pointer; }
         .estado-form :focus-visible { outline: 3px solid #e2a15c; outline-offset: 2px; }
         .feedback-mesas { padding: 16px; margin-bottom: 20px; border: 1px solid #80634e; border-radius: 8px; color: #f1e9df; }
+        
+/* Barra inferior (Ver comanda, Cerrar comanda, Salir): queda pegada al borde de abajo de la pantalla */
+.barra-inferior {
+    position: sticky;
+    bottom: 12px;
+    z-index: 20;
+    background: rgba(20, 17, 14, .97);
+    box-shadow: 0 -12px 28px rgba(0, 0, 0, .5);
+}
+
+@media (max-width: 720px) {
+    .barra-inferior {
+        position: static;
+    }
+}
 
     </style>
 
