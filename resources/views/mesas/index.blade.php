@@ -1220,6 +1220,8 @@
             <span class="nav-icon">％</span>
             Descuento
         </a>
+                <x-campana-notificaciones />
+
 
     @endif
 
@@ -1272,6 +1274,7 @@
 
         </section>
 
+ <x-aviso-notificaciones />
 
         {{-- ADMINISTRAR --}}
 
