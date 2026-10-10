@@ -45,9 +45,16 @@ class ComandaController extends Controller
                 'fecha' => now(),
                 'estado' => 'abierta',
             ]);
-
-            // La mesa pasa a "Mesa atendida" (verde). En la base el estado se llama "reservada".
-            $mesa->update(['estado' => 'reservada']);
+            // Una comanda vacía todavía está esperando el primer pedido.
+            // Conservamos la fecha si la espera ya había comenzado.
+            // Abrir una comanda vacía deja la mesa esperando.
+            // Si ya tenía una alerta, la conservamos.
+            $mesa->update([
+                'estado' => $mesa->estado === 'pendiente_de_cierre'
+                ? 'pendiente_de_cierre'
+                : 'ocupada',
+                'inicio_espera' => $mesa->inicio_espera ?? now(),
+                ]);
 
             return $comanda;
         });
@@ -122,6 +129,12 @@ class ComandaController extends Controller
             $detalle->cambiarCantidad($detalle->cantidad + $cantidad);
 
             $comanda->recalcularTotales();
+            // El pedido ya tiene un producto: termina la espera
+            // y la mesa pasa a "Mesa atendida".
+            $comanda->mesa()->update([
+                'estado' => 'reservada',
+                'inicio_espera' => null,
+                ]);
         });
 
         return $this->volverAComanda($comanda)->with('success', 'Producto agregado.');
@@ -211,7 +224,8 @@ class ComandaController extends Controller
                 'estado' => 'libre',
                 'mozo_id' => null,
                 'cantidad_personas' => 0,
-            ]);
+                'inicio_espera' => null,
+                ]);
         });
 
         return redirect()
