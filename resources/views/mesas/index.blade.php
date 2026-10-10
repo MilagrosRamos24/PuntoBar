@@ -1837,7 +1837,11 @@
                             class="comanda-cierre"
                             id="form-cerrar-comanda-{{ $comanda->id }}"
                             data-mesa-numero="{{ $mesa->numero }}"
-                        >
+                             data-confirmar="¿Cerrar la comanda de la mesa {{ $mesa->numero }}? La mesa va a quedar libre y la comanda pasa al historial."
+                            data-confirmar-titulo="Cerrar comanda"
+                            data-confirmar-aceptar="Cerrar comanda"
+                            data-confirmar-cancelar="Volver"
+                            >
                             @csrf
                             <button type="submit" class="btn-principal btn-atencion">
                                 ✓ &nbsp; Cerrar comanda
@@ -2002,20 +2006,11 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     document.addEventListener('keydown', function (evento) {
-        if (evento.key === 'Escape') {
+        if (evento.key === 'Escape' && !document.querySelector('.dialogo[open]')) {
             document.querySelectorAll('.modal-comanda.activo').forEach(cerrarComanda);
         }
     });
 
-    // Confirmación antes de cerrar una comanda.
-    document.querySelectorAll('form[id^="form-cerrar-comanda-"]').forEach(function (form) {
-        form.addEventListener('submit', function (evento) {
-            const numero = form.dataset.mesaNumero;
-            if (!confirm('¿Cerrar la comanda de la mesa ' + numero + '? La mesa va a quedar libre.')) {
-                evento.preventDefault();
-            }
-        });
-    });
 
     // Barra inferior: trabaja sobre la mesa seleccionada.
     function comandaDeLaMesaSeleccionada() {
@@ -2158,7 +2153,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 </script>
-
+</x-dialogo/> 
 </body>
 
 </html>

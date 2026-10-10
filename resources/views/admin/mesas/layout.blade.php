@@ -22,5 +22,6 @@
     @endif
     @yield('content')
 </main>
+<x-dialogo />
 </body>
 </html>
