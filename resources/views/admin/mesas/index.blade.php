@@ -14,8 +14,6 @@
             <td><div class="acciones">
                 <a href="{{ route('admin.mesas.show', $mesa) }}">Consultar</a>
                 <a href="{{ route('admin.mesas.edit', $mesa) }}">Editar</a>
-                <form action="{{ route('admin.mesas.destroy', $mesa) }}" method="POST" onsubmit="return confirm('¿Eliminar esta mesa? Esta acción no se puede deshacer.');">
-                    @csrf @method('DELETE')<button class="peligro">Eliminar</button>
                 </form>
             </div></td>
         </tr>
