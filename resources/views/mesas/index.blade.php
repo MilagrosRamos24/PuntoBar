@@ -2153,7 +2153,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 </script>
-</x-dialogo/> 
+<x-dialogo /> 
 </body>
 
 </html>
