@@ -61,8 +61,15 @@ class AdminMesaController extends Controller
 
     public function store(Request $request)
     {
-        $mesa = Mesa::create($this->datos($request));
-        return redirect()->route('admin.mesas.show', $mesa)->with('success', 'Mesa creada correctamente.');
+    $datos = $this->datos($request);
+
+    $datos['inicio_espera'] = $datos['estado'] === 'ocupada'
+        ? now()
+        : null;
+
+    $mesa = Mesa::create($datos);return redirect()
+        ->route('admin.mesas.show', $mesa)
+        ->with('success', 'Mesa creada correctamente.');
     }
 
     public function show(Mesa $mesa)
@@ -79,9 +86,46 @@ class AdminMesaController extends Controller
 
     public function update(Request $request, Mesa $mesa)
     {
-        $mesa->update($this->datos($request, $mesa));
-        return redirect()->route('admin.mesas.show', $mesa)->with('success', 'Mesa actualizada correctamente.');
+    $datos = $this->datos($request, $mesa);
+
+    // Con una comanda abierta, el estado y el encargado
+    // se administran mediante el flujo de atención.
+    if ($mesa->comandaAbierta()->exists()) {
+        $cambiaEstado = $datos['estado'] !== $mesa->estado;
+
+        $cambiaMozo = (int) ($datos['mozo_id'] ?? 0)
+            !== (int) ($mesa->mozo_id ?? 0);
+
+        if ($cambiaEstado || $cambiaMozo) {
+            return back()
+                ->withErrors([
+                    'estado' => 'La mesa tiene una comanda abierta. '
+                        .'No se puede cambiar su estado o encargado desde este formulario.',
+                ])
+                ->withInput();
+        }
+
+        // Editar otros datos no modifica la espera.
+        $datos['inicio_espera'] = $mesa->inicio_espera;
+    } else {
+        $datos['inicio_espera'] = match ($datos['estado']) {
+            // Si ya estaba esperando, conservar el inicio.
+            'ocupada' => $mesa->inicio_espera ?? now(),
+
+            // Una alerta conserva el tiempo registrado.
+            'pendiente_de_cierre' => $mesa->inicio_espera,
+
+            // Libre o atendida: no hay espera del primer pedido.
+            default => null,
+        };
     }
+
+    $mesa->update($datos);
+
+    return redirect()
+        ->route('admin.mesas.show', $mesa)
+        ->with('success', 'Mesa actualizada correctamente.');
+        }
 
     public function destroy(Mesa $mesa)
     {

@@ -70,8 +70,13 @@ class ComandaTest extends TestCase
         $this->assertSame('abierta', $comanda->estado);
         $this->assertNotNull($comanda->fecha);
 
-        // La mesa pasa a "Mesa atendida".
-        $this->assertDatabaseHas('mesas', ['id' => $mesa->id, 'estado' => 'reservada']);
+        // Una comanda vacía mantiene la mesa esperando el primer pedido.
+        $this->assertDatabaseHas('mesas', [
+            'id' => $mesa->id,
+            'estado' => 'ocupada',
+            ]);
+            $this->assertNotNull($mesa->fresh()->inicio_espera);
+            $this->assertFalse($comanda->detalles()->exists());
     }
 
     public function test_una_mesa_no_puede_tener_dos_comandas_abiertas(): void

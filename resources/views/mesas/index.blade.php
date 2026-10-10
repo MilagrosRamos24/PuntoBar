@@ -5,7 +5,9 @@
 
     $mesasLibres = $mesas->where('estado', 'libre')->count();
 
-    $mesasAlertas = $mesas->where('estado', 'pendiente_de_cierre')->count();
+    $mesasAlertas = $mesas->filter(
+    fn ($mesa) => $mesa->estado_visual === 'pendiente_de_cierre'
+    )->count();
 
     $nombreUsuario = auth()->user()->name ?? 'Usuario';
 
@@ -1143,6 +1145,21 @@
         .estado-form button { cursor: pointer; }
         .estado-form :focus-visible { outline: 3px solid #e2a15c; outline-offset: 2px; }
         .feedback-mesas { padding: 16px; margin-bottom: 20px; border: 1px solid #80634e; border-radius: 8px; color: #f1e9df; }
+        
+/* Barra inferior (Ver comanda, Cerrar comanda, Salir): queda pegada al borde de abajo de la pantalla */
+.barra-inferior {
+    position: sticky;
+    bottom: 12px;
+    z-index: 20;
+    background: rgba(20, 17, 14, .97);
+    box-shadow: 0 -12px 28px rgba(0, 0, 0, .5);
+}
+
+@media (max-width: 720px) {
+    .barra-inferior {
+        position: static;
+    }
+}
 
     </style>
 
@@ -1268,8 +1285,8 @@
             <div class="separador"></div>
 
             <div class="estadistica">
-                <strong>{{ $mesasAlertas }}</strong>
-                <span>Pendientes de cierre</span>
+                <strong id="cantidad-mesas-alerta">{{ $mesasAlertas }}</strong>
+                <span>Alertas de atención</span>
             </div>
 
         </section>
@@ -1312,7 +1329,7 @@
             @forelse ($mesas as $mesa)
 
                 @php
-                    $estado = $estadoInfo[$mesa->estado] ?? [
+                    $estado = $estadoInfo[$mesa->estado_visual] ?? [
                         'label' => $mesa->estado_texto,
                         'clase' => 'libre',
                     ];
@@ -1346,6 +1363,8 @@
                     data-comanda-id="{{ $comanda?->id }}"
                     data-atender-url="{{ route('mesas.atender', $mesa) }}"
                     data-puede-atender="{{ $puedeAtender ? '1' : '0' }}"
+                    data-inicio-espera="{{ $mesa->estaEsperandoPrimerPedido() ? $mesa->inicio_espera->toIso8601String() : '' }}"
+                    data-alerta-espera-en="{{ $mesa->alerta_espera_en ?? '' }}"
                 >
 
                     <div class="mesa-titulo">
@@ -1362,6 +1381,16 @@
 
 
                     <div class="mesa-info">
+                    @if ($mesa->estaEsperandoPrimerPedido())
+                    <div class="info-linea">
+                    <span class="info-icon" aria-hidden="true">◷</span>
+
+                    <span class="tiempo-espera">
+                    Calculando tiempo de espera…
+                    </span>
+                    </div>
+
+                @endif
 
                         <div class="info-linea">
 
@@ -1808,11 +1837,11 @@
                             class="comanda-cierre"
                             id="form-cerrar-comanda-{{ $comanda->id }}"
                             data-mesa-numero="{{ $mesa->numero }}"
-                                                        data-confirmar="¿Cerrar la comanda de la mesa {{ $mesa->numero }}? La mesa va a quedar libre y la comanda pasa al historial."
+                             data-confirmar="¿Cerrar la comanda de la mesa {{ $mesa->numero }}? La mesa va a quedar libre y la comanda pasa al historial."
                             data-confirmar-titulo="Cerrar comanda"
                             data-confirmar-aceptar="Cerrar comanda"
                             data-confirmar-cancelar="Volver"
-                        >
+                            >
                             @csrf
                             <button type="submit" class="btn-principal btn-atencion">
                                 ✓ &nbsp; Cerrar comanda
@@ -1977,12 +2006,11 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     document.addEventListener('keydown', function (evento) {
-            if (evento.key === 'Escape' && !document.querySelector('.dialogo[open]')) {
+        if (evento.key === 'Escape' && !document.querySelector('.dialogo[open]')) {
             document.querySelectorAll('.modal-comanda.activo').forEach(cerrarComanda);
         }
     });
 
-   
 
     // Barra inferior: trabaja sobre la mesa seleccionada.
     function comandaDeLaMesaSeleccionada() {
@@ -2034,7 +2062,98 @@ document.addEventListener('DOMContentLoaded', function () {
 
 });
 </script>
-<x-dialogo />
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // Usamos la hora del servidor como referencia.
+    const horaServidor = @json(now()->toIso8601String());
+    const inicioReferencia = performance.now();
+    const referenciaServidor = Date.parse(horaServidor);
+
+    function actualizarEspera() {
+        const ahora = referenciaServidor
+            + (performance.now() - inicioReferencia);
+
+        document.querySelectorAll('.mesa[data-inicio-espera]')
+            .forEach(function (mesa) {
+                const inicio = Date.parse(mesa.dataset.inicioEspera);
+                const limite = Date.parse(mesa.dataset.alertaEsperaEn);
+                const contador = mesa.querySelector('.tiempo-espera');
+
+                if (
+                    !contador ||
+                    !Number.isFinite(inicio) ||
+                    !Number.isFinite(limite)
+                ) {
+                    return;
+                }
+
+                const segundos = Math.max(
+                    0,
+                    Math.floor((ahora - inicio) / 1000)
+                );
+
+                const minutos = Math.floor(segundos / 60);
+                const resto = String(segundos % 60).padStart(2, '0');
+                const vencida = ahora >= limite;
+
+                contador.textContent = vencida
+                    ? `Sin primer pedido hace ${minutos}:${resto} min · Alerta`
+                    : `Esperando primer pedido hace ${minutos}:${resto} min`;
+
+                if (vencida && !mesa.classList.contains('alerta')) {
+                    mesa.classList.remove('libre', 'espera', 'atendida');
+                    mesa.classList.add('alerta');
+
+                    mesa.dataset.mesaEstado = 'Alerta de atención';
+
+                    const etiqueta = mesa.querySelector('.estado');
+
+                    if (etiqueta) {
+                        etiqueta.classList.remove(
+                            'libre', 'espera', 'atendida'
+                        );
+                        etiqueta.classList.add('alerta');
+                        etiqueta.textContent = 'Alerta de atención';
+                    }
+
+                    mesa.querySelectorAll('.mesa-icono, .mesa-total')
+                        .forEach(function (elemento) {
+                            elemento.classList.remove(
+                                'libre', 'espera', 'atendida'
+                            );
+                            elemento.classList.add('alerta');
+                        });
+
+                    // Actualiza el texto inferior si esta mesa
+                    // ya estaba seleccionada.
+                    if (mesa.classList.contains('seleccionada')) {
+                        mesa.click();
+                    }
+                }
+            });
+
+        const cantidad = document.getElementById(
+            'cantidad-mesas-alerta'
+        );
+
+        if (cantidad) {
+            cantidad.textContent =
+                document.querySelectorAll('.mesas-grid .mesa.alerta').length;
+        }
+    }
+
+    actualizarEspera();
+    setInterval(actualizarEspera, 1000);
+
+    document.addEventListener('visibilitychange', function () {
+        if (!document.hidden) {
+            actualizarEspera();
+        }
+    });
+});
+</script>
+</x-dialogo/> 
 </body>
 
 </html>
