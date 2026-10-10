@@ -12,5 +12,6 @@
         @yield('content')
     </main>
     @stack('scripts')
+    <x-dialogo />
 </body>
 </html>

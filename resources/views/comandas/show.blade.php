@@ -163,7 +163,7 @@
 
         @if ($abierta)
             <form method="POST" action="{{ route('comandas.cerrar', $comanda) }}"
-                  onsubmit="return confirm('¿Cerrar la comanda de la mesa {{ $comanda->mesa->numero }}? La mesa va a quedar libre.');">
+                data-confirmar="¿Cerrar la comanda de la mesa {{ $comanda->mesa->numero }}? La mesa va a quedar libre y la comanda pasa al historial." data-confirmar-titulo="Cerrar comanda" data-confirmar-aceptar="Cerrar comanda" data-confirmar-cancelar="Volver"
                 @csrf
                 <button type="submit" class="btn-ancho">Cerrar comanda</button>
             </form>

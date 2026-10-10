@@ -52,8 +52,7 @@
                             <form
                             action="{{ route('admin.mozos.destroy', $mozo) }}"
                             method="POST"
-                            onsubmit="return confirm('¿Dar de baja a este mozo? Su historial se conservará.');"
-                            >
+                          data-confirmar="¿Dar de baja a este mozo? Su historial se conservará." data-confirmar-titulo="Dar de baja" data-confirmar-aceptar="Dar de baja"
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="peligro">
