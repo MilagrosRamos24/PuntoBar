@@ -2094,43 +2094,51 @@ document.addEventListener('DOMContentLoaded', function () {
                 );
 
                 const minutos = Math.floor(segundos / 60);
-                const resto = String(segundos % 60).padStart(2, '0');
-                const vencida = ahora >= limite;
+const resto = String(segundos % 60).padStart(2, '0');
+const vencida = ahora >= limite;
 
-                contador.textContent = vencida
-                    ? `Sin primer pedido hace ${minutos}:${resto} min · Alerta`
-                    : `Esperando primer pedido hace ${minutos}:${resto} min`;
+const horas = Math.floor(minutos / 60);
+const minutosRestantes = minutos % 60;
 
-                if (vencida && !mesa.classList.contains('alerta')) {
-                    mesa.classList.remove('libre', 'espera', 'atendida');
-                    mesa.classList.add('alerta');
+const tiempo = horas === 0
+    ? `${minutos}:${resto} min`
+    : `${horas} h` +
+      (minutosRestantes > 0 ? ` ${minutosRestantes} min` : '');
 
-                    mesa.dataset.mesaEstado = 'Alerta de atención';
+contador.textContent = vencida
+    ? `Sin primer pedido hace ${tiempo} · Alerta`
+    : `Esperando primer pedido hace ${tiempo}`;
 
-                    const etiqueta = mesa.querySelector('.estado');
+if (vencida && !mesa.classList.contains('alerta')) {
+    mesa.classList.remove('libre', 'espera', 'atendida');
+    mesa.classList.add('alerta');
 
-                    if (etiqueta) {
-                        etiqueta.classList.remove(
-                            'libre', 'espera', 'atendida'
-                        );
-                        etiqueta.classList.add('alerta');
-                        etiqueta.textContent = 'Alerta de atención';
-                    }
+    mesa.dataset.mesaEstado = 'Alerta de atención';
 
-                    mesa.querySelectorAll('.mesa-icono, .mesa-total')
-                        .forEach(function (elemento) {
-                            elemento.classList.remove(
-                                'libre', 'espera', 'atendida'
-                            );
-                            elemento.classList.add('alerta');
-                        });
+    const etiqueta = mesa.querySelector('.estado');
 
-                    // Actualiza el texto inferior si esta mesa
-                    // ya estaba seleccionada.
-                    if (mesa.classList.contains('seleccionada')) {
-                        mesa.click();
-                    }
-                }
+    if (etiqueta) {
+        etiqueta.classList.remove(
+            'libre', 'espera', 'atendida'
+        );
+        etiqueta.classList.add('alerta');
+        etiqueta.textContent = 'Alerta de atención';
+    }
+
+    mesa.querySelectorAll('.mesa-icono, .mesa-total')
+        .forEach(function (elemento) {
+            elemento.classList.remove(
+                'libre', 'espera', 'atendida'
+            );
+            elemento.classList.add('alerta');
+        });
+
+    // Actualiza el texto inferior si esta mesa
+    // ya estaba seleccionada.
+    if (mesa.classList.contains('seleccionada')) {
+        mesa.click();
+    }
+}
             });
 
         const cantidad = document.getElementById(
