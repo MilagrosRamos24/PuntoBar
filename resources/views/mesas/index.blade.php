@@ -6,7 +6,7 @@
     $mesasLibres = $mesas->where('estado', 'libre')->count();
 
     $mesasAlertas = $mesas->filter(
-    fn ($mesa) => $mesa->estado_visual === 'pendiente_de_cierre'
+        fn ($mesa) => $mesa->estado_visual === 'pendiente_de_cierre'
     )->count();
 
     $nombreUsuario = auth()->user()->name ?? 'Usuario';
@@ -87,6 +87,12 @@
             min-height: 100vh;
         }
 
+        /* Íconos SVG (componente x-icono) */
+        .icono {
+            flex-shrink: 0;
+            display: block;
+        }
+
         /* =========================
            BARRA SUPERIOR
         ========================= */
@@ -158,7 +164,8 @@
         }
 
         .nav-icon {
-            font-size: 21px;
+            width: 20px;
+            height: 20px;
         }
 
         .usuario {
@@ -234,6 +241,9 @@
         .admin-menu summary {
             list-style: none;
             cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
             padding: 13px 20px;
             border: 1px solid #a05d2d;
             border-radius: 9px;
@@ -264,7 +274,9 @@
         }
 
         .admin-dropdown a {
-            display: block;
+            display: flex;
+            align-items: center;
+            gap: 10px;
             padding: 12px 14px;
             color: #d8cec5;
             text-decoration: none;
@@ -294,6 +306,7 @@
             background: #1b1915;
             border: 1px solid #3d3024;
             border-radius: 14px;
+            overflow: hidden;
             transition:
                 transform .2s ease,
                 border-color .2s ease,
@@ -317,6 +330,7 @@
             position: absolute;
             top: 12px;
             right: 12px;
+            z-index: 2;
             padding: 5px 9px;
             border-radius: 6px;
             background: #f39b55;
@@ -329,26 +343,43 @@
             border: 2px solid #df7b48;
         }
 
+        /* Dibujo de mesa y sillas de fondo (decorativo) */
+        .mesa-decoracion {
+            position: absolute;
+            top: 92px;
+            right: 16px;
+            width: 96px;
+            height: auto;
+            color: #c9bdb2;
+            opacity: .1;
+            pointer-events: none;
+        }
+
+        /* El contenido queda por encima del dibujo de fondo */
+        .mesa > *:not(.mesa-decoracion) {
+            position: relative;
+            z-index: 1;
+        }
+
         /* =========================
            CABECERA MESA
         ========================= */
 
         .mesa-header {
             display: flex;
-            align-items: flex-start;
+            align-items: center;
             gap: 15px;
             margin-bottom: 20px;
         }
 
         .mesa-icono {
-            width: 60px;
-            height: 60px;
+            width: 56px;
+            height: 56px;
             flex-shrink: 0;
             display: flex;
             align-items: center;
             justify-content: center;
             border-radius: 50%;
-            font-size: 29px;
             border: 1px solid;
         }
 
@@ -431,9 +462,9 @@
 
         .info-icon {
             width: 27px;
-            color: #c9bdb2;
-            font-size: 19px;
-            text-align: center;
+            display: flex;
+            justify-content: center;
+            color: #a79b91;
         }
 
         .mesa-separador {
@@ -487,6 +518,10 @@
 
         .btn-mesa {
             flex: 1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
             padding: 9px 8px;
             border-radius: 7px;
             border: 1px solid #4d3a2a;
@@ -594,6 +629,10 @@
         }
 
         .btn-principal {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
             padding: 13px 20px;
             border-radius: 8px;
             border: 1px solid #5d4834;
@@ -621,6 +660,10 @@
         }
 
         .btn-salir {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
             padding: 13px 22px;
             border-radius: 8px;
             border: 1px solid #604936;
@@ -1145,21 +1188,103 @@
         .estado-form button { cursor: pointer; }
         .estado-form :focus-visible { outline: 3px solid #e2a15c; outline-offset: 2px; }
         .feedback-mesas { padding: 16px; margin-bottom: 20px; border: 1px solid #80634e; border-radius: 8px; color: #f1e9df; }
-        
-/* Barra inferior (Ver comanda, Cerrar comanda, Salir): queda pegada al borde de abajo de la pantalla */
-.barra-inferior {
-    position: sticky;
-    bottom: 12px;
-    z-index: 20;
-    background: rgba(20, 17, 14, .97);
-    box-shadow: 0 -12px 28px rgba(0, 0, 0, .5);
-}
 
-@media (max-width: 720px) {
-    .barra-inferior {
-        position: static;
-    }
-}
+        /* Barra inferior (Ver comanda, Cerrar comanda, Salir): queda pegada al borde de abajo de la pantalla */
+        .barra-inferior {
+            position: sticky;
+            bottom: 12px;
+            z-index: 20;
+            background: rgba(20, 17, 14, .97);
+            box-shadow: 0 -12px 28px rgba(0, 0, 0, .5);
+        }
+
+        @media (max-width: 720px) {
+            .barra-inferior {
+                position: static;
+            }
+        }
+
+        .barra-inferior {
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .barra-inferior .seleccion {
+            flex: 1 1 240px;
+            min-width: 0;
+        }
+
+        .barra-inferior .acciones-principales {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+            gap: 12px;
+            min-width: 0;
+        }
+
+        .barra-inferior .acciones-principales form {
+            margin: 0;
+        }
+
+        #form-registrar-atencion {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .campo-personas-atencion {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .campo-personas-atencion label {
+            margin: 0;
+            color: #ddd3ca;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+
+        #cantidad-personas-atencion {
+            width: 80px;
+            height: 44px;
+            padding: 0 10px;
+            border: 1px solid #80634e;
+            border-radius: 8px;
+            background: #211812;
+            color: #f1e9df;
+            font-size: 14px;
+        }
+
+        #cantidad-personas-atencion:focus {
+            outline: 2px solid #f09b58;
+            outline-offset: 2px;
+        }
+
+        .barra-inferior .btn-principal {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 44px;
+            margin: 0;
+            white-space: nowrap;
+        }
+
+        @media (max-width: 720px) {
+            .barra-inferior .seleccion {
+                flex: auto;
+            }
+
+            .barra-inferior .acciones-principales {
+                width: 100%;
+                justify-content: flex-start;
+            }
+
+            #form-registrar-atencion {
+                flex-wrap: wrap;
+            }
+        }
 
     </style>
 
@@ -1194,55 +1319,55 @@
         </div>
 
 
-<nav class="navegacion">
+        <nav class="navegacion">
 
-    <a
-        href="{{ route('mesas') }}"
-        class="nav-item {{ !$soloMisMesas ? 'activo' : '' }}"
-        @if (!$soloMisMesas) aria-current="page" @endif
-    >
-        <span class="nav-icon">▣</span>
-        Mesas
-    </a>
+            <a
+                href="{{ route('mesas') }}"
+                class="nav-item {{ !$soloMisMesas ? 'activo' : '' }}"
+                @if (!$soloMisMesas) aria-current="page" @endif
+            >
+                <x-icono nombre="mesas" class="nav-icon" />
+                Mesas
+            </a>
 
-    @if (auth()->user()->role === 'mozo')
-        <a
-            href="{{ route('mesas', ['vista' => 'mis-mesas']) }}"
-            class="nav-item {{ $soloMisMesas ? 'activo' : '' }}"
-            @if ($soloMisMesas) aria-current="page" @endif
-        >
-            <span class="nav-icon">▣</span>
-            Mis mesas
-        </a>
-    @endif
+            @if (auth()->user()->role === 'mozo')
+                <a
+                    href="{{ route('mesas', ['vista' => 'mis-mesas']) }}"
+                    class="nav-item {{ $soloMisMesas ? 'activo' : '' }}"
+                    @if ($soloMisMesas) aria-current="page" @endif
+                >
+                    <x-icono nombre="mesa" class="nav-icon" />
+                    Mis mesas
+                </a>
+            @endif
 
-    @if ($esAdmin)
+            @if ($esAdmin)
 
-        <a href="{{ route('admin.mozos.index') }}" class="nav-item">
-            <span class="nav-icon">♙</span>
-            Mozos
-        </a>
+                <a href="{{ route('admin.mozos.index') }}" class="nav-item">
+                    <x-icono nombre="mozo" class="nav-icon" />
+                    Mozos
+                </a>
 
-        <a href="{{ route('admin.productos.index') }}" class="nav-item">
-            <span class="nav-icon">♜</span>
-            Productos
-        </a>
+                <a href="{{ route('admin.productos.index') }}" class="nav-item">
+                    <x-icono nombre="productos" class="nav-icon" />
+                    Productos
+                </a>
 
-        <a href="{{ route('admin.comandas.index') }}" class="nav-item">
-            <span class="nav-icon">▤</span>
-            Comandas
-        </a>
+                <a href="{{ route('admin.comandas.index') }}" class="nav-item">
+                    <x-icono nombre="comanda" class="nav-icon" />
+                    Comandas
+                </a>
 
-        <a href="{{ route('admin.descuento.edit') }}" class="nav-item">
-            <span class="nav-icon">％</span>
-            Descuento
-        </a>
+                <a href="{{ route('admin.descuento.edit') }}" class="nav-item">
+                    <x-icono nombre="descuento" class="nav-icon" />
+                    Descuento
+                </a>
+
                 <x-campana-notificaciones />
 
+            @endif
 
-    @endif
-
-</nav>
+        </nav>
 
 
         <div class="usuario">
@@ -1291,7 +1416,7 @@
 
         </section>
 
- <x-aviso-notificaciones />
+        <x-aviso-notificaciones />
 
         {{-- ADMINISTRAR --}}
 
@@ -1299,20 +1424,25 @@
             <div class="barra-acciones">
                 <details class="admin-menu">
                     <summary>
-                        ⚙ Administrar ▾
+                        <x-icono nombre="ajustes" tamano="18" />
+                        Administrar
+                        <x-icono nombre="flecha-abajo" tamano="16" />
                     </summary>
 
                     <div class="admin-dropdown">
                         <a href="{{ route('admin.mesas.create') }}">
-                            ⊕ &nbsp; Agregar mesa
+                            <x-icono nombre="mas" tamano="18" />
+                            Agregar mesa
                         </a>
 
                         <a href="{{ route('admin.mesas.index') }}">
-                            ☷ &nbsp; Gestionar mesas
+                            <x-icono nombre="lista" tamano="18" />
+                            Gestionar mesas
                         </a>
 
                         <a href="{{ route('admin.mozos.index') }}">
-                            ☷ &nbsp; Gestionar mozos
+                            <x-icono nombre="mozo" tamano="18" />
+                            Gestionar mozos
                         </a>
                     </div>
                 </details>
@@ -1367,36 +1497,56 @@
                     data-alerta-espera-en="{{ $mesa->alerta_espera_en ?? '' }}"
                 >
 
-                    <div class="mesa-titulo">
+                    {{-- Dibujo de mesa y sillas de fondo (decorativo) --}}
+                    <svg class="mesa-decoracion" viewBox="0 0 120 70" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                        <path d="M36 28h48"/>
+                        <path d="M42 28v34"/>
+                        <path d="M78 28v34"/>
+                        <path d="M12 12v50"/>
+                        <path d="M12 40h18"/>
+                        <path d="M30 40v22"/>
+                        <path d="M108 12v50"/>
+                        <path d="M108 40H90"/>
+                        <path d="M90 40v22"/>
+                    </svg>
 
-                        <h2>
-                            Mesa {{ $mesa->numero }}
-                        </h2>
+                    {{-- Cabecera: ícono de la mesa en el círculo del color del estado --}}
+                    <div class="mesa-header">
 
-                        <span class="estado {{ $claseEstado }}">
-                            {{ $estado['label'] }}
-                        </span>
+                        <div class="mesa-icono {{ $claseEstado }}">
+                            <x-icono nombre="mesa" tamano="28" />
+                        </div>
+
+                        <div class="mesa-titulo">
+
+                            <h2>
+                                Mesa {{ $mesa->numero }}
+                            </h2>
+
+                            <span class="estado {{ $claseEstado }}">
+                                {{ $estado['label'] }}
+                            </span>
+
+                        </div>
 
                     </div>
 
 
                     <div class="mesa-info">
-                    @if ($mesa->estaEsperandoPrimerPedido())
-                    <div class="info-linea">
-                    <span class="info-icon" aria-hidden="true">◷</span>
 
-                    <span class="tiempo-espera">
-                    Calculando tiempo de espera…
-                    </span>
-                    </div>
+                        @if ($mesa->estaEsperandoPrimerPedido())
+                            <div class="info-linea">
+                                <span class="info-icon"><x-icono nombre="reloj" tamano="18" /></span>
 
-                @endif
+                                <span class="tiempo-espera">
+                                    Calculando tiempo de espera…
+                                </span>
+                            </div>
+                        @endif
 
                         <div class="info-linea">
 
-                            <span class="info-icon">
-                                ♟
-                            </span>
+                            <span class="info-icon"><x-icono nombre="mozo" tamano="18" /></span>
 
                             <span>
                                 @if ($mesa->mozo)
@@ -1411,9 +1561,7 @@
 
                         <div class="info-linea">
 
-                            <span class="info-icon">
-                                ♟
-                            </span>
+                            <span class="info-icon"><x-icono nombre="personas" tamano="18" /></span>
 
                             <span>
                                 Personas:
@@ -1430,9 +1578,7 @@
 
                     <div class="mesa-total {{ $claseEstado }}">
 
-                        <span class="info-icon">
-                            ▤
-                        </span>
+                        <span class="info-icon"><x-icono nombre="comanda" tamano="18" /></span>
 
                         <span>
                             Total:
@@ -1454,13 +1600,15 @@
                                     class="btn-mesa btn-comanda"
                                     data-abrir-comanda="{{ $comanda->id }}"
                                 >
-                                    ▤ &nbsp; Ver comanda
+                                    <x-icono nombre="comanda" tamano="16" />
+                                    Ver comanda
                                 </button>
                             @elseif ($mesa->mozo_id)
                                 <form method="POST" action="{{ route('comandas.store', $mesa) }}">
                                     @csrf
                                     <button type="submit" class="btn-mesa btn-comanda">
-                                        ⊕ &nbsp; Abrir comanda
+                                        <x-icono nombre="mas" tamano="16" />
+                                        Abrir comanda
                                     </button>
                                 </form>
                             @endif
@@ -1571,14 +1719,33 @@
                     class="btn-principal"
                     id="btn-ver-comanda"
                 >
-                    ▤ &nbsp; Ver comanda
+                    <x-icono nombre="comanda" tamano="18" />
+                    Ver comanda
                 </button>
 
                 @if (auth()->user()->role === 'mozo')
                     <form id="form-registrar-atencion" method="POST">
                         @csrf
+
+                        <div class="campo-personas-atencion">
+                            <label for="cantidad-personas-atencion">
+                                Personas
+                            </label>
+
+                            <input
+                                type="number"
+                                id="cantidad-personas-atencion"
+                                name="cantidad_personas"
+                                min="1"
+                                step="1"
+                                placeholder="Ej.: 4"
+                                required
+                            >
+                        </div>
+
                         <button type="submit" class="btn-principal btn-atencion">
-                            ◷ &nbsp; Registrar atención
+                            <x-icono nombre="reloj" tamano="18" />
+                            Registrar atención
                         </button>
                     </form>
                 @endif
@@ -1588,7 +1755,8 @@
                     class="btn-principal"
                     id="btn-cerrar-comanda"
                 >
-                    ✓ &nbsp; Cerrar comanda
+                    <x-icono nombre="check" tamano="18" />
+                    Cerrar comanda
                 </button>
 
                 <form
@@ -1601,7 +1769,8 @@
                         type="submit"
                         class="btn-salir"
                     >
-                        ⇥ &nbsp; Salir
+                        <x-icono nombre="salir" tamano="18" />
+                        Salir
                     </button>
                 </form>
 
@@ -1784,7 +1953,10 @@
                                 >
                             </div>
 
-                            <button type="submit" class="btn-principal">Agregar</button>
+                            <button type="submit" class="btn-principal">
+                                <x-icono nombre="mas" tamano="16" />
+                                Agregar
+                            </button>
 
                         </form>
 
@@ -1837,14 +2009,15 @@
                             class="comanda-cierre"
                             id="form-cerrar-comanda-{{ $comanda->id }}"
                             data-mesa-numero="{{ $mesa->numero }}"
-                             data-confirmar="¿Cerrar la comanda de la mesa {{ $mesa->numero }}? La mesa va a quedar libre y la comanda pasa al historial."
+                            data-confirmar="¿Cerrar la comanda de la mesa {{ $mesa->numero }}? La mesa va a quedar libre y la comanda pasa al historial."
                             data-confirmar-titulo="Cerrar comanda"
                             data-confirmar-aceptar="Cerrar comanda"
                             data-confirmar-cancelar="Volver"
-                            >
+                        >
                             @csrf
                             <button type="submit" class="btn-principal btn-atencion">
-                                ✓ &nbsp; Cerrar comanda
+                                <x-icono nombre="check" tamano="18" />
+                                Cerrar comanda
                             </button>
                         </form>
 
@@ -2011,7 +2184,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-
     // Barra inferior: trabaja sobre la mesa seleccionada.
     function comandaDeLaMesaSeleccionada() {
         if (!mesaSeleccionada) {
@@ -2094,51 +2266,51 @@ document.addEventListener('DOMContentLoaded', function () {
                 );
 
                 const minutos = Math.floor(segundos / 60);
-const resto = String(segundos % 60).padStart(2, '0');
-const vencida = ahora >= limite;
+                const resto = String(segundos % 60).padStart(2, '0');
+                const vencida = ahora >= limite;
 
-const horas = Math.floor(minutos / 60);
-const minutosRestantes = minutos % 60;
+                const horas = Math.floor(minutos / 60);
+                const minutosRestantes = minutos % 60;
 
-const tiempo = horas === 0
-    ? `${minutos}:${resto} min`
-    : `${horas} h` +
-      (minutosRestantes > 0 ? ` ${minutosRestantes} min` : '');
+                const tiempo = horas === 0
+                    ? `${minutos}:${resto} min`
+                    : `${horas} h` +
+                      (minutosRestantes > 0 ? ` ${minutosRestantes} min` : '');
 
-contador.textContent = vencida
-    ? `Sin primer pedido hace ${tiempo} · Alerta`
-    : `Esperando primer pedido hace ${tiempo}`;
+                contador.textContent = vencida
+                    ? `Sin primer pedido hace ${tiempo} · Alerta`
+                    : `Esperando primer pedido hace ${tiempo}`;
 
-if (vencida && !mesa.classList.contains('alerta')) {
-    mesa.classList.remove('libre', 'espera', 'atendida');
-    mesa.classList.add('alerta');
+                if (vencida && !mesa.classList.contains('alerta')) {
+                    mesa.classList.remove('libre', 'espera', 'atendida');
+                    mesa.classList.add('alerta');
 
-    mesa.dataset.mesaEstado = 'Alerta de atención';
+                    mesa.dataset.mesaEstado = 'Alerta de atención';
 
-    const etiqueta = mesa.querySelector('.estado');
+                    const etiqueta = mesa.querySelector('.estado');
 
-    if (etiqueta) {
-        etiqueta.classList.remove(
-            'libre', 'espera', 'atendida'
-        );
-        etiqueta.classList.add('alerta');
-        etiqueta.textContent = 'Alerta de atención';
-    }
+                    if (etiqueta) {
+                        etiqueta.classList.remove(
+                            'libre', 'espera', 'atendida'
+                        );
+                        etiqueta.classList.add('alerta');
+                        etiqueta.textContent = 'Alerta de atención';
+                    }
 
-    mesa.querySelectorAll('.mesa-icono, .mesa-total')
-        .forEach(function (elemento) {
-            elemento.classList.remove(
-                'libre', 'espera', 'atendida'
-            );
-            elemento.classList.add('alerta');
-        });
+                    mesa.querySelectorAll('.mesa-icono, .mesa-total')
+                        .forEach(function (elemento) {
+                            elemento.classList.remove(
+                                'libre', 'espera', 'atendida'
+                            );
+                            elemento.classList.add('alerta');
+                        });
 
-    // Actualiza el texto inferior si esta mesa
-    // ya estaba seleccionada.
-    if (mesa.classList.contains('seleccionada')) {
-        mesa.click();
-    }
-}
+                    // Actualiza el texto inferior si esta mesa
+                    // ya estaba seleccionada.
+                    if (mesa.classList.contains('seleccionada')) {
+                        mesa.click();
+                    }
+                }
             });
 
         const cantidad = document.getElementById(
@@ -2161,7 +2333,9 @@ if (vencida && !mesa.classList.contains('alerta')) {
     });
 });
 </script>
-<x-dialogo /> 
+
+<x-dialogo />
+
 </body>
 
 </html>
