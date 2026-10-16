@@ -38,6 +38,16 @@ class ComandaController extends Controller
                 ->withErrors(['comanda' => 'La mesa ya tiene una comanda abierta.']);
         }
 
+        if (
+            $mesa->estado === 'libre' ||
+            (int) $mesa->cantidad_personas < 1
+            ) {
+                return back()->withErrors([
+                    'comanda' =>
+                    'Primero registrá la atención indicando la cantidad de personas.',
+                    ]);
+                    }
+
         $comanda = DB::transaction(function () use ($mesa) {
             $comanda = Comanda::create([
                 'mesa_id' => $mesa->id,
