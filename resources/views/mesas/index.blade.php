@@ -1636,31 +1636,30 @@
                     @endif
 
 
-                    @if ($esAdmin)
+                     @if ($esAdmin)
                         <div class="mesa-acciones">
-                            <a href="{{ route('admin.mesas.show', $mesa) }}" class="btn-mesa">
+                            <a
+                                href="{{ route('admin.mesas.show', $mesa) }}"
+                                class="btn-mesa"
+                            >
                                 Consultar
                             </a>
-                            <a href="{{ route('admin.mesas.edit', $mesa) }}" class="btn-mesa">
+
+                            <a
+                                href="{{ route('admin.mesas.edit', $mesa) }}"
+                                class="btn-mesa"
+                            >
                                 Editar
-                            </a>
-                        </div>
-                    @elseif ($esMiMesa)
-                        <div class="mesa-acciones">
-                            <a href="{{ route('mesas.show', $mesa) }}" class="btn-mesa">
-                                Acceder a mi mesa
                             </a>
                         </div>
                     @endif
 
                 </article>
 
-            @empty
+                @empty
 
                 <div class="sin-mesas">
-
                     No hay mesas registradas.
-
                 </div>
 
             @endforelse

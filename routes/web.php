@@ -59,9 +59,8 @@ Route::middleware(VerificarRol::class . ':admin,mozo')->group(function () {
 
     Route::put('/mesas/{mesa}/estado', [MesaController::class, 'cambiarEstado'])
     ->name('mesas.estado');
-    
-    Route::get('/mesas/{mesa}', [MesaController::class, 'show'])
-    ->name('mesas.show');
+
+
 });
 
     // Comandas (PB-10 a PB-14)
@@ -84,7 +83,7 @@ Route::middleware(VerificarRol::class . ':admin,mozo')->group(function () {
 
     Route::post('/comandas/{comanda}/cerrar', [ComandaController::class, 'cerrar'])
         ->name('comandas.cerrar');
-        
+
 // ====================
 // SOLO ADMINISTRADOR (Módulos III y IV, productos y descuento)
 // ====================
@@ -126,7 +125,7 @@ Route::middleware(VerificarRol::class . ':admin')
 
         Route::post('/logout', [AdminLoginController::class, 'destroy'])
             ->name('logout');
-            
+
          Route::get('/comandas', [AdminComandaController::class, 'index'])
         ->name('comandas.index');
 
