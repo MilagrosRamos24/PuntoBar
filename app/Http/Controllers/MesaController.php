@@ -32,7 +32,7 @@ class MesaController extends Controller
         ->orderBy('numero')
         ->get();
 
-    $productos = Producto::disponibles()
+    $productos = Producto::activos()
         ->orderBy('categoria')
         ->orderBy('nombre')
         ->get()
