@@ -26,10 +26,11 @@ class ComandaTest extends TestCase
     {
         return Mesa::create([
             'numero' => $numero,
-            'estado' => 'libre',
+            'estado' => $mozo !== null ? 'ocupada' : 'libre',
             'mozo_id' => $mozo?->id,
-            'cantidad_personas' => 2,
-        ]);
+            'cantidad_personas' => $mozo !== null ? 2 : 0,
+            'inicio_espera' => $mozo !== null ? now() : null,
+            ]);
     }
 
     private function producto(string $nombre, float $precio, string $estado = 'activo'): Producto
@@ -46,9 +47,11 @@ class ComandaTest extends TestCase
 
     private function comandaAbierta(User $mozo, Mesa $mesa): Comanda
     {
-        $this->actingAs($mozo)->post(route('comandas.store', $mesa));
+        $this->actingAs($mozo)
+        ->post(route('comandas.store', $mesa))
+        ->assertSessionHasNoErrors();
 
-        return Comanda::firstOrFail();
+    return Comanda::where('mesa_id', $mesa->id)->firstOrFail();
     }
 
     // ===== PB-10: crear comanda =====

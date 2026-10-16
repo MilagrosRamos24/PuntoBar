@@ -17,25 +17,31 @@ class StockComandaTest extends TestCase
     private Comanda $comanda;
 
     protected function setUp(): void
-    {
-        parent::setUp();
+{
+    parent::setUp();
 
-        $this->mozo = User::factory()->create([
-            'username' => 'mozo1',
-            'role' => 'mozo',
-            'estado' => 'activo',
-        ]);
+    $this->mozo = User::factory()->create([
+        'username' => 'mozo1',
+        'role' => 'mozo',
+        'estado' => 'activo',
+    ]);
 
-        $mesa = Mesa::create([
-            'numero' => 1,
-            'estado' => 'libre',
-            'mozo_id' => $this->mozo->id,
-            'cantidad_personas' => 2,
-        ]);
+    // Representa una mesa cuya atención ya fue registrada.
+    $mesa = Mesa::create([
+        'numero' => 1,
+        'estado' => 'ocupada',
+        'mozo_id' => $this->mozo->id,
+        'cantidad_personas' => 2,
+        'inicio_espera' => now(),
+    ]);
 
-        $this->actingAs($this->mozo)->post(route('comandas.store', $mesa));
-        $this->comanda = Comanda::firstOrFail();
-    }
+    $this->actingAs($this->mozo)
+        ->post(route('comandas.store', $mesa))
+        ->assertSessionHasNoErrors();
+
+    $this->comanda = Comanda::where('mesa_id', $mesa->id)
+        ->firstOrFail();
+        }
 
     private function porUnidad(string $nombre, int $stock): Producto
     {
