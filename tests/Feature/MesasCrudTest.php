@@ -60,27 +60,67 @@ class MesasCrudTest extends TestCase
         $this->assertDatabaseHas('mesas', ['id' => $mesa->id]);
     }
 
-   public function test_cuatro_estados_validos_y_rechazo_de_estado_inventado(): void
+   public function test_estados_sin_productos_y_rechazo_de_estado_inventado(): void
 {
     $mozo = $this->usuario('mozo');
 
-    $mesa = Mesa::create($this->datos());
-    $mesa->forceFill(['mozo_id' => $mozo->id])->save();
+    $mesa = Mesa::create($this->datos([
+        'mozo_id' => $mozo->id,
+        'cantidad_personas' => 2,
+    ]));
 
     $this->actingAs($mozo);
 
-    foreach (array_keys(Mesa::ESTADOS) as $estado) {
-        $this->put('/mesas/'.$mesa->id.'/estado', ['estado' => $estado])
+    foreach (['libre', 'ocupada', 'pendiente_de_cierre'] as $estado) {
+        $this->put('/mesas/'.$mesa->id.'/estado', [
+            'estado' => $estado,
+        ])
             ->assertRedirect(route('mesas'))
             ->assertSessionHasNoErrors();
 
-        $this->assertDatabaseHas('mesas', ['id' => $mesa->id, 'estado' => $estado]);
+        $this->assertDatabaseHas('mesas', [
+            'id' => $mesa->id,
+            'estado' => $estado,
+        ]);
     }
 
-    $this->put('/mesas/'.$mesa->id.'/estado', ['estado' => 'inventado'])
+    $this->put('/mesas/'.$mesa->id.'/estado', [
+        'estado' => 'inventado',
+    ])->assertSessionHasErrors('estado');
+
+    $this->assertDatabaseHas('mesas', [
+        'id' => $mesa->id,
+        'estado' => 'pendiente_de_cierre',
+    ]);
+
+    $this->get('/mesas')
+        ->assertOk()
+        ->assertSee('Alerta de atención');
+}
+
+
+public function test_no_permite_marcar_atendida_sin_productos(): void
+{
+    $mozo = $this->usuario('mozo');
+
+    $mesa = Mesa::create($this->datos([
+        'estado' => 'ocupada',
+        'mozo_id' => $mozo->id,
+        'cantidad_personas' => 2,
+    ]));
+
+    $this->actingAs($mozo)
+        ->from(route('mesas'))
+        ->put('/mesas/'.$mesa->id.'/estado', [
+            'estado' => 'reservada',
+        ])
+        ->assertRedirect(route('mesas'))
         ->assertSessionHasErrors('estado');
 
-    $this->get('/mesas')->assertOk()->assertSee('Alerta de atención');
+    $this->assertDatabaseHas('mesas', [
+        'id' => $mesa->id,
+        'estado' => 'ocupada',
+    ]);
 }
 
     public function test_editar_no_cambia_el_estado_anterior_ni_el_mozo_inactivo_sin_pedirlo(): void

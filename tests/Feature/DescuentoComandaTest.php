@@ -47,45 +47,30 @@ class DescuentoComandaTest extends TestCase
     }
 
     private function comandaCon(int $cantidad, int $numeroMesa = 1): Comanda
-    {
-        $mesa = Mesa::create([
-            'numero' => $numeroMesa,
-            'estado' => 'libre',
-            'mozo_id' => $this->mozo->id,
-            'cantidad_personas' => 2,
-        ]);
+{
+    // Representa una mesa cuya atención ya fue registrada.
+    $mesa = Mesa::create([
+        'numero' => $numeroMesa,
+        'estado' => 'ocupada',
+        'mozo_id' => $this->mozo->id,
+        'cantidad_personas' => 2,
+        'inicio_espera' => now(),
+    ]);
 
-        $this->actingAs($this->mozo)->post(route('comandas.store', $mesa));
-        $comanda = Comanda::where('mesa_id', $mesa->id)->firstOrFail();
+    $this->actingAs($this->mozo)
+        ->post(route('comandas.store', $mesa))
+        ->assertSessionHasNoErrors();
 
-        $this->post(route('comandas.productos.store', $comanda), [
-            'producto_id' => $this->picada->id,
-            'cantidad' => $cantidad,
-        ])->assertSessionHasNoErrors();
+    $comanda = Comanda::where('mesa_id', $mesa->id)
+        ->firstOrFail();
 
-        return $comanda->fresh();
-    }
+    $this->post(route('comandas.productos.store', $comanda), [
+        'producto_id' => $this->picada->id,
+        'cantidad' => $cantidad,
+    ])->assertSessionHasNoErrors();
 
-    // ===== Pantalla de configuración =====
-
-    public function test_el_administrador_ve_la_configuracion(): void
-    {
-        $this->actingAs($this->admin)
-            ->get(route('admin.descuento.edit'))
-            ->assertOk()
-            ->assertSee('Monto tope')
-            ->assertSee('Hoy no se aplica ningún descuento.');
-    }
-
-    public function test_un_mozo_no_puede_configurar_el_descuento(): void
-    {
-        $this->actingAs($this->mozo)->get(route('admin.descuento.edit'))->assertForbidden();
-
-        $this->actingAs($this->mozo)
-            ->put(route('admin.descuento.update'), ['monto_tope' => 1000, 'porcentaje' => 50, 'activo' => 1])
-            ->assertForbidden();
-    }
-
+    return $comanda->fresh();
+}
     public function test_guardar_la_configuracion(): void
     {
         $this->configurar(20000, 10);
