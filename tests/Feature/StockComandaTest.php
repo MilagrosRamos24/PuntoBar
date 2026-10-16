@@ -138,14 +138,66 @@ class StockComandaTest extends TestCase
         $this->assertSame(10, $gaseosa->fresh()->stock);
     }
 
-    public function test_los_productos_sin_stock_no_se_ofrecen_en_la_comanda(): void
-    {
-        $this->porUnidad('Gaseosa agotada', 0);
-        $this->porUnidad('Agua con stock', 5);
+    public function test_producto_sin_stock_aparece_pero_no_se_puede_seleccionar(): void
+{
+    $agotado = $this->porUnidad('Gaseosa agotada', 0);
+    $disponible = $this->porUnidad('Agua con stock', 5);
 
-        $this->get(route('mesas', ['comanda' => $this->comanda->id]))
-            ->assertOk()
-            ->assertSee('Agua con stock')
-            ->assertDontSee('Gaseosa agotada');
+    $respuesta = $this->get(
+        route('mesas', ['comanda' => $this->comanda->id])
+    );
+
+    $respuesta->assertOk();
+
+    // Inspeccionamos el selector de esta comanda.
+    $documento = new \DOMDocument();
+
+    $estadoAnterior = libxml_use_internal_errors(true);
+
+    try {
+        $documento->loadHTML(
+            '<?xml encoding="UTF-8">' . $respuesta->getContent()
+        );
+    } finally {
+        libxml_clear_errors();
+        libxml_use_internal_errors($estadoAnterior);
     }
+
+    $xpath = new \DOMXPath($documento);
+    $selector = '//select[@id="producto-' . $this->comanda->id . '"]';
+
+    $opcionesAgotadas = $xpath->query(
+        $selector . '/optgroup/option[@value="' . $agotado->id . '"]'
+    );
+
+    $opcionesDisponibles = $xpath->query(
+        $selector . '/optgroup/option[@value="' . $disponible->id . '"]'
+    );
+
+    // El producto agotado aparece con aviso y deshabilitado.
+    $this->assertSame(1, $opcionesAgotadas->length);
+
+    $opcionAgotada = $opcionesAgotadas->item(0);
+
+    $this->assertStringContainsString(
+        'Gaseosa agotada',
+        $opcionAgotada->textContent
+    );
+    $this->assertStringContainsString(
+        'Sin stock',
+        $opcionAgotada->textContent
+    );
+    $this->assertTrue($opcionAgotada->hasAttribute('disabled'));
+
+    // El producto disponible aparece y se puede seleccionar.
+    $this->assertSame(1, $opcionesDisponibles->length);
+
+    $opcionDisponible = $opcionesDisponibles->item(0);
+
+    $this->assertStringContainsString(
+        'Agua con stock',
+        $opcionDisponible->textContent
+    );
+    $this->assertFalse($opcionDisponible->hasAttribute('disabled'));
+}
 }
