@@ -1924,18 +1924,33 @@
                             <div>
                                 <label for="producto-{{ $comanda->id }}">Producto</label>
                                 <select id="producto-{{ $comanda->id }}" name="producto_id" required>
-                                    <option value="" disabled @selected(! ($esLaComandaActual && old('producto_id')))>Elegí un producto</option>
+                                    <option
+                                     value=""
+                                     disabled
+                                     @selected(! ($esLaComandaActual && old('producto_id')))
+                                     >
+                                      Elegí un producto
+                                    </option>
                                     @foreach ($productos as $categoria => $lista)
-                                        <optgroup label="{{ \App\Models\Producto::CATEGORIAS[$categoria] ?? ucfirst($categoria) }}">
-                                            @foreach ($lista as $producto)
-                                                <option
-                                                    value="{{ $producto->id }}"
-                                                    @selected($esLaComandaActual && old('producto_id') == $producto->id)
-                                                >
-                                                    {{ $producto->nombre }} · {{ $pesos($producto->precio) }}{{ $producto->llevaStock() ? ' · quedan ' . $producto->stock : '' }}
-                                                </option>
-                                            @endforeach
-                                        </optgroup>
+                                    <optgroup label="{{ \App\Models\Producto::CATEGORIAS[$categoria] ?? ucfirst($categoria) }}">
+                                        @foreach ($lista as $producto)
+                                        @php
+                                        $sinStock = $producto->llevaStock()
+                                        && (int) $producto->stock <= 0;
+                                        @endphp
+                                        <option
+                                        value="{{ $producto->id }}"
+                                        @disabled($sinStock)
+                                        @selected(
+                                                ! $sinStock
+                                                 && $esLaComandaActual
+                                                  && old('producto_id') == $producto->id
+                                                 )
+                                                 >
+                                        {{ $producto->nombre }} · {{ $pesos($producto->precio) }}{{ $sinStock ? ' - Sin stock' : ($producto->llevaStock() ? ' · quedan ' . $producto->stock : '') }}
+                                      </option>
+                                       @endforeach
+                                    </optgroup>
                                     @endforeach
                                 </select>
                             </div>
@@ -2335,6 +2350,18 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 
 <x-dialogo />
+
+@if ($errors->has('estado') || $errors->has('cantidad'))
+    <script>
+        window.addEventListener('DOMContentLoaded', function () {
+            const mensaje = {{ Illuminate\Support\Js::from(
+                $errors->first('cantidad') ?: $errors->first('estado')
+            ) }};
+
+            alert(mensaje);
+        });
+    </script>
+@endif
 
 </body>
 
