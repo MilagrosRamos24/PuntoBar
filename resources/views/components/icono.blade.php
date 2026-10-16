@@ -2,12 +2,14 @@
     Íconos de línea fina para Punto Bar (SVG dentro de la página, sin cargar nada de internet).
     Toman el color del texto que los rodea (currentColor).
 
-    Uso:
-        <x-icono nombre="mesa" />
-        <x-icono nombre="reloj" tamano="16" class="nav-icon" />
+    Uso: x-icono con el atributo nombre (obligatorio), y opcionalmente tamano y class.
+    Ejemplo: x-icono nombre="reloj" tamano="16"
 
     Nombres disponibles: mesas, mesa, mozo, personas, productos, comanda, descuento,
-    reloj, mas, check, salir, ajustes, lista, flecha-abajo, campana.
+    reloj, mas, check, salir, ajustes, lista, flecha-abajo, campana,
+    editar, eliminar, volver, guardar, alerta.
+
+    Para agregar un ícono: sumar una línea al arreglo de abajo, con su nombre y su dibujo SVG.
 --}}
 
 @props(['nombre' => '', 'tamano' => 20])
@@ -58,6 +60,21 @@
 
         // Campana: notificaciones
         'campana' => '<path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/>',
+
+        // Lápiz: editar
+        'editar' => '<path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16z"/><path d="m13.5 6.5 4 4"/>',
+
+        // Tacho: eliminar o dar de baja
+        'eliminar' => '<path d="M4 7h16"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M6 7l1 13h10l1-13"/><path d="M9 7V4h6v3"/>',
+
+        // Flecha hacia la izquierda: volver
+        'volver' => '<path d="M19 12H5"/><path d="m11 6-6 6 6 6"/>',
+
+        // Tilde dentro de un círculo: guardar o actualizar
+        'guardar' => '<circle cx="12" cy="12" r="9"/><path d="m8 12.5 3 3 5-6"/>',
+
+        // Triángulo con signo de exclamación: alerta, stock bajo
+        'alerta' => '<path d="M12 3.5 2.5 20h19z"/><path d="M12 10v4.5"/><path d="M12 17.5h.01"/>',
     ];
 @endphp
 
