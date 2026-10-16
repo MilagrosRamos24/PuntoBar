@@ -127,47 +127,101 @@
 <style>
     .mozo-campos {
         display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 18px;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 20px;
+        width: 100%;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .mozo-campos > div {
+        min-width: 0;
     }
 
     .mozo-campos label {
         display: block;
         margin-bottom: 8px;
+        color: #f1e9df;
+        font-size: 14px;
+        font-weight: 600;
     }
 
     .mozo-campos input,
     .mozo-campos select {
         box-sizing: border-box;
         width: 100%;
-        padding: 10px 12px;
+        min-height: 46px;
+        padding: 12px 14px;
         border: 1px solid #635442;
         border-radius: 8px;
-        background: #12110f;
-        color: #eee9e1;
+        background: #12100d;
+        color: #f1e9df;
         font: inherit;
     }
 
     .mozo-campos input:focus,
     .mozo-campos select:focus {
-        outline: 2px solid #e9a365;
+        border-color: #f09b58;
+        outline: 2px solid #f09b58;
         outline-offset: 2px;
     }
 
     .mozo-campos small {
         display: block;
-        margin-top: 6px;
+        margin-top: 7px;
         color: #b8aea0;
+        font-size: 13px;
         line-height: 1.4;
     }
 
     .mozo-botones {
-        margin-top: 24px;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 12px;
+        width: 100%;
+        max-width: 600px;
+        margin: 28px auto 0;
     }
 
-    @media (max-width: 650px) {
-        .mozo-campos {
-            grid-template-columns: 1fr;
+    .mozo-botones button,
+    .mozo-botones a {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+        min-height: 44px;
+        padding: 12px 22px;
+        border: 1px solid #80634e;
+        border-radius: 8px;
+        background: #211812;
+        color: #f1e9df;
+        font: inherit;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .mozo-botones button.primario {
+        border-color: #f09b58;
+        background: #f09b58;
+        color: #1c1510;
+        font-weight: 700;
+    }
+
+    .mozo-botones button.primario:hover {
+        border-color: #ffad6a;
+        background: #ffad6a;
+    }
+
+    .mozo-botones a:hover {
+        border-color: #f09b58;
+        color: #f09b58;
+    }
+
+    @media (max-width: 600px) {
+        .mozo-botones button,
+        .mozo-botones a {
+            width: 100%;
         }
     }
 </style>
