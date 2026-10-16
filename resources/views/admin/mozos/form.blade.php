@@ -25,11 +25,12 @@
     </div>
 
     <div>
-        <label for="username">Usuario de acceso</label>
-        <input
+<label for="username">DNI (usuario de acceso)</label>        <input
             type="text"
             id="username"
             name="username"
+                        placeholder="Ej: 40123456"
+
             value="{{ old('username', isset($mozo) ? $mozo->username : '') }}"
             minlength="3"
             maxlength="50"
@@ -38,8 +39,7 @@
             spellcheck="false"
             required
         >
-        <small>Podés usar un DNI o letras, números, punto y guiones.</small>
-    </div>
+<small>Ingresá el DNI del mozo, sin puntos ni espacios.</small>    </div>
 
     <div>
         <label for="email">Correo electrónico</label>
