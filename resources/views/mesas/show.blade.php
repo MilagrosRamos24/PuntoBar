@@ -1,3 +1,13 @@
+@php
+    // Color del círculo según el estado (los nombres guardados en la base, y la alerta de espera)
+    $clasesEstado = [
+        'libre' => 'libre',
+        'ocupada' => 'espera',
+        'reservada' => 'atendida',
+        'pendiente_de_cierre' => 'alerta',
+    ];
+    $claseEstado = $clasesEstado[$mesa->estado_visual ?? $mesa->estado] ?? 'libre';
+@endphp
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -16,7 +26,10 @@
         >
 
         <nav aria-label="Navegación">
-            <a href="{{ route('mesas') }}">Volver a las mesas</a>
+            <a href="{{ route('mesas') }}" class="con-icono">
+                <x-icono nombre="volver" tamano="18" />
+                Volver a las mesas
+            </a>
 
             <form
                 action="{{ auth()->user()->role === 'admin'
@@ -26,14 +39,22 @@
             >
                 @csrf
 
-                <button type="submit">Cerrar sesión</button>
+                <button type="submit" class="con-icono">
+                    <x-icono nombre="salir" tamano="18" />
+                    Cerrar sesión
+                </button>
             </form>
         </nav>
     </header>
 
     <main class="contenido">
         <section class="tarjeta formulario">
-            <h1>Mesa {{ $mesa->numero }}</h1>
+            <div class="titulo-mesa">
+                <span class="icono-mesa {{ $claseEstado }}">
+                    <x-icono nombre="mesa" tamano="30" />
+                </span>
+                <h1>Mesa {{ $mesa->numero }}</h1>
+            </div>
 
             <dl>
                 <dt>Estado</dt>
@@ -78,7 +99,8 @@
                     </select>
                 </div>
 
-                <button type="submit" class="primario">
+                <button type="submit" class="primario con-icono">
+                    <x-icono nombre="guardar" tamano="18" />
                     Actualizar estado
                 </button>
             </form>

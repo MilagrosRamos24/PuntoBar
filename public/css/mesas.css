@@ -51,3 +51,68 @@
     background: #d9434b;
     color: #fff;
 }
+
+/* =========================
+   ÍCONOS (componente x-icono)
+   Pegar al final de public/css/mesas.css
+========================= */
+
+.icono {
+    flex-shrink: 0;
+    display: block;
+}
+
+/* Botones y enlaces que llevan un ícono al lado del texto */
+.con-icono {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+/* Título de la mesa con el ícono en un círculo del color del estado */
+.titulo-mesa {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 20px;
+}
+
+.titulo-mesa h1 {
+    margin: 0;
+}
+
+.icono-mesa {
+    width: 56px;
+    height: 56px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 1px solid;
+}
+
+.icono-mesa.libre {
+    color: #5ba8ff;
+    background: rgba(30, 115, 220, .16);
+    border-color: #287ad7;
+}
+
+.icono-mesa.espera {
+    color: #ffd03b;
+    background: rgba(220, 165, 20, .14);
+    border-color: #dca91e;
+}
+
+.icono-mesa.atendida {
+    color: #45d77d;
+    background: rgba(24, 180, 86, .13);
+    border-color: #1fb85e;
+}
+
+.icono-mesa.alerta {
+    color: #ff6970;
+    background: rgba(205, 55, 65, .15);
+    border-color: #dc4650;
+}
