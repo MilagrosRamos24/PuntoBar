@@ -179,7 +179,16 @@
 
         .usuario strong {
             color: #e3d9d0;
+
         }
+
+        .usuario-nombre {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        
 
         /* =========================
            CONTENIDO
@@ -465,6 +474,20 @@
             display: flex;
             justify-content: center;
             color: #a79b91;
+        }
+
+                /* Línea de espera: reloj mientras espera, reloj de arena rojo en alerta */
+        .icono-demora {
+            display: none;
+        }
+
+        .mesa.alerta .icono-espera {
+            display: none;
+        }
+
+        .mesa.alerta .icono-demora {
+            display: block;
+            color: #ff6970;
         }
 
         .mesa-separador {
@@ -1369,11 +1392,17 @@
 
         </nav>
 
+                <div class="usuario">
 
-        <div class="usuario">
-
-            <strong>
-                {{ $esAdmin ? 'Vista de administrador' : 'Mozo: ' . $nombreUsuario }}
+            <strong class="usuario-nombre">
+                @if ($esAdmin)
+                    <x-icono nombre="ajustes" tamano="18" />
+                    Vista de administrador
+                @else
+                    <x-icono nombre="mozo" tamano="18" />
+                    <span class="sr-only">Mozo:</span>
+                    {{ $nombreUsuario }}
+                @endif
             </strong>
 
         </div>
@@ -1536,7 +1565,10 @@
 
                         @if ($mesa->estaEsperandoPrimerPedido())
                             <div class="info-linea">
-                                <span class="info-icon"><x-icono nombre="reloj" tamano="18" /></span>
+                                                               <span class="info-icon">
+                                    <x-icono nombre="reloj" tamano="18" class="icono-espera" />
+                                    <x-icono nombre="reloj-arena" tamano="18" class="icono-demora" />
+                                </span>
 
                                 <span class="tiempo-espera">
                                     Calculando tiempo de espera…

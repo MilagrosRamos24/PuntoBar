@@ -75,7 +75,10 @@
 
         // Triángulo con signo de exclamación: alerta, stock bajo
         'alerta' => '<path d="M12 3.5 2.5 20h19z"/><path d="M12 10v4.5"/><path d="M12 17.5h.01"/>',
-    ];
+    
+        // Reloj de arena: mesa en alerta por demora
+        'reloj-arena' => '<path d="M6 3h12"/><path d="M6 21h12"/><path d="M7 3v3.5a5 5 0 0 0 2.2 4.1L12 12l2.8-1.4A5 5 0 0 0 17 6.5V3"/><path d="M7 21v-3.5a5 5 0 0 1 2.2-4.1L12 12l2.8 1.4A5 5 0 0 1 17 17.5V21"/>',
+        ];
 @endphp
 
 <svg
