@@ -71,6 +71,17 @@ class MesaController extends Controller
         $mesaActual = Mesa::whereKey($mesa->id)
             ->lockForUpdate()
             ->firstOrFail();
+            // El mozo debe cerrar la comanda antes de liberar la mesa.
+            if (
+                request()->user()->role === 'mozo' &&
+                $datos['estado'] === 'libre' &&
+                $mesaActual->comandaAbierta()->exists()
+                ) {
+                     throw ValidationException::withMessages([
+                        'estado' =>
+                        'Primero debés cerrar la comanda antes de pasar la mesa a libre.',
+                        ]);
+                  }
 
         // "reservada" representa Mesa atendida en este proyecto.
         if (in_array($datos['estado'], ['reservada', 'atendida'], true)) {
