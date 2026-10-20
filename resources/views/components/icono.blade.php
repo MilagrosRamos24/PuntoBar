@@ -7,7 +7,8 @@
 
     Nombres disponibles: mesas, mesa, mozo, personas, productos, comanda, descuento,
     reloj, mas, check, salir, ajustes, lista, flecha-abajo, campana,
-    editar, eliminar, volver, guardar, alerta.
+    editar, eliminar, volver, guardar, alerta, reloj-arena,
+    filtro, ver, quitar, siguiente.
 
     Para agregar un ícono: sumar una línea al arreglo de abajo, con su nombre y su dibujo SVG.
 --}}
@@ -75,10 +76,22 @@
 
         // Triángulo con signo de exclamación: alerta, stock bajo
         'alerta' => '<path d="M12 3.5 2.5 20h19z"/><path d="M12 10v4.5"/><path d="M12 17.5h.01"/>',
-    
+
         // Reloj de arena: mesa en alerta por demora
         'reloj-arena' => '<path d="M6 3h12"/><path d="M6 21h12"/><path d="M7 3v3.5a5 5 0 0 0 2.2 4.1L12 12l2.8-1.4A5 5 0 0 0 17 6.5V3"/><path d="M7 21v-3.5a5 5 0 0 1 2.2-4.1L12 12l2.8 1.4A5 5 0 0 1 17 17.5V21"/>',
-        ];
+
+        // Embudo: filtrar
+        'filtro' => '<path d="M4 5h16l-6 7.5V19l-4 1.5v-8z"/>',
+
+        // Ojo: ver el detalle
+        'ver' => '<path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/>',
+
+        // Cruz: quitar filtros, cerrar
+        'quitar' => '<path d="M6 6l12 12"/><path d="M18 6 6 18"/>',
+
+        // Flecha hacia la derecha: siguiente
+        'siguiente' => '<path d="M5 12h14"/><path d="m13 6 6 6-6 6"/>',
+    ];
 @endphp
 
 <svg
