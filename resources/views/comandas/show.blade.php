@@ -2,6 +2,12 @@
 
 @section('title', 'Comanda mesa ' . $comanda->mesa->numero)
 
+@if (auth()->user()->role === 'admin')
+    @section('admin-header')
+        <x-admin-nav titulo="Detalle de comanda" />
+    @endsection
+@endif
+
 @section('content')
 <style>
     .comanda { display: grid; gap: 16px; }
