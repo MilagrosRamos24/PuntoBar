@@ -42,11 +42,12 @@
         .brand { display: flex; align-items: center; min-width: 360px; }
 
         .logo {
-            width: 125px;
+            width: 170px;
             height: auto;
             padding-right: 25px;
             margin-right: 25px;
             border-right: 1px solid #403126;
+            flex-shrink: 0;
         }
 
         .titulo-sistema h1 { font-size: 28px; color: #f5eee7; }
@@ -222,26 +223,7 @@
 
 <body>
 
-    <header class="topbar">
-
-        <div class="brand">
-            <img src="{{ asset('img/punto-bar-logo-transparente.png') }}" alt="PUNTO BAR" class="logo">
-
-            <div class="titulo-sistema">
-                <h1>Descuento por consumo</h1>
-                <p>Configuración del administrador</p>
-            </div>
-        </div>
-
-        <nav class="navegacion" aria-label="Menú principal">
-            <a href="{{ route('mesas') }}" class="nav-item">Mesas</a>
-            <a href="{{ route('admin.comandas.index') }}" class="nav-item">Comandas</a>
-            <a href="{{ route('admin.descuento.edit') }}" class="nav-item activo" aria-current="page">Descuento</a>
-        </nav>
-
-        <div class="usuario">Vista de administrador</div>
-
-    </header>
+    <x-admin-nav titulo="Descuento" />
 
     <main class="contenido">
         <a href="{{ route('mesas') }}" class="btn-volver"> ← Volver a mesas</a>

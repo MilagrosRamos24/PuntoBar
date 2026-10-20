@@ -7,26 +7,7 @@
     <link rel="stylesheet" href="{{ asset('css/mesas.css') }}">
 </head>
 <body>
-<header class="cabecera">
-    <img src="{{ asset('img/punto-bar-logo-transparente.png') }}" alt="Punto Bar">
-    <nav aria-label="Navegación de mesas">
-        <a href="{{ route('mesas') }}" class="con-icono">
-            <x-icono nombre="mesas" tamano="18" />
-            Panel
-        </a>
-        <a href="{{ route('admin.mesas.index') }}" class="con-icono">
-            <x-icono nombre="lista" tamano="18" />
-            Gestionar mesas
-        </a>
-        <form action="{{ route('admin.logout') }}" method="POST">
-            @csrf
-            <button class="con-icono">
-                <x-icono nombre="salir" tamano="18" />
-                Cerrar sesión
-            </button>
-        </form>
-    </nav>
-</header>
+<x-admin-nav :titulo="trim($__env->yieldContent('title', 'Gestión de mesas'))" />
 <main class="contenido">
     @if(session('success'))<p class="mensaje" role="status">{{ session('success') }}</p>@endif
     @if($errors->any())

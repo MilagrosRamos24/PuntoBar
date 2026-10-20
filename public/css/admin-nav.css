@@ -1,0 +1,99 @@
+/* Encabezado compartido: mismas medidas que mesas de mozos.
+   Se limita a esta barra para conservar los contenedores de cada módulo. */
+.pb-admin-nav, .pb-admin-nav * { box-sizing: border-box; }
+.pb-admin-nav {
+    width: 100%; min-height: 92px; display: flex; align-items: center;
+    gap: 20px; padding: 0 40px; margin: 0;
+    background: #15130f; border-bottom: 1px solid #34271c;
+    color: #f1e9df; font-family: Arial, Helvetica, sans-serif;
+}
+.pb-admin-nav .pb-admin-brand { display: flex; align-items: center; flex: 0 1 auto; min-width: 0; }
+.pb-admin-nav .pb-admin-logo {
+    display: block; width: 170px; min-width: 170px; max-width: 170px;
+    height: auto; max-height: none; object-fit: contain; flex: 0 0 170px;
+    padding: 0 25px 0 0; margin: 0 25px 0 0; border-right: 1px solid #403126;
+}
+.pb-admin-nav .pb-admin-heading h1 { margin: 0; font-size: 28px; line-height: 1.15; font-weight: 700; color: #f5eee7; }
+.pb-admin-nav .pb-admin-heading p { margin: 5px 0 0; font-size: 15px; line-height: 1.4; color: #9e948b; }
+.pb-admin-nav .pb-admin-links { display: flex; align-items: center; justify-content: center; gap: 8px; flex: 1; flex-wrap: wrap; margin: 0; }
+.pb-admin-nav .pb-admin-link {
+    display: flex; align-items: center; gap: 10px; padding: 14px 20px;
+    border: 1px solid transparent; border-radius: 9px; background: transparent;
+    color: #c7bdb4; font-size: 16px; font-weight: 400; line-height: normal; text-decoration: none;
+}
+.pb-admin-nav .pb-admin-link:hover { color: #f0a15f; border-color: #4a3424; background: transparent; }
+.pb-admin-nav .pb-admin-link.is-active { color: #f39b55; background: #211a14; border-color: #543a26; }
+.pb-admin-nav .icono { width: 20px; height: 20px; flex-shrink: 0; }
+.pb-admin-nav .pb-admin-account { flex-shrink: 0; padding-left: 24px; border-left: 1px solid #403126; font-size: 14px; font-weight: 700; }
+.pb-admin-nav .pb-admin-account form { margin: 0; }
+.pb-admin-nav .pb-admin-account button { display: inline-block; width: auto; margin: 6px 0 0; padding: 0; border: 0; background: transparent; color: #c7bdb4; font: inherit; font-size: 13px; cursor: pointer; }
+.pb-admin-nav .pb-admin-account button:hover { color: #f0a15f; background: transparent; }
+.pb-admin-nav :is(a, button):focus-visible { outline: 2px solid #f39b55; outline-offset: 3px; }
+@media (max-width: 1500px) {
+    .pb-admin-nav { flex-wrap: wrap; padding: 14px 24px; gap: 14px; }
+    .pb-admin-nav .pb-admin-links { order: 3; flex-basis: 100%; justify-content: flex-start; }
+    .pb-admin-nav .pb-admin-account { margin-left: auto; }
+}
+@media (max-width: 600px) {
+    .pb-admin-nav { padding: 14px 16px; }
+    .pb-admin-nav .pb-admin-brand { width: 100%; }
+    .pb-admin-nav .pb-admin-heading h1 { font-size: 22px; overflow-wrap: anywhere; }
+    .pb-admin-nav .pb-admin-logo { margin-right: 14px; }
+    .pb-admin-nav .pb-admin-account { margin: 0; padding: 0; border: 0; }
+    .pb-admin-nav .pb-admin-link { padding: 10px 12px; font-size: 14px; }
+}
+
+/* En computadoras, mantener el encabezado en una sola fila. */
+@media (min-width: 1280px) {
+    .pb-admin-nav {
+        flex-wrap: nowrap;
+        height: 92px;
+        min-height: 92px;
+        padding: 0 24px;
+        gap: 12px;
+    }
+
+    .pb-admin-nav .pb-admin-brand {
+        flex: 0 1 auto;
+    }
+
+    .pb-admin-nav .pb-admin-logo {
+        width: 170px;
+        min-width: 170px;
+        max-width: 170px;
+        max-height: 82px;
+        object-fit: contain;
+        margin-right: 18px;
+        padding-right: 18px;
+    }
+
+    .pb-admin-nav .pb-admin-heading h1 {
+        font-size: 24px;
+    }
+
+    .pb-admin-nav .pb-admin-heading p {
+        font-size: 14px;
+    }
+
+    .pb-admin-nav .pb-admin-links {
+        order: 0;
+        flex: 1 1 auto;
+        flex-wrap: nowrap;
+        justify-content: center;
+        gap: 4px;
+    }
+
+    .pb-admin-nav .pb-admin-link {
+        padding: 12px 10px;
+        gap: 7px;
+        font-size: 14px;
+        white-space: nowrap;
+    }
+
+    .pb-admin-nav .pb-admin-account {
+        margin-left: 0;
+        padding-left: 16px;
+        font-size: 13px;
+        white-space: nowrap;
+    }
+}
