@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@yield('title') · Punto Bar</title>
     <link rel="stylesheet" href="{{ asset('css/mesas.css') }}">
+    <link rel="icon"
+      type="image/png"
+      href="{{ asset('img/favicon.png') }}?v=3">
 </head>
 <body>
 <x-admin-nav :titulo="trim($__env->yieldContent('title', 'Gestión de mesas'))" />
