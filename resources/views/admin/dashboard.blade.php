@@ -4,6 +4,10 @@
 
 @section('shell-class', 'pb-shell--panel')
 
+@section('admin-header')
+    <x-admin-nav titulo="Administración" />
+@endsection
+
 @section('content')
 
 <section class="card">

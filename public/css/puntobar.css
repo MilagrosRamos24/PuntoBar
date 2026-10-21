@@ -16,7 +16,29 @@ body { margin: 0; min-height: 100vh; background: var(--pb-fondo); color: var(--p
 .pb-shell { width: min(92%, 440px); margin: 0 auto; padding: 10px 0 28px; }
 .pb-shell--home { width: min(92%, 760px); }
 .pb-shell--panel { width: min(92%, 900px); padding-top: 24px; }
-.logo { display: block; width: min(100%, 190px); height: auto; margin: 0 auto; }
+/* Logo general: login y módulos que usan el estilo compartido. */
+.logo {
+    display: block;
+    width: min(100%, 300px);
+    height: auto;
+    margin: 0 auto;
+}
+
+/* Logo más grande en la pantalla de inicio. */
+.pb-shell--home .logo {
+    width: min(100%, 350px);
+}
+
+/* Tamaño para celulares. */
+@media (max-width: 420px) {
+    .logo {
+        width: min(100%, 210px);
+    }
+
+    .pb-shell--home .logo {
+        width: min(100%, 300px);
+    }
+}
 .card { background: var(--pb-superficie); border: 1px solid var(--pb-borde); border-radius: var(--pb-radio); padding: 22px; }
 h1, h2 { font-size: 22px; margin: 0 0 6px; }
 p { color: var(--pb-secundario); font-size: 14px; line-height: 1.4; margin: 8px 0; }

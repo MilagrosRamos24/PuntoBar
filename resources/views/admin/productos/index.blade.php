@@ -3,6 +3,10 @@
 @section('title', 'Productos')
 @section('shell-class', 'pb-shell--productos')
 
+@section('admin-header')
+    <x-admin-nav titulo="Productos" />
+@endsection
+
 @section('content')
     @php
         $categorias = \App\Models\Producto::CATEGORIAS;
@@ -26,28 +30,7 @@
     <link rel="stylesheet" href="{{ asset('css/productos.css') }}">
 
     <div class="pp">
-        <header class="pp-header">
-            <div class="pp-brand">
-                <img class="pp-logo" src="{{ asset('img/punto-bar-logo-transparente.png') }}" alt="Punto Bar">
-                <div>
-                    <h1>Productos</h1>
-                    <p>Catálogo de bebidas, comidas y postres</p>
-                </div>
-            </div>
 
-            <div class="pp-header-right">
-                <nav class="pp-nav" aria-label="Secciones del administrador">
-                    <a href="{{ route('mesas') }}">Mesas</a>
-                    <a href="{{ route('admin.mesas.index') }}">Gestión de mesas</a>
-                    <a href="{{ route('admin.productos.index') }}" aria-current="page">Productos</a>
-                </nav>
-                   <x-campana-notificaciones />
-                <form method="POST" action="{{ route('admin.logout') }}">
-                    @csrf
-                    <button type="submit" class="pp-link-btn">Cerrar sesión</button>
-                </form>
-            </div>
-        </header>
 
         <div class="pp-toolbar">
             <nav class="pp-tabs" aria-label="Filtrar por categoría">

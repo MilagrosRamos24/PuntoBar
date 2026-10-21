@@ -113,11 +113,12 @@
         }
 
         .logo {
-            width: 125px;
+            width: 170px;
             height: auto;
             padding-right: 25px;
             margin-right: 25px;
             border-right: 1px solid #403126;
+            flex-shrink: 0;
         }
 
         .titulo-sistema h1 {
@@ -1308,7 +1309,148 @@
                 flex-wrap: wrap;
             }
         }
+        /* Encabezado del perfil mozo */
+.topbar {
+    box-sizing: border-box;
+    width: 100%;
+    height: auto;
+    min-height: 92px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 0 24px;
+    background: #15130f;
+    border-bottom: 1px solid #34271c;
+}
 
+.topbar .brand {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    flex: 0 1 auto;
+}
+
+.topbar .logo {
+    box-sizing: border-box;
+    display: block;
+    width: 170px;
+    min-width: 170px;
+    max-width: 170px;
+    height: auto;
+    max-height: none;
+    object-fit: contain;
+    flex: 0 0 170px;
+    padding: 0 18px 0 0;
+    margin: 0 18px 0 0;
+    border-right: 1px solid #403126;
+}
+
+.topbar .titulo-sistema h1 {
+    margin: 0;
+    font-size: 24px;
+    line-height: 1.15;
+    color: #f5eee7;
+}
+
+.topbar .titulo-sistema p {
+    margin: 5px 0 0;
+    font-size: 14px;
+    line-height: 1.4;
+    color: #9e948b;
+}
+
+.topbar .navegacion {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.topbar .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    border: 1px solid transparent;
+    border-radius: 9px;
+    background: transparent;
+    color: #c7bdb4;
+    font-size: 15px;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.topbar .nav-item:hover {
+    color: #f0a15f;
+    background: #1c1712;
+    border-color: #4a3424;
+}
+
+.topbar .nav-item.activo {
+    color: #f39b55;
+    background: #211a14;
+    border-color: #543a26;
+}
+
+.topbar .nav-icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}
+
+.topbar .usuario {
+    min-width: 0;
+    flex-shrink: 0;
+    margin: 0;
+    padding-left: 20px;
+    border-left: 1px solid #403126;
+    color: #e3d9d0;
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.topbar .nav-item:focus-visible {
+    outline: 2px solid #f39b55;
+    outline-offset: 3px;
+}
+
+/* Adaptación para ventanas pequeñas */
+@media (max-width: 900px) {
+    .topbar {
+        flex-wrap: wrap;
+        padding: 14px 18px;
+        gap: 14px;
+    }
+
+    .topbar .brand {
+        min-width: 0;
+        flex: 1;
+    }
+
+    .topbar .navegacion {
+        order: 3;
+        flex-basis: 100%;
+        justify-content: flex-start;
+    }
+}
+
+@media (max-width: 600px) {
+    .topbar .brand {
+        flex-basis: 100%;
+    }
+
+    .topbar .titulo-sistema h1 {
+        font-size: 22px;
+    }
+
+    .topbar .usuario {
+        padding-left: 0;
+        border-left: 0;
+    }
+}
     </style>
 
 </head>
@@ -1319,6 +1461,9 @@
          BARRA SUPERIOR
     ========================= --}}
 
+    @if ($esAdmin)
+        <x-admin-nav titulo="Gestión de mesas" />
+    @else
     <header class="topbar">
 
         <div class="brand">
@@ -1412,6 +1557,7 @@
         </div>
 
     </header>
+    @endif
 
 
     {{-- =========================

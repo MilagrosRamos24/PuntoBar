@@ -19,6 +19,9 @@
     <link rel="stylesheet" href="{{ asset('css/mesas.css') }}">
 </head>
 <body>
+    @if (auth()->user()->role === 'admin')
+        <x-admin-nav titulo="Detalle de mesa" />
+    @else
     <header class="cabecera">
         <img
             src="{{ asset('img/punto-bar-logo-transparente.png') }}"
@@ -46,6 +49,7 @@
             </form>
         </nav>
     </header>
+    @endif
 
     <main class="contenido">
         <section class="tarjeta formulario">
