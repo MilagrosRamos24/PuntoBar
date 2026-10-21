@@ -46,5 +46,8 @@
             </div>
 
         </section>
-
+ 
+        <p style="text-align: center; margin-top: 24px">
+    <a href="{{ route('ayuda') }}" style="display: inline-flex; align-items: center; min-height: 48px; padding: 0 22px; border: 1px solid #e9a365; border-radius: 14px; color: #e9a365; font-weight: 600; text-decoration: none">¿Primera vez en Punto Bar? Leé el manual de usuario</a>
+</p>
 @endsection
