@@ -248,3 +248,24 @@
     .pb-shell.pb-shell--productos { padding: 24px 12px 48px; }
     .pp-dialog-body { padding: 24px; }
 }
+
+.pp-brand {
+    display: flex;
+    align-items: center;
+    gap: 0;
+}
+
+.pp-brand .pp-logo {
+    box-sizing: border-box;
+    display: block;
+    width: 145px;
+    min-width: 0;
+    max-width: 145px;
+    height: auto;
+    max-height: none;
+    flex: 0 0 145px;
+    object-fit: contain;
+    padding: 0 15px 0 0;
+    margin: 0 15px 0 0;
+    border-right: 1px solid #403126;
+}

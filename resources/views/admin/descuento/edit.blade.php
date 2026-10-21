@@ -27,9 +27,6 @@
             min-height: 100vh;
         }
 
-        /* Íconos (componente x-icono) */
-        .icono { flex-shrink: 0; display: block; }
-
         /* ===== Barra superior (misma estética que mesas) ===== */
 
         .topbar {
@@ -45,11 +42,12 @@
         .brand { display: flex; align-items: center; min-width: 360px; }
 
         .logo {
-            width: 125px;
+            width: 170px;
             height: auto;
             padding-right: 25px;
             margin-right: 25px;
             border-right: 1px solid #403126;
+            flex-shrink: 0;
         }
 
         .titulo-sistema h1 { font-size: 28px; color: #f5eee7; }
@@ -58,9 +56,6 @@
         .navegacion { display: flex; gap: 8px; flex: 1; justify-content: center; }
 
         .nav-item {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
             padding: 14px 20px;
             border-radius: 9px;
             color: #c7bdb4;
@@ -73,9 +68,6 @@
         .nav-item.activo { color: #f39b55; background: #211a14; border-color: #543a26; }
 
         .usuario {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
             padding-left: 30px;
             border-left: 1px solid #403126;
             color: #e3d9d0;
@@ -103,22 +95,12 @@
         .tarjeta h2 { font-size: 19px; margin-bottom: 8px; }
         .tarjeta > p { color: #a99d94; line-height: 1.55; font-size: 15px; }
 
-        .titulo-con-icono {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .titulo-con-icono .icono { color: #f39b55; }
-
         .estado-actual {
             display: flex;
             align-items: center;
             gap: 12px;
             margin-bottom: 14px;
         }
-
-        .estado-actual h2 { margin-bottom: 0; }
 
         .pill {
             display: inline-block;
@@ -198,10 +180,6 @@
         .interruptor span { font-size: 15px; }
 
         .btn-principal {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
             padding: 14px 20px;
             border-radius: 9px;
             border: 1px solid #f09b58;
@@ -217,18 +195,16 @@
         .nota { color: #8f837a; font-size: 13px; line-height: 1.5; }
 
         .btn-volver {
-            justify-self: start;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
+            justify-self: start; 
             color: #c7bdb4;
             text-decoration: none;
             font-size: 15px;
         }
 
-        .btn-volver:hover {
+        .btn-volver:hover { 
             color: #f0a15f;
-        }
+         }
+
 
         :focus-visible { outline: 3px solid #e2a15c; outline-offset: 2px; }
 
@@ -247,44 +223,10 @@
 
 <body>
 
-    <header class="topbar">
-
-        <div class="brand">
-            <img src="{{ asset('img/punto-bar-logo-transparente.png') }}" alt="PUNTO BAR" class="logo">
-
-            <div class="titulo-sistema">
-                <h1>Descuento por consumo</h1>
-                <p>Configuración del administrador</p>
-            </div>
-        </div>
-
-        <nav class="navegacion" aria-label="Menú principal">
-            <a href="{{ route('mesas') }}" class="nav-item">
-                <x-icono nombre="mesas" />
-                Mesas
-            </a>
-            <a href="{{ route('admin.comandas.index') }}" class="nav-item">
-                <x-icono nombre="comanda" />
-                Comandas
-            </a>
-            <a href="{{ route('admin.descuento.edit') }}" class="nav-item activo" aria-current="page">
-                <x-icono nombre="descuento" />
-                Descuento
-            </a>
-        </nav>
-
-        <div class="usuario">
-            <x-icono nombre="ajustes" tamano="18" />
-            Vista de administrador
-        </div>
-
-    </header>
+    <x-admin-nav titulo="Descuento" />
 
     <main class="contenido">
-        <a href="{{ route('mesas') }}" class="btn-volver">
-            <x-icono nombre="volver" tamano="18" />
-            Volver a mesas
-        </a>
+        <a href="{{ route('mesas') }}" class="btn-volver"> ← Volver a mesas</a>
 
         @if (session('success'))
             <div class="aviso ok" role="status">{{ session('success') }}</div>
@@ -301,10 +243,7 @@
         {{-- Cómo está funcionando hoy --}}
         <section class="tarjeta" aria-labelledby="titulo-actual">
             <div class="estado-actual">
-                <h2 id="titulo-actual" class="titulo-con-icono">
-                    <x-icono nombre="descuento" />
-                    Situación actual
-                </h2>
+                <h2 id="titulo-actual">Situación actual</h2>
                 <span class="pill {{ $configuracion->activo ? 'activo' : 'inactivo' }}">
                     {{ $configuracion->activo ? 'Activo' : 'Desactivado' }}
                 </span>
@@ -322,10 +261,7 @@
 
         {{-- Formulario --}}
         <section class="tarjeta" aria-labelledby="titulo-config">
-            <h2 id="titulo-config" class="titulo-con-icono">
-                <x-icono nombre="ajustes" />
-                Configurar
-            </h2>
+            <h2 id="titulo-config">Configurar</h2>
             <p>
                 Cuando el subtotal de una comanda supera el monto tope, el sistema descuenta el porcentaje
                 sobre el total. Si después se quitan productos y el subtotal vuelve a quedar por debajo
@@ -386,10 +322,7 @@
                     <span>Aplicar el descuento</span>
                 </label>
 
-                <button type="submit" class="btn-principal">
-                    <x-icono nombre="guardar" tamano="18" />
-                    Guardar configuración
-                </button>
+                <button type="submit" class="btn-principal">Guardar configuración</button>
 
                 <p class="nota">
                     Al guardar, se recalculan las {{ $comandasAbiertas }}

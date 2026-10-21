@@ -45,11 +45,12 @@
         .brand { display: flex; align-items: center; min-width: 360px; }
 
         .logo {
-            width: 125px;
+            width: 170px;
             height: auto;
             padding-right: 25px;
             margin-right: 25px;
             border-right: 1px solid #403126;
+            flex-shrink: 0;
         }
 
         .titulo-sistema h1 { font-size: 28px; color: #f5eee7; }
