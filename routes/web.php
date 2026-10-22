@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AyudaController;
 use App\Http\Controllers\AdminLoginController;
 use App\Http\Controllers\MozoAuthController;
 use App\Http\Middleware\VerificarRol;
@@ -15,7 +16,7 @@ use App\Http\Controllers\AdminNotificacionStockController;
 use App\Http\Controllers\AdminDescuentoController;
 
 Route::view('/', 'home')->name('home');
-
+Route::get('/ayuda', [AyudaController::class, 'index'])->name('ayuda');
 // ====================
 // INGRESO (sin sesión iniciada)
 // ====================
