@@ -11,10 +11,13 @@
 @section('content')
 <style>
     .comanda { display: grid; gap: 16px; }
+    .comanda .pb-icono { flex-shrink: 0; display: block; }
     .comanda .card { background: #1a1815; border: 1px solid #403628; border-radius: 16px; padding: 22px; }
     .comanda h1 { margin: 4px 0 10px; font-size: 26px; }
-    .comanda .badge { color: #e9a365; font-size: 13px; letter-spacing: 1px; text-transform: uppercase; margin: 0; }
-    .comanda .datos { display: flex; flex-wrap: wrap; gap: 6px 18px; color: #b8aea0; font-size: 14px; }
+    .comanda .badge { display: flex; align-items: center; gap: 8px; color: #e9a365; font-size: 13px; letter-spacing: 1px; text-transform: uppercase; margin: 0; }
+    .comanda .datos { display: flex; flex-wrap: wrap; gap: 8px 20px; color: #b8aea0; font-size: 14px; }
+    .comanda .datos > span { display: inline-flex; align-items: center; gap: 6px; }
+    .comanda .datos .pb-icono { color: #8f857a; }
     .comanda .datos strong { color: #eee9e1; font-weight: 600; }
     .comanda .pill { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; }
     .comanda .pill.abierta { background: #32cf6a; color: #102117; }
@@ -23,7 +26,8 @@
     .comanda .aviso.ok { border: 1px solid #3f7a4f; background: #1d2b20; color: #c9f0d3; }
     .comanda .aviso.error { border: 1px solid #d88a80; background: #382321; color: #ffd2cb; }
     .comanda .aviso p { margin: 2px 0; color: inherit; }
-    .comanda h2 { font-size: 17px; margin: 0 0 12px; }
+    .comanda h2 { display: flex; align-items: center; gap: 8px; font-size: 17px; margin: 0 0 12px; }
+    .comanda h2 .pb-icono { color: #e9a365; }
     .comanda .linea { display: grid; grid-template-columns: 1fr auto; gap: 6px 12px; padding: 12px 0; border-bottom: 1px solid #2e261d; }
     .comanda .linea:last-child { border-bottom: none; }
     .comanda .linea .nombre { color: #eee9e1; }
@@ -33,7 +37,7 @@
     .comanda .acciones-linea form { display: flex; gap: 8px; align-items: center; margin: 0; }
     .comanda input[type="number"] { width: 76px; padding: 8px; margin: 0; }
     .comanda select { width: 100%; padding: 12px; background: #12110f; border: 1px solid #635442; border-radius: 10px; color: #eee9e1; font-size: 15px; }
-    .comanda button { width: auto; margin: 0; padding: 8px 14px; font-size: 14px; }
+    .comanda button { display: inline-flex; align-items: center; justify-content: center; gap: 6px; width: auto; margin: 0; padding: 8px 14px; font-size: 14px; }
     .comanda .btn-secundario { background: transparent; border: 1px solid #635442; color: #eee9e1; font-weight: 400; }
     .comanda .btn-secundario:hover { border-color: #e9a365; color: #e9a365; background: transparent; }
     .comanda .btn-peligro { background: transparent; border: 1px solid #8c4a42; color: #ffb3a8; font-weight: 400; }
@@ -47,7 +51,8 @@
     .comanda .totales .total { color: #eee9e1; font-size: 22px; font-weight: 700; margin-top: 6px; }
     .comanda .totales .total span:last-child { color: #e9a365; }
     .comanda .vacio { color: #8f857a; margin: 0; }
-    .comanda .volver { text-align: center; }
+    .comanda .volver { display: flex; justify-content: center; }
+    .comanda .volver a { display: inline-flex; align-items: center; gap: 8px; }
     .comanda :focus-visible { outline: 3px solid #e9a365; outline-offset: 2px; }
     .comanda .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 </style>
@@ -61,14 +66,26 @@
 
     {{-- Encabezado: mesa, mozo, fecha/hora y estado (PB-10) --}}
     <section class="card">
-        <p class="badge">Comanda #{{ $comanda->id }}</p>
+        <p class="badge">
+            <x-icono nombre="comanda" tamano="16" />
+            Comanda #{{ $comanda->id }}
+        </p>
         <h1>Mesa {{ $comanda->mesa->numero }}</h1>
         <div class="datos">
-            <span>Mozo: <strong>{{ $comanda->mozo->name }}</strong></span>
-            <span>Abierta: <strong>{{ $comanda->fecha->format('d/m/Y H:i') }}</strong></span>
+            <span>
+                <x-icono nombre="mozo" tamano="16" />
+                Mozo: <strong>{{ $comanda->mozo->name }}</strong>
+            </span>
+            <span>
+                <x-icono nombre="reloj" tamano="16" />
+                Abierta: <strong>{{ $comanda->fecha->format('d/m/Y H:i') }}</strong>
+            </span>
             <span>Estado: <span class="pill {{ $comanda->estado }}">{{ $comanda->estado_texto }}</span></span>
             @if ($comanda->cerrada_en)
-                <span>Cerrada: <strong>{{ $comanda->cerrada_en->format('d/m/Y H:i') }}</strong></span>
+                <span>
+                    <x-icono nombre="check" tamano="16" />
+                    Cerrada: <strong>{{ $comanda->cerrada_en->format('d/m/Y H:i') }}</strong>
+                </span>
             @endif
         </div>
     </section>
@@ -87,7 +104,10 @@
 
     {{-- Productos cargados: cambiar cantidades y quitar (PB-12) --}}
     <section class="card" aria-labelledby="titulo-productos">
-        <h2 id="titulo-productos">Productos</h2>
+        <h2 id="titulo-productos">
+            <x-icono nombre="productos" tamano="18" />
+            Productos
+        </h2>
 
         @forelse ($comanda->detalles as $detalle)
             <div class="linea">
@@ -105,13 +125,19 @@
                             <label class="sr-only" for="cantidad-{{ $detalle->id }}">Cantidad de {{ $detalle->producto->nombre }}</label>
                             <input id="cantidad-{{ $detalle->id }}" type="number" name="cantidad"
                                    value="{{ $detalle->cantidad }}" min="1" max="99" required>
-                            <button type="submit" class="btn-secundario">Actualizar</button>
+                            <button type="submit" class="btn-secundario">
+                                <x-icono nombre="guardar" tamano="16" />
+                                Actualizar
+                            </button>
                         </form>
 
                         <form method="POST" action="{{ route('comandas.productos.destroy', [$comanda, $detalle]) }}">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="btn-peligro">Quitar</button>
+                            <button type="submit" class="btn-peligro">
+                                <x-icono nombre="eliminar" tamano="16" />
+                                Quitar
+                            </button>
                         </form>
                     </div>
                 @endif
@@ -124,7 +150,10 @@
     {{-- Agregar productos y cantidades (PB-11) --}}
     @if ($abierta)
         <section class="card" aria-labelledby="titulo-agregar">
-            <h2 id="titulo-agregar">Agregar producto</h2>
+            <h2 id="titulo-agregar">
+                <x-icono nombre="mas" tamano="18" />
+                Agregar producto
+            </h2>
 
             @if ($productos->isEmpty())
                 <p class="vacio">No hay productos activos en el catálogo.</p>
@@ -150,7 +179,10 @@
                         <label for="cantidad">Cantidad</label>
                         <input id="cantidad" type="number" name="cantidad" value="{{ old('cantidad', 1) }}" min="1" max="99" required>
                     </div>
-                    <button type="submit" class="btn-ancho" style="grid-column: 1 / -1;">Agregar</button>
+                    <button type="submit" class="btn-ancho" style="grid-column: 1 / -1;">
+                        <x-icono nombre="mas" tamano="18" />
+                        Agregar
+                    </button>
                 </form>
             @endif
         </section>
@@ -158,7 +190,10 @@
 
     {{-- Totales y cierre (PB-14) --}}
     <section class="card" aria-labelledby="titulo-total">
-        <h2 id="titulo-total">Total</h2>
+        <h2 id="titulo-total">
+            <x-icono nombre="comanda" tamano="18" />
+            Total
+        </h2>
         <div class="totales">
             <div><span>Subtotal</span><span>{{ $pesos($comanda->subtotal) }}</span></div>
             @if ((float) $comanda->descuento > 0)
@@ -169,18 +204,31 @@
 
         @if ($abierta)
             <form method="POST" action="{{ route('comandas.cerrar', $comanda) }}"
-                data-confirmar="¿Cerrar la comanda de la mesa {{ $comanda->mesa->numero }}? La mesa va a quedar libre y la comanda pasa al historial." data-confirmar-titulo="Cerrar comanda" data-confirmar-aceptar="Cerrar comanda" data-confirmar-cancelar="Volver"
+                data-confirmar="¿Cerrar la comanda de la mesa {{ $comanda->mesa->numero }}? La mesa va a quedar libre y la comanda pasa al historial."
+                data-confirmar-titulo="Cerrar comanda"
+                data-confirmar-aceptar="Cerrar comanda"
+                data-confirmar-cancelar="Volver"
+            >
                 @csrf
-                <button type="submit" class="btn-ancho">Cerrar comanda</button>
+                <button type="submit" class="btn-ancho">
+                    <x-icono nombre="check" tamano="18" />
+                    Cerrar comanda
+                </button>
             </form>
         @endif
     </section>
 
-     <p class="volver">
+    <p class="volver">
         @if (auth()->user()->role === 'admin')
-            <a href="{{ route('admin.comandas.index') }}">← Volver al historial</a>
+            <a href="{{ route('admin.comandas.index') }}">
+                <x-icono nombre="volver" tamano="18" />
+                Volver al historial
+            </a>
         @else
-            <a href="{{ route('mesas') }}">← Volver a mesas</a>
+            <a href="{{ route('mesas') }}">
+                <x-icono nombre="volver" tamano="18" />
+                Volver a mesas
+            </a>
         @endif
     </p>
 

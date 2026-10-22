@@ -9,8 +9,9 @@
         <p>Consultá, registrá, editá y da de baja los mozos del bar.</p>
     </div>
 
-    <a class="primario" href="{{ route('admin.mozos.create') }}">
-        + Nuevo mozo
+    <a class="primario con-icono" href="{{ route('admin.mozos.create') }}">
+        <x-icono nombre="mas" tamano="18" />
+        Nuevo mozo
     </a>
 </div>
 
@@ -44,7 +45,8 @@
 
                     <td>
                         <div class="acciones">
-                            <a href="{{ route('admin.mozos.edit', $mozo) }}">
+                            <a href="{{ route('admin.mozos.edit', $mozo) }}" class="con-icono">
+                                <x-icono nombre="editar" tamano="16" />
                                 Editar
                             </a>
 
@@ -52,12 +54,14 @@
                             <form
                             action="{{ route('admin.mozos.destroy', $mozo) }}"
                             method="POST"
-                          data-confirmar="¿Dar de baja a este mozo? Su historial se conservará." data-confirmar-titulo="Dar de baja" data-confirmar-aceptar="Dar de baja"
+                            data-confirmar="¿Dar de baja a este mozo? Su historial se conservará." data-confirmar-titulo="Dar de baja" data-confirmar-aceptar="Dar de baja"
+                            >
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="peligro">
-                                 Dar de baja
-                                </button>
+                            <button type="submit" class="peligro con-icono">
+                                <x-icono nombre="eliminar" tamano="16" />
+                                Dar de baja
+                            </button>
                             </form>
                             @else
                             <form
@@ -66,9 +70,10 @@
                             >
                             @csrf
                             @method('PATCH')
-                            <button type="submit" class="primario">
-                                 Habilitar
-                                </button>
+                            <button type="submit" class="primario con-icono">
+                                <x-icono nombre="check" tamano="16" />
+                                Habilitar
+                            </button>
                             </form>
                             @endif
                         </div>
@@ -88,7 +93,7 @@
 @if($mozos->hasPages())
     <nav class="acciones" aria-label="Paginación de mozos">
         @if(!$mozos->onFirstPage())
-            <a href="{{ $mozos->previousPageUrl() }}">Anterior</a>
+            <a href="{{ $mozos->previousPageUrl() }}" class="con-icono"><x-icono nombre="volver" tamano="16" /> Anterior</a>
         @endif
 
         <span>
@@ -96,7 +101,7 @@
         </span>
 
         @if($mozos->hasMorePages())
-            <a href="{{ $mozos->nextPageUrl() }}">Siguiente</a>
+            <a href="{{ $mozos->nextPageUrl() }}" class="con-icono">Siguiente <x-icono nombre="siguiente" tamano="16" /></a>
         @endif
     </nav>
 @endif

@@ -7,12 +7,16 @@
 
     Nombres disponibles: mesas, mesa, mozo, personas, productos, comanda, descuento,
     reloj, mas, check, salir, ajustes, lista, flecha-abajo, campana,
-    editar, eliminar, volver, guardar, alerta.
+    editar, eliminar, volver, guardar, alerta, reloj-arena,
+    filtro, ver, quitar, siguiente, entrar, ayuda.
+
+    El SVG lleva la clase "pb-icono" (no "icono", porque el inicio y los logins ya usan "icono"
+    para el círculo grande de cada opción). Con :base="false" se dibuja sin esa clase.
 
     Para agregar un ícono: sumar una línea al arreglo de abajo, con su nombre y su dibujo SVG.
 --}}
 
-@props(['nombre' => '', 'tamano' => 20])
+@props(['nombre' => '', 'tamano' => 20, 'base' => true])
 
 @php
     $iconos = [
@@ -75,14 +79,41 @@
 
         // Triángulo con signo de exclamación: alerta, stock bajo
         'alerta' => '<path d="M12 3.5 2.5 20h19z"/><path d="M12 10v4.5"/><path d="M12 17.5h.01"/>',
-    
+
         // Reloj de arena: mesa en alerta por demora
         'reloj-arena' => '<path d="M6 3h12"/><path d="M6 21h12"/><path d="M7 3v3.5a5 5 0 0 0 2.2 4.1L12 12l2.8-1.4A5 5 0 0 0 17 6.5V3"/><path d="M7 21v-3.5a5 5 0 0 1 2.2-4.1L12 12l2.8 1.4A5 5 0 0 1 17 17.5V21"/>',
-        ];
+
+        // Embudo: filtrar
+        'filtro' => '<path d="M4 5h16l-6 7.5V19l-4 1.5v-8z"/>',
+
+        // Ojo: ver el detalle
+        'ver' => '<path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/>',
+
+        // Cruz: quitar filtros, cerrar
+        'quitar' => '<path d="M6 6l12 12"/><path d="M18 6 6 18"/>',
+
+        // Flecha hacia la derecha: siguiente
+        'siguiente' => '<path d="M5 12h14"/><path d="m13 6 6 6-6 6"/>',
+
+        // Puerta con flecha hacia adentro: ingresar
+        'entrar' => '<path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3"/><path d="m10 16 4-4-4-4"/><path d="M14 12H4"/>',
+
+        // Libro abierto: ayuda y manual de usuario
+        'ayuda' => '<path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21.5V5.5Z"/><path d="M4 21.5A2.5 2.5 0 0 1 6.5 19H20"/>',
+    ];
 @endphp
 
+{{-- Estilos mínimos para que los íconos se vean bien en cualquier pantalla (se agregan una sola vez) --}}
+@once
+    <style>
+        .pb-icono { flex-shrink: 0; display: inline-block; vertical-align: middle; }
+        /* Clase repetida a propósito: le gana a estilos como "button { display: block }" de otras hojas */
+        .con-icono.con-icono { display: inline-flex; align-items: center; justify-content: center; gap: .5em; }
+    </style>
+@endonce
+
 <svg
-    {{ $attributes->merge(['class' => 'icono']) }}
+    {{ $attributes->class(['pb-icono' => $base]) }}
     width="{{ $tamano }}"
     height="{{ $tamano }}"
     viewBox="0 0 24 24"

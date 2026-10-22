@@ -229,7 +229,10 @@
     <x-admin-nav titulo="Descuento" />
 
     <main class="contenido">
-        <a href="{{ route('mesas') }}" class="btn-volver"> ← Volver a mesas</a>
+        <a href="{{ route('mesas') }}" class="btn-volver con-icono">
+            <x-icono nombre="volver" tamano="18" />
+            Volver a mesas
+        </a>
 
         @if (session('success'))
             <div class="aviso ok" role="status">{{ session('success') }}</div>
@@ -246,7 +249,10 @@
         {{-- Cómo está funcionando hoy --}}
         <section class="tarjeta" aria-labelledby="titulo-actual">
             <div class="estado-actual">
-                <h2 id="titulo-actual">Situación actual</h2>
+                <h2 id="titulo-actual" class="con-icono">
+                    <x-icono nombre="descuento" />
+                    Situación actual
+                </h2>
                 <span class="pill {{ $configuracion->activo ? 'activo' : 'inactivo' }}">
                     {{ $configuracion->activo ? 'Activo' : 'Desactivado' }}
                 </span>
@@ -264,7 +270,10 @@
 
         {{-- Formulario --}}
         <section class="tarjeta" aria-labelledby="titulo-config">
-            <h2 id="titulo-config">Configurar</h2>
+            <h2 id="titulo-config" class="con-icono">
+                <x-icono nombre="ajustes" />
+                Configurar
+            </h2>
             <p>
                 Cuando el subtotal de una comanda supera el monto tope, el sistema descuenta el porcentaje
                 sobre el total. Si después se quitan productos y el subtotal vuelve a quedar por debajo
@@ -325,7 +334,10 @@
                     <span>Aplicar el descuento</span>
                 </label>
 
-                <button type="submit" class="btn-principal">Guardar configuración</button>
+                <button type="submit" class="btn-principal con-icono">
+                    <x-icono nombre="guardar" tamano="18" />
+                    Guardar configuración
+                </button>
 
                 <p class="nota">
                     Al guardar, se recalculan las {{ $comandasAbiertas }}

@@ -14,10 +14,10 @@
 <label for="password">Contraseña</label>
 <input id="password" name="password" type="password" maxlength="255" autocomplete="current-password" required>
 <label class="show"><input id="show-password" type="checkbox">Mostrar contraseña</label>
-<button type="submit">Ingresar al panel</button>
+<button type="submit" class="con-icono"><x-icono nombre="entrar" tamano="18" /> Ingresar al panel</button>
 </form>
 </section>
-<a class="back" href="{{ route('home') }}">Volver al inicio</a>
+<a class="back con-icono" href="{{ route('home') }}"><x-icono nombre="volver" tamano="16" /> Volver al inicio</a>
 @push('scripts')
 <script>document.getElementById('show-password').addEventListener('change',function(){document.getElementById('password').type=this.checked?'text':'password';});</script>
 @endpush

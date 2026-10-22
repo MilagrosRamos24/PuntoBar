@@ -24,21 +24,21 @@
 
         {{-- MÓDULO MESAS --}}
         <a href="{{ route('admin.mesas.index') }}" class="module">
-            <strong>Mesas</strong>
+            <strong class="con-icono"><x-icono nombre="mesas" /> Mesas</strong>
             <p>Gestión de mesas</p>
         </a>
 
         {{-- MÓDULO MOZOS --}}
         <a href="{{ route('admin.mozos.index') }}" class="module">
-             <strong>Mozos</strong>
-             <p>Gestión del personal</p>
-            </a>
+            <strong class="con-icono"><x-icono nombre="mozo" /> Mozos</strong>
+            <p>Gestión del personal</p>
+        </a>
 
         {{-- MÓDULO COMANDAS --}}
-        <div class="module">
-            <strong>Comandas</strong>
-            <p>Seguimiento de pedidos · Próximamente</p>
-        </div>
+        <a href="{{ route('admin.comandas.index') }}" class="module">
+            <strong class="con-icono"><x-icono nombre="comanda" /> Comandas</strong>
+            <p>Listado e historial de pedidos</p>
+        </a>
 
     </div>
 
@@ -48,7 +48,8 @@
     >
         @csrf
 
-        <button type="submit">
+        <button type="submit" class="con-icono">
+            <x-icono nombre="salir" tamano="18" />
             Cerrar sesión
         </button>
     </form>

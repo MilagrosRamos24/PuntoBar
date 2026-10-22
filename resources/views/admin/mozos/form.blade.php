@@ -117,11 +117,12 @@
 </div>
 
 <div class="acciones mozo-botones">
-    <button type="submit" class="primario">
+    <button type="submit" class="primario con-icono">
+        <x-icono :nombre="isset($mozo) ? 'guardar' : 'mas'" tamano="18" />
         {{ isset($mozo) ? 'Guardar cambios' : 'Crear mozo' }}
     </button>
 
-    <a href="{{ route('admin.mozos.index') }}">Cancelar</a>
+    <a href="{{ route('admin.mozos.index') }}" class="con-icono"><x-icono nombre="quitar" tamano="16" /> Cancelar</a>
 </div>
 
 <style>

@@ -90,7 +90,7 @@
         }
 
         /* Íconos SVG (componente x-icono) */
-        .icono {
+        .pb-icono {
             flex-shrink: 0;
             display: block;
         }

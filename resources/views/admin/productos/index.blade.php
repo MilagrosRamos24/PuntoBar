@@ -45,8 +45,14 @@
             </nav>
 
             <div class="pp-actions">
-                <button type="button" class="pp-btn pp-btn--ghost" data-abrir-masiva>Actualizar precios</button>
-                <button type="button" class="pp-btn pp-btn--primary" data-nuevo>+ Nuevo producto</button>
+                <button type="button" class="pp-btn pp-btn--ghost con-icono" data-abrir-masiva>
+                    <x-icono nombre="descuento" tamano="16" />
+                    Actualizar precios
+                </button>
+                <button type="button" class="pp-btn pp-btn--primary con-icono" data-nuevo>
+                    <x-icono nombre="mas" tamano="16" />
+                    Nuevo producto
+                </button>
             </div>
         </div>
 
@@ -100,9 +106,9 @@
                                         <span class="pp-stock">
                                             <span @class(['pp-num', 'is-danger' => $sinStock, 'is-warn' => $stockBajo])>{{ $producto->stock }} u.</span>
                                             @if ($sinStock)
-                                                <span class="pp-chip pp-chip--danger">Sin stock</span>
+                                                <span class="pp-chip pp-chip--danger con-icono"><x-icono nombre="alerta" tamano="12" /> Sin stock</span>
                                             @elseif ($stockBajo)
-                                                <span class="pp-chip pp-chip--warn">Stock bajo</span>
+                                                <span class="pp-chip pp-chip--warn con-icono"><x-icono nombre="alerta" tamano="12" /> Stock bajo</span>
                                             @endif
                                         </span>
                                     @else
@@ -114,11 +120,17 @@
                                 </td>
                                 <td class="pp-cell-actions">
                                     <div class="pp-row-actions">
-                                        <button type="button" class="pp-btn pp-btn--ghost pp-btn--sm" data-editar="{{ json_encode($datosEdicion, JSON_UNESCAPED_UNICODE) }}">Editar</button>
+                                        <button type="button" class="pp-btn pp-btn--ghost pp-btn--sm con-icono" data-editar="{{ json_encode($datosEdicion, JSON_UNESCAPED_UNICODE) }}">
+                                            <x-icono nombre="editar" tamano="14" />
+                                            Editar
+                                        </button>
                                         <form method="POST" action="{{ route('admin.productos.estado', $producto) }}">
                                             @csrf
                                             @method('PATCH')
-                                            <button type="submit" @class(['pp-btn', 'pp-btn--ghost', 'pp-btn--sm', 'is-danger' => $activo, 'is-ok' => ! $activo])>{{ $activo ? 'Dar de baja' : 'Dar de alta' }}</button>
+                                            <button type="submit" @class(['pp-btn', 'pp-btn--ghost', 'pp-btn--sm', 'con-icono', 'is-danger' => $activo, 'is-ok' => ! $activo])>
+                                                <x-icono :nombre="$activo ? 'eliminar' : 'check'" tamano="14" />
+                                                {{ $activo ? 'Dar de baja' : 'Dar de alta' }}
+                                            </button>
                                         </form>
                                     </div>
                                 </td>

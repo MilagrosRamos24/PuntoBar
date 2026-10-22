@@ -23,10 +23,11 @@
 }
 .pb-admin-nav .pb-admin-link:hover { color: #f0a15f; border-color: #4a3424; background: transparent; }
 .pb-admin-nav .pb-admin-link.is-active { color: #f39b55; background: #211a14; border-color: #543a26; }
-.pb-admin-nav .icono { width: 20px; height: 20px; flex-shrink: 0; }
+/* Íconos del menú (componente x-icono, clase pb-icono) */
+.pb-admin-nav .pb-icono { width: 20px; height: 20px; flex-shrink: 0; }
 .pb-admin-nav .pb-admin-account { flex-shrink: 0; padding-left: 24px; border-left: 1px solid #403126; font-size: 14px; font-weight: 700; }
 .pb-admin-nav .pb-admin-account form { margin: 0; }
-.pb-admin-nav .pb-admin-account button { display: inline-block; width: auto; margin: 6px 0 0; padding: 0; border: 0; background: transparent; color: #c7bdb4; font: inherit; font-size: 13px; cursor: pointer; }
+.pb-admin-nav .pb-admin-account button { display: inline-flex; align-items: center; gap: 6px; width: auto; margin: 6px 0 0; padding: 0; border: 0; background: transparent; color: #c7bdb4; font: inherit; font-size: 13px; cursor: pointer; }
 .pb-admin-nav .pb-admin-account button:hover { color: #f0a15f; background: transparent; }
 .pb-admin-nav :is(a, button):focus-visible { outline: 2px solid #f39b55; outline-offset: 3px; }
 @media (max-width: 1500px) {

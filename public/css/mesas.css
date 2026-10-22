@@ -54,10 +54,9 @@
 
 /* =========================
    ÍCONOS (componente x-icono)
-   Pegar al final de public/css/mesas.css
 ========================= */
 
-.icono {
+.pb-icono {
     flex-shrink: 0;
     display: block;
 }

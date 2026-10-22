@@ -29,6 +29,9 @@
             min-height: 100vh;
         }
 
+        /* Íconos (componente x-icono) */
+        .pb-icono { flex-shrink: 0; display: block; }
+
         /* ===== Barra superior (misma estética que mesas) ===== */
 
         .topbar {
@@ -58,6 +61,9 @@
         .navegacion { display: flex; gap: 8px; flex: 1; justify-content: center; }
 
         .nav-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
             padding: 14px 20px;
             border-radius: 9px;
             color: #c7bdb4;
@@ -70,6 +76,9 @@
         .nav-item.activo { color: #f39b55; background: #211a14; border-color: #543a26; }
 
         .usuario {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
             padding-left: 30px;
             border-left: 1px solid #403126;
             color: #e3d9d0;
@@ -108,7 +117,9 @@
         }
 
         .btn {
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
             padding: 10px 18px;
             border-radius: 8px;
             border: 1px solid #5d4834;
@@ -166,7 +177,17 @@
         .estado.abierta { background: #32cf6a; color: #102117; }
         .estado.cerrada { background: #3a332c; color: #d8cec5; }
 
-        .vacio { padding: 60px 20px; text-align: center; color: #9e948b; }
+        .vacio {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 14px;
+            padding: 60px 20px;
+            text-align: center;
+            color: #9e948b;
+        }
+
+        .vacio .pb-icono { color: #5d4834; }
 
         .paginacion {
             display: flex;
@@ -182,6 +203,8 @@
 
         :focus-visible { outline: 3px solid #e2a15c; outline-offset: 2px; }
 
+        .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
         @media (max-width: 900px) {
             .topbar { flex-wrap: wrap; padding: 18px; }
             .brand { min-width: 100%; }
@@ -194,25 +217,7 @@
 
 <body>
 
-    <header class="topbar">
-
-        <div class="brand">
-            <img src="{{ asset('img/punto-bar-logo-transparente.png') }}" alt="PUNTO BAR" class="logo">
-
-            <div class="titulo-sistema">
-                <h1>Comandas</h1>
-                <p>Listado e historial</p>
-            </div>
-        </div>
-
-        <nav class="navegacion" aria-label="Menú principal">
-            <a href="{{ route('mesas') }}" class="nav-item">Mesas</a>
-            <a href="{{ route('admin.comandas.index') }}" class="nav-item activo" aria-current="page">Comandas</a>
-        </nav>
-
-        <div class="usuario">Vista de administrador</div>
-
-    </header>
+    <x-admin-nav titulo="Comandas" />
 
     <main class="contenido">
 
@@ -244,10 +249,16 @@
                 </select>
             </div>
 
-            <button type="submit" class="btn btn-principal">Filtrar</button>
+            <button type="submit" class="btn btn-principal">
+                <x-icono nombre="filtro" tamano="16" />
+                Filtrar
+            </button>
 
             @if ($hayFiltros)
-                <a href="{{ route('admin.comandas.index') }}" class="btn">Quitar filtros</a>
+                <a href="{{ route('admin.comandas.index') }}" class="btn">
+                    <x-icono nombre="quitar" tamano="16" />
+                    Quitar filtros
+                </a>
             @endif
 
         </form>
@@ -261,9 +272,10 @@
 
             @if ($comandas->isEmpty())
 
-                <p class="vacio">
-                    {{ $hayFiltros ? 'No hay comandas que coincidan con los filtros.' : 'Todavía no hay comandas registradas.' }}
-                </p>
+                <div class="vacio">
+                    <x-icono nombre="comanda" tamano="40" />
+                    <p>{{ $hayFiltros ? 'No hay comandas que coincidan con los filtros.' : 'Todavía no hay comandas registradas.' }}</p>
+                </div>
 
             @else
 
@@ -300,6 +312,7 @@
                                 <td class="total">{{ $pesos($comanda->total) }}</td>
                                 <td>
                                     <a href="{{ route('comandas.show', $comanda) }}" class="btn">
+                                        <x-icono nombre="ver" tamano="16" />
                                         Ver<span class="sr-only"> comanda #{{ $comanda->id }}</span>
                                     </a>
                                 </td>
@@ -314,18 +327,19 @@
 
         @if ($comandas->lastPage() > 1)
             <nav class="paginacion" aria-label="Páginas">
-                <a href="{{ $comandas->previousPageUrl() ?? '#' }}" class="btn" @if ($comandas->onFirstPage()) aria-disabled="true" @endif>← Anteriores</a>
+                <a href="{{ $comandas->previousPageUrl() ?? '#' }}" class="btn" @if ($comandas->onFirstPage()) aria-disabled="true" @endif>
+                    <x-icono nombre="volver" tamano="16" />
+                    Anteriores
+                </a>
                 <span>Página {{ $comandas->currentPage() }} de {{ $comandas->lastPage() }}</span>
-                <a href="{{ $comandas->nextPageUrl() ?? '#' }}" class="btn" @if (! $comandas->hasMorePages()) aria-disabled="true" @endif>Siguientes →</a>
-                <a href="{{ route('admin.descuento.edit') }}" class="nav-item">Descuento</a>
+                <a href="{{ $comandas->nextPageUrl() ?? '#' }}" class="btn" @if (! $comandas->hasMorePages()) aria-disabled="true" @endif>
+                    Siguientes
+                    <x-icono nombre="siguiente" tamano="16" />
+                </a>
             </nav>
         @endif
 
     </main>
-
-    <style>
-        .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-    </style>
 
 <x-dialogo />
 </body>
