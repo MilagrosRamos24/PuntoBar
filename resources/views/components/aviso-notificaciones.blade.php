@@ -14,7 +14,7 @@
         @endonce
 
         <section class="pn-banner" role="status" aria-label="Notificaciones sin leer">
-            <span class="pn-banner-icono" aria-hidden="true">!</span>
+            <span class="pn-banner-icono" aria-hidden="true"><x-icono nombre="alerta" tamano="18" /></span>
 
             <div class="pn-banner-cuerpo">
                 <strong class="pn-banner-titulo">
@@ -30,7 +30,10 @@
                 </ul>
             </div>
 
-            <a href="{{ route('admin.notificaciones.index') }}" class="pn-banner-enlace">Ver notificaciones</a>
+            <a href="{{ route('admin.notificaciones.index') }}" class="pn-banner-enlace con-icono">
+                <x-icono nombre="ver" tamano="16" />
+                Ver notificaciones
+            </a>
         </section>
     @endif
 @endif

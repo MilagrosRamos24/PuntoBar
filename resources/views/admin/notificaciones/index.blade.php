@@ -20,6 +20,7 @@
 
         @if ($notificaciones->total() === 0)
             <div class="pn-vacio">
+                <x-icono nombre="campana" tamano="36" />
                 <strong>No hay notificaciones pendientes.</strong>
                 <span>Cuando un producto se quede sin stock, vas a verlo acá.</span>
             </div>
@@ -35,7 +36,7 @@
             <div class="pn-lista">
                 @foreach ($notificaciones as $n)
                     <article @class(['pn-item', 'is-nueva' => ! $n->estaLeida()])>
-                        <span class="pn-icono" aria-hidden="true">!</span>
+                        <span class="pn-icono" aria-hidden="true"><x-icono nombre="alerta" tamano="18" /></span>
 
                         <div class="pn-cuerpo">
                             <p class="pn-titulo"><strong>{{ $n->nombre_producto }}</strong> se quedó sin stock</p>
@@ -58,7 +59,10 @@
                                 <form method="POST" action="{{ route('admin.notificaciones.leida', $n) }}">
                                     @csrf
                                     @method('PATCH')
-                                    <button type="submit" class="pp-btn pp-btn--ghost pp-btn--sm">Marcar como leída</button>
+                                    <button type="submit" class="pp-btn pp-btn--ghost pp-btn--sm con-icono">
+                                        <x-icono nombre="check" tamano="14" />
+                                        Marcar como leída
+                                    </button>
                                 </form>
                             @endif
                         </div>
@@ -69,15 +73,15 @@
             @if ($notificaciones->hasPages())
                 <nav class="pn-paginas" aria-label="Paginación">
                     @if ($notificaciones->onFirstPage())
-                        <span aria-disabled="true">‹ Más recientes</span>
+                        <span aria-disabled="true" class="con-icono"><x-icono nombre="volver" tamano="16" /> Más recientes</span>
                     @else
-                        <a href="{{ $notificaciones->previousPageUrl() }}">‹ Más recientes</a>
+                        <a href="{{ $notificaciones->previousPageUrl() }}" class="con-icono"><x-icono nombre="volver" tamano="16" /> Más recientes</a>
                     @endif
 
                     @if ($notificaciones->hasMorePages())
-                        <a href="{{ $notificaciones->nextPageUrl() }}">Más antiguas ›</a>
+                        <a href="{{ $notificaciones->nextPageUrl() }}" class="con-icono">Más antiguas <x-icono nombre="siguiente" tamano="16" /></a>
                     @else
-                        <span aria-disabled="true">Más antiguas ›</span>
+                        <span aria-disabled="true" class="con-icono">Más antiguas <x-icono nombre="siguiente" tamano="16" /></span>
                     @endif
                 </nav>
             @endif

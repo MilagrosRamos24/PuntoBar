@@ -8,12 +8,15 @@
     Nombres disponibles: mesas, mesa, mozo, personas, productos, comanda, descuento,
     reloj, mas, check, salir, ajustes, lista, flecha-abajo, campana,
     editar, eliminar, volver, guardar, alerta, reloj-arena,
-    filtro, ver, quitar, siguiente.
+    filtro, ver, quitar, siguiente, entrar.
+
+    El SVG lleva la clase "pb-icono" (no "icono", porque el inicio y los logins ya usan "icono"
+    para el círculo grande de cada opción). Con :base="false" se dibuja sin esa clase.
 
     Para agregar un ícono: sumar una línea al arreglo de abajo, con su nombre y su dibujo SVG.
 --}}
 
-@props(['nombre' => '', 'tamano' => 20])
+@props(['nombre' => '', 'tamano' => 20, 'base' => true])
 
 @php
     $iconos = [
@@ -91,11 +94,23 @@
 
         // Flecha hacia la derecha: siguiente
         'siguiente' => '<path d="M5 12h14"/><path d="m13 6 6 6-6 6"/>',
+
+        // Puerta con flecha hacia adentro: ingresar
+        'entrar' => '<path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3"/><path d="m10 16 4-4-4-4"/><path d="M14 12H4"/>',
     ];
 @endphp
 
+{{-- Estilos mínimos para que los íconos se vean bien en cualquier pantalla (se agregan una sola vez) --}}
+@once
+    <style>
+        .pb-icono { flex-shrink: 0; display: inline-block; vertical-align: middle; }
+        /* Clase repetida a propósito: le gana a estilos como "button { display: block }" de otras hojas */
+        .con-icono.con-icono { display: inline-flex; align-items: center; justify-content: center; gap: .5em; }
+    </style>
+@endonce
+
 <svg
-    {{ $attributes->merge(['class' => 'icono']) }}
+    {{ $attributes->class(['pb-icono' => $base]) }}
     width="{{ $tamano }}"
     height="{{ $tamano }}"
     viewBox="0 0 24 24"

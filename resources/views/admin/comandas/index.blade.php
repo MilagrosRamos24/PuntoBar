@@ -28,7 +28,7 @@
         }
 
         /* Íconos (componente x-icono) */
-        .icono { flex-shrink: 0; display: block; }
+        .pb-icono { flex-shrink: 0; display: block; }
 
         /* ===== Barra superior (misma estética que mesas) ===== */
 
@@ -185,7 +185,7 @@
             color: #9e948b;
         }
 
-        .vacio .icono { color: #5d4834; }
+        .vacio .pb-icono { color: #5d4834; }
 
         .paginacion {
             display: flex;
@@ -215,38 +215,7 @@
 
 <body>
 
-    <header class="topbar">
-
-        <div class="brand">
-            <img src="{{ asset('img/punto-bar-logo-transparente.png') }}" alt="PUNTO BAR" class="logo">
-
-            <div class="titulo-sistema">
-                <h1>Comandas</h1>
-                <p>Listado e historial</p>
-            </div>
-        </div>
-
-        <nav class="navegacion" aria-label="Menú principal">
-            <a href="{{ route('mesas') }}" class="nav-item">
-                <x-icono nombre="mesas" />
-                Mesas
-            </a>
-            <a href="{{ route('admin.comandas.index') }}" class="nav-item activo" aria-current="page">
-                <x-icono nombre="comanda" />
-                Comandas
-            </a>
-            <a href="{{ route('admin.descuento.edit') }}" class="nav-item">
-                <x-icono nombre="descuento" />
-                Descuento
-            </a>
-        </nav>
-
-        <div class="usuario">
-            <x-icono nombre="ajustes" tamano="18" />
-            Vista de administrador
-        </div>
-
-    </header>
+    <x-admin-nav titulo="Comandas" />
 
     <main class="contenido">
 

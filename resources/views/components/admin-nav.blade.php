@@ -24,10 +24,16 @@
         <x-campana-notificaciones />
     </nav>
     <div class="pb-admin-account">
-        <span>Vista de administrador</span>
+        <span class="con-icono">
+            <x-icono nombre="ajustes" tamano="18" />
+            Vista de administrador
+        </span>
         <form method="POST" action="{{ route('admin.logout') }}">
             @csrf
-            <button type="submit">Cerrar sesión</button>
+            <button type="submit" class="con-icono">
+                <x-icono nombre="salir" tamano="18" />
+                Cerrar sesión
+            </button>
         </form>
     </div>
 </header>

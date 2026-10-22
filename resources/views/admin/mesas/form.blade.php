@@ -27,4 +27,7 @@
     <label for="cantidad_personas">Cantidad de personas</label>
     <input id="cantidad_personas" name="cantidad_personas" type="number" min="0" max="2147483647" value="{{ old('cantidad_personas', $mesa?->cantidad_personas ?? 0) }}" required>
 </div>
-<div class="acciones"><a href="{{ route('admin.mesas.index') }}">Cancelar</a><button class="primario">Guardar</button></div>
+<div class="acciones">
+    <a href="{{ route('admin.mesas.index') }}" class="con-icono"><x-icono nombre="quitar" tamano="16" /> Cancelar</a>
+    <button class="primario con-icono"><x-icono nombre="guardar" tamano="18" /> Guardar</button>
+</div>

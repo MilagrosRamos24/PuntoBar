@@ -17,7 +17,7 @@
                 <a href="{{ route('admin.login') }}" class="opcion">
 
                     <div class="icono" aria-hidden="true">
-                        🤵
+                        <x-icono nombre="ajustes" tamano="34" :base="false" />
                     </div>
 
                     <h3>Administrador</h3>
@@ -32,7 +32,7 @@
                 <a href="{{ route('mozo.login') }}" class="opcion">
 
                     <div class="icono" aria-hidden="true">
-                        🍽️
+                        <x-icono nombre="mesa" tamano="34" :base="false" />
                     </div>
 
                     <h3>Mozo</h3>

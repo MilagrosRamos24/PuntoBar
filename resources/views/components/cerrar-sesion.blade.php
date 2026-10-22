@@ -7,7 +7,10 @@
     <form method="POST"
           action="{{ auth()->user()->role === 'admin' ? route('admin.logout') : route('mozo.logout') }}">
         @csrf
-        <button type="submit">Cerrar sesión</button>
+        <button type="submit" class="con-icono">
+            <x-icono nombre="salir" tamano="18" />
+            Cerrar sesión
+        </button>
     </form>
 @endauth
 

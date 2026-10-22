@@ -51,15 +51,17 @@
 
     <label class="show"><input id="show-password" type="checkbox">Mostrar contraseña</label>
 
-    <button type="submit" >
+    <button type="submit" class="con-icono">
+        <x-icono nombre="entrar" tamano="18" />
         Ingresar
     </button>
 </form>
 
     </section>
 
-        <a href="{{ route('home') }}" class="back">
-            ← Volver
+        <a href="{{ route('home') }}" class="back con-icono">
+            <x-icono nombre="volver" tamano="16" />
+            Volver
         </a>
 
 
