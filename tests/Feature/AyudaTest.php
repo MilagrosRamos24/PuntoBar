@@ -63,4 +63,12 @@ class AyudaTest extends TestCase
         $this->actingAs($this->usuario('admin'))->get('/mesas')->assertOk()->assertSee(route('ayuda'));
         $this->actingAs($this->usuario('mozo'))->get('/mesas')->assertOk()->assertSee(route('ayuda'));
     }
+
+    public function test_el_menu_del_administrador_incluye_ayuda_en_otras_pantallas(): void
+    {
+        $this->actingAs($this->usuario('admin'))
+            ->get('/admin/productos')
+            ->assertOk()
+            ->assertSee(route('ayuda'));
+    }
 }

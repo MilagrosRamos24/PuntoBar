@@ -1535,8 +1535,7 @@
                 <x-campana-notificaciones />
 
             @endif
-
-                   <a href="{{ route('ayuda') }}" class="nav-item">
+            <a href="{{ route('ayuda') }}" class="nav-item">
                 <svg class="icono nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21.5V5.5Z"/><path d="M4 21.5A2.5 2.5 0 0 1 6.5 19H20"/></svg>
                 Ayuda
             </a> </nav>
