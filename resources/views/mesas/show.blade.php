@@ -17,6 +17,9 @@
     <title>Mesa {{ $mesa->numero }} · Punto Bar</title>
 
     <link rel="stylesheet" href="{{ asset('css/mesas.css') }}">
+    <link rel="icon"
+      type="image/png"
+      href="{{ asset('img/favicon.png') }}?v=3">
 </head>
 <body>
     @if (auth()->user()->role === 'admin')

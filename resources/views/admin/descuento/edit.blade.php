@@ -16,6 +16,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Descuento por consumo - PUNTO BAR</title>
+    <link rel="icon"
+      type="image/png"
+      href="{{ asset('img/favicon.png') }}?v=3">
 
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }

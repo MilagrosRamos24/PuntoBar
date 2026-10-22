@@ -97,3 +97,33 @@
         white-space: nowrap;
     }
 }
+/* Recuperar el tamaño del logo en todo el administrador */
+.pb-admin-nav .pb-admin-logo {
+    width: 190px;
+    min-width: 190px;
+    max-width: 190px;
+    flex: 0 0 190px;
+    height: auto;
+    max-height: none;
+    padding-right: 18px;
+    margin-right: 18px;
+}
+.pb-admin-nav .pb-admin-brand {
+    position: relative;
+}
+
+.pb-admin-nav .pb-admin-logo {
+    border-right: none;
+}
+
+/* Separador con altura independiente del logo */
+.pb-admin-nav .pb-admin-brand::after {
+    content: "";
+    position: absolute;
+    left: 171px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1px;
+    height: 56px;
+    background: #403126;
+}
