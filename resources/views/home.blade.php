@@ -22,9 +22,7 @@
 
                     <h3>Administrador</h3>
 
-                    <p>
-                        Mesas, mozos y comandas
-                    </p>
+                 
 
                 </a>
 
@@ -37,9 +35,7 @@
 
                     <h3>Mozo</h3>
 
-                    <p>
-                        Atención de mesas
-                    </p>
+            
 
                 </a>
 

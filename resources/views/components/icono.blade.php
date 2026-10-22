@@ -8,7 +8,7 @@
     Nombres disponibles: mesas, mesa, mozo, personas, productos, comanda, descuento,
     reloj, mas, check, salir, ajustes, lista, flecha-abajo, campana,
     editar, eliminar, volver, guardar, alerta, reloj-arena,
-    filtro, ver, quitar, siguiente, entrar.
+    filtro, ver, quitar, siguiente, entrar, ayuda.
 
     El SVG lleva la clase "pb-icono" (no "icono", porque el inicio y los logins ya usan "icono"
     para el círculo grande de cada opción). Con :base="false" se dibuja sin esa clase.
@@ -97,6 +97,9 @@
 
         // Puerta con flecha hacia adentro: ingresar
         'entrar' => '<path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3"/><path d="m10 16 4-4-4-4"/><path d="M14 12H4"/>',
+
+        // Libro abierto: ayuda y manual de usuario
+        'ayuda' => '<path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21.5V5.5Z"/><path d="M4 21.5A2.5 2.5 0 0 1 6.5 19H20"/>',
     ];
 @endphp
 
