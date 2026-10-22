@@ -1,0 +1,49 @@
+/* Manual de usuario · Punto Bar (se apoya en productos.css: encabezado y variables de color) */
+
+/* ---------- Selector de rol y botón del PDF ---------- */
+.ay-controles { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; margin: 0 0 32px; }
+.ay-rol { display: inline-flex; padding: 4px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; }
+.ay-rol a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 22px; border-radius: 10px; color: var(--muted); font-size: 16px; font-weight: 600; text-decoration: none; }
+.ay-rol a:hover { color: var(--text); }
+.ay-rol a[aria-current="true"] { background: var(--accent); color: #21170e; font-weight: 700; }
+.ay-pdf { display: inline-flex; align-items: center; min-height: 48px; padding: 0 20px; border: 1px solid var(--line-2); border-radius: 14px; color: var(--text); font-size: 15px; font-weight: 600; text-decoration: none; transition: border-color .15s; }
+.ay-pdf:hover { border-color: var(--accent); }
+
+/* ---------- Índice y contenido ---------- */
+.ay-cuerpo { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 40px; }
+.ay-indice { flex: 0 0 260px; box-sizing: border-box; padding: 22px; background: var(--card); border: 1px solid var(--line); border-radius: 20px; }
+.ay-indice-titulo { margin: 0 0 12px; font-size: 13px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.ay-indice ul { margin: 0; padding: 0; list-style: none; }
+.ay-indice a { display: block; padding: 9px 0; color: var(--text); font-size: 15px; text-decoration: none; }
+.ay-indice a:hover { color: var(--accent); }
+.ay-contenido { flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column; gap: 44px; }
+
+.ay-seccion { scroll-margin-top: 24px; }
+.ay-seccion h2 { margin: 0 0 14px; font-size: 26px; font-weight: 700; color: var(--text); }
+.ay-seccion h3 { margin: 26px 0 10px; font-size: 19px; font-weight: 700; color: var(--text); }
+.ay-seccion p { margin: 0 0 14px; font-size: 16px; line-height: 1.65; color: #e6dccf; }
+.ay-seccion ol, .ay-seccion ul { margin: 0 0 14px; padding-left: 24px; font-size: 16px; line-height: 1.65; color: #e6dccf; }
+.ay-seccion li { margin: 6px 0; }
+.ay-seccion strong { color: var(--text); }
+
+/* ---------- Estados de las mesas ---------- */
+.ay-seccion .ay-estados { margin: 0 0 14px; padding: 0; list-style: none; background: var(--card); border: 1px solid var(--line); border-radius: 18px; }
+.ay-seccion .ay-estados li { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 20px; margin: 0; padding: 14px 20px; }
+.ay-seccion .ay-estados li + li { border-top: 1px solid var(--line-2); }
+.ay-chip { flex: 0 0 190px; box-sizing: border-box; padding: 6px 12px; border-radius: 10px; font-size: 14px; font-weight: 700; text-align: center; }
+.ay-chip--libre { background: #9cc5ff; color: #0a2748; }
+.ay-chip--espera { background: #f7c948; color: #3a2a00; }
+.ay-chip--atendida { background: #6fdc92; color: #0b2a17; }
+.ay-chip--alerta { background: #ff8a80; color: #3d0a07; }
+
+/* ---------- Preguntas frecuentes ---------- */
+.ay-tabla { overflow-x: auto; margin: 0 0 14px; background: var(--card); border: 1px solid var(--line); border-radius: 18px; }
+.ay-tabla table { width: 100%; min-width: 680px; border-collapse: collapse; }
+.ay-tabla th { padding: 14px 18px; text-align: left; font-size: 13px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); border-bottom: 1px solid var(--line); }
+.ay-tabla td { padding: 14px 18px; vertical-align: top; font-size: 15px; line-height: 1.55; color: #e6dccf; }
+.ay-tabla tr + tr td { border-top: 1px solid var(--line-2); }
+
+@media (max-width: 720px) {
+    .ay-indice { flex: 1 1 100%; }
+    .ay-chip { flex-basis: 100%; }
+}
