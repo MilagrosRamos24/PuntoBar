@@ -28,6 +28,7 @@ Route::get('/admin/login', [AdminLoginController::class, 'create'])
 Route::post('/admin/login', [AdminLoginController::class, 'store'])
     ->name('admin.login.store');
 
+
 // Mozo. throttle:5,1 = máximo 5 intentos por minuto, para que no se puedan
 // adivinar las contraseñas probando combinaciones.
 Route::get('/mozo/login', [MozoAuthController::class, 'index'])
@@ -117,8 +118,12 @@ Route::middleware(VerificarRol::class . ':admin')
         Route::get('notificaciones', [AdminNotificacionStockController::class, 'index'])
             ->name('notificaciones.index');
 
+
         Route::patch('notificaciones/{notificacion}/leida', [AdminNotificacionStockController::class, 'marcarLeida'])
             ->name('notificaciones.leida');
+
+         Route::delete('notificaciones', [AdminNotificacionStockController::class, 'eliminar'])
+            ->name('notificaciones.eliminar');
 
         Route::get('/panel', function () {
     return redirect()->route('mesas');

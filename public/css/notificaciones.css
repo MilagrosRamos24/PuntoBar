@@ -48,3 +48,17 @@
     .pn-item { flex-wrap: wrap; }
     .pn-acciones { width: 100%; }
 }
+/* Selección y eliminación de notificaciones. */
+.pn-herramientas { display:flex; flex-wrap:wrap; align-items:center; gap:12px 18px; margin:0 0 20px; padding:16px; border:1px solid var(--line); border-radius:14px; background:var(--card); color:var(--text); }
+.pn-herramientas form { display:flex; flex-wrap:wrap; gap:10px; margin:0; }
+.pn-herramientas small { flex-basis:100%; color:var(--muted); }
+.pn-seleccion { display:inline-flex; align-items:center; gap:8px; cursor:pointer; }
+.pn-seleccion input, .pn-elegir { width:19px; height:19px; flex-shrink:0; accent-color:var(--accent, #e9a365); cursor:pointer; }
+.pn-btn-eliminar { background:#8c3038; border:1px solid #be525b; color:#fff; }
+.pn-btn-eliminar:hover { background:#a33b44; }
+.pn-herramientas button:disabled { opacity:.45; cursor:not-allowed; }
+@media(max-width:720px) { .pn-herramientas form { width:100%; } .pn-herramientas button { flex:1 1 180px; } }
+
+.pn-herramientas {
+    margin-top: 20px;
+}
