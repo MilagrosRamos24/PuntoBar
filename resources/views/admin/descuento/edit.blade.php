@@ -164,8 +164,8 @@
             font-size: 16px;
         }
 
-        .con-prefijo .monto { padding-left: 28px; }
-        .con-prefijo .porc { padding-right: 32px; }
+        .campo .con-prefijo .monto { padding-left: 30px; }
+        .campo .con-prefijo .porc { padding-right: 34px; }
 
         .ayuda { margin-top: 6px; color: #8f837a; font-size: 13px; }
 
