@@ -106,7 +106,7 @@
 {{-- Estilos mínimos para que los íconos se vean bien en cualquier pantalla (se agregan una sola vez) --}}
 @once
     <style>
-        .pb-icono { flex-shrink: 0; display: inline-block; vertical-align: middle; }
+        :where(.pb-icono) { flex-shrink: 0; display; inline-block; vertical-align: middle; }
         /* Clase repetida a propósito: le gana a estilos como "button { display: block }" de otras hojas */
         .con-icono.con-icono { display: inline-flex; align-items: center; justify-content: center; gap: .5em; }
     </style>
