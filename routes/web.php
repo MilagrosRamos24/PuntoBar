@@ -67,6 +67,7 @@ Route::middleware(VerificarRol::class . ':admin,mozo')->group(function () {
 
     // Comandas (PB-10 a PB-14)
     Route::post('/mesas/{mesa}/comandas', [ComandaController::class, 'store'])
+        ->middleware(\App\Http\Middleware\VerificarMesaActiva::class)
         ->name('comandas.store');
 
     Route::get('/comandas/{comanda}', [ComandaController::class, 'show'])
@@ -95,6 +96,8 @@ Route::middleware(VerificarRol::class . ':admin')
     ->name('admin.')
     ->group(function () {
 
+        Route::patch('mesas/{mesa}/actividad', [AdminMesaController::class, 'cambiarActividad'])
+            ->name('mesas.actividad');
         Route::resource('mesas', AdminMesaController::class);
         // Gestión de mozos.
         Route::patch('mozos/{mozo}/habilitar', [AdminMozoController::class, 'habilitar'])

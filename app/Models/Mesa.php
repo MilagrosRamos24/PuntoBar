@@ -14,6 +14,7 @@ class Mesa extends Model
 ];
 
     protected $fillable = [
+    'activa',
     'numero',
     'estado',
     'mozo_id',
@@ -25,6 +26,7 @@ class Mesa extends Model
     protected function casts(): array
     {
     return [
+        'activa' => 'boolean',
         'numero' => 'integer',
         'cantidad_personas' => 'integer',
         'inicio_espera' => 'datetime',

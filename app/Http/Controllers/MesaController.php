@@ -22,7 +22,7 @@ class MesaController extends Controller
     $consulta = Mesa::with([
         'mozo',
         'comandaAbierta.detalles.producto',
-    ]);
+    ])->where('activa', true);
 
     if ($soloMisMesas) {
         $consulta->where('mozo_id', $usuario->id);
@@ -71,6 +71,8 @@ class MesaController extends Controller
         $mesaActual = Mesa::whereKey($mesa->id)
             ->lockForUpdate()
             ->firstOrFail();
+
+        abort_unless($mesaActual->activa, 409, 'Esta mesa está desactivada. Actualizá la pantalla.');
             // El mozo debe cerrar la comanda antes de liberar la mesa.
             if (
                 request()->user()->role === 'mozo' &&
@@ -141,6 +143,8 @@ public function atender(Request $request, Mesa $mesa)
             ->lockForUpdate()
             ->firstOrFail();
 
+        abort_unless($mesaActual->activa, 409, 'Esta mesa está desactivada. Actualizá la pantalla.');
+
         if ($mesaActual->estado !== 'libre') {
             throw ValidationException::withMessages([
                 'mesa' =>
@@ -185,6 +189,8 @@ public function atender(Request $request, Mesa $mesa)
      */
     private function verificarAcceso(Request $request, Mesa $mesa): void
     {
+        abort_unless($mesa->activa, 409, 'Esta mesa está desactivada.');
+
         $usuario = $request->user();
 
         $esAdministrador = $usuario->role === 'admin';
