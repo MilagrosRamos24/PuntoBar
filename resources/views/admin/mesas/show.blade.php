@@ -19,6 +19,7 @@
         <h1>Mesa {{ $mesa->numero }}</h1>
     </div>
     <dl>
+        <dt>Disponibilidad</dt><dd>{{ $mesa->activa ? 'Activa' : 'Inactiva' }}</dd>
         <dt>Estado</dt><dd><span class="estado {{ $mesa->estado }}">{{ $mesa->estado_texto }}</span></dd>
         <dt>Mozo asignado</dt><dd>{{ $mesa->mozo?->name ?? 'Sin asignar' }}</dd>
         <dt>Cantidad de personas</dt><dd>{{ $mesa->cantidad_personas }}</dd>
@@ -32,13 +33,17 @@
             <x-icono nombre="editar" tamano="18" />
             Editar
         </a>
-        <form action="{{ route('admin.mesas.destroy', $mesa) }}" method="POST" data-confirmar="¿Eliminar esta mesa? Esta acción no se puede deshacer." data-confirmar-titulo="Eliminar mesa" data-confirmar-aceptar="Eliminar">
-            @csrf @method('DELETE')
-            <button class="peligro con-icono">
-                <x-icono nombre="eliminar" tamano="18" />
-                Eliminar
-            </button>
-        </form>
+<form action="{{ route('admin.mesas.actividad', $mesa) }}" method="POST"
+    data-confirmar="{{ $mesa->activa ? '¿Desactivar esta mesa? Se conservará su historial y se quitará de la vista de atención.' : '¿Reactivar esta mesa? Volverá a estar disponible como libre.' }}"
+    data-confirmar-titulo="{{ $mesa->activa ? 'Desactivar mesa' : 'Reactivar mesa' }}"
+    data-confirmar-aceptar="{{ $mesa->activa ? 'Desactivar' : 'Reactivar' }}">
+    @csrf
+    @method('PATCH')
+    <button type="submit" class="{{ $mesa->activa ? 'peligro' : 'primario' }} con-icono">
+        {{ $mesa->activa ? 'Desactivar' : 'Reactivar' }}
+    </button>
+</form>
+
     </div>
 </section>
 @endsection

@@ -127,9 +127,50 @@ class AdminMesaController extends Controller
         ->with('success', 'Mesa actualizada correctamente.');
         }
 
-    public function destroy(Mesa $mesa)
+    public function cambiarActividad(Mesa $mesa)
     {
-        $mesa->delete();
-        return redirect()->route('admin.mesas.index')->with('success', 'Mesa eliminada correctamente.');
+        return \Illuminate\Support\Facades\DB::transaction(function () use ($mesa) {
+            $mesa = Mesa::whereKey($mesa->id)->lockForUpdate()->firstOrFail();
+
+            if ($mesa->activa && $mesa->comandaAbierta()->exists()) {
+                return redirect()->route('admin.mesas.index')
+                    ->with('error', 'Primero debés cerrar la comanda antes de desactivar la mesa.');
+            }
+
+            $activar = ! $mesa->activa;
+            $mesa->update([
+                'activa' => $activar,
+                'estado' => 'libre',
+                'mozo_id' => null,
+                'cantidad_personas' => 0,
+                'inicio_espera' => null,
+            ]);
+
+            return redirect()->route('admin.mesas.index')->with(
+                'success',
+                $activar ? 'Mesa reactivada correctamente.' : 'Mesa desactivada correctamente.'
+            );
+        });
     }
+
+    public function destroy(Mesa $mesa)
+{
+    $tieneComandas = \App\Models\Comanda::where('mesa_id', $mesa->id)
+        ->exists();
+
+    if ($tieneComandas) {
+        return redirect()
+            ->route('admin.mesas.index')
+            ->with(
+                'error',
+                'No se puede eliminar esta mesa porque tiene comandas asociadas. Debe conservarse para mantener el historial.'
+            );
+    }
+
+    $mesa->delete();
+
+    return redirect()
+        ->route('admin.mesas.index')
+        ->with('success', 'Mesa eliminada correctamente.');
+}
 }
