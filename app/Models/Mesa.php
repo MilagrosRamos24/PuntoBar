@@ -20,6 +20,7 @@ class Mesa extends Model
     'mozo_id',
     'cantidad_personas',
     'inicio_espera',
+    'ultimo_pedido_en',
     ];
 
 
@@ -30,7 +31,22 @@ class Mesa extends Model
         'numero' => 'integer',
         'cantidad_personas' => 'integer',
         'inicio_espera' => 'datetime',
+        'ultimo_pedido_en' => 'datetime',
     ];
+    }
+
+    protected static function booted(): void
+    {
+        static::saving(function (Mesa $mesa) {
+            if ($mesa->estado === 'libre' || $mesa->activa === false) {
+                $mesa->ultimo_pedido_en = null;
+            } elseif (
+                $mesa->isDirty('estado') &&
+                (! $mesa->exists || $mesa->getOriginal('estado') === 'libre')
+            ) {
+                $mesa->ultimo_pedido_en = now();
+            }
+        });
     }
 
     public function mozo()

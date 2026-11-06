@@ -47,6 +47,30 @@ class MesaController extends Controller
         'soloMisMesas'
     ));
 }
+    public function tiempos(Request $request)
+    {
+        $consulta = Mesa::where('activa', true);
+        if ($request->user()->role === 'mozo' && $request->query('vista') === 'mis-mesas') {
+            $consulta->where('mozo_id', $request->user()->id);
+        }
+
+        return response()->json([
+            'servidor' => now()->getTimestampMs(),
+            'mesas' => $consulta->get()->map(fn (Mesa $mesa) => [
+                'id' => $mesa->id,
+                'numero' => $mesa->numero,
+                // El aviso se calcula en el servidor y solo corresponde al mozo asignado.
+                'alerta' => $request->user()->role === 'mozo'
+                    && (int) $mesa->mozo_id === (int) $request->user()->id
+                    && $mesa->estado_visual === 'pendiente_de_cierre',
+                'episodio' => $mesa->inicio_espera?->toIso8601String() ?? 'manual',
+                'desde' => $mesa->estado !== 'libre' && $mesa->ultimo_pedido_en
+                    ? $mesa->ultimo_pedido_en->getTimestampMs()
+                    : null,
+            ]),
+        ])->header('Cache-Control', 'no-store');
+    }
+
     public function show(Request $request, Mesa $mesa)
     {
         $this->verificarAcceso($request, $mesa);
@@ -174,6 +198,7 @@ public function atender(Request $request, Mesa $mesa)
             'cantidad_personas' => (int) $datos['cantidad_personas'],
             'estado' => 'ocupada',
             'inicio_espera' => now(),
+            'ultimo_pedido_en' => now(),
         ]);
     });
 

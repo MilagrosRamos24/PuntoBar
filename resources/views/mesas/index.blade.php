@@ -1756,6 +1756,12 @@
                     </div>
 
 
+                    <div class="info-linea" data-tiempo-pedido="{{ $mesa->id }}"
+                         data-desde="{{ $mesa->estado !== 'libre' && $mesa->ultimo_pedido_en ? $mesa->ultimo_pedido_en->getTimestampMs() : '' }}"
+                         style="margin-top: 12px; font-variant-numeric: tabular-nums;">
+                        <span class="info-icon"><x-icono nombre="reloj" tamano="18" /></span>
+                        <span>Última atención / pedido: <strong data-contador-pedido>Sin registro</strong></span>
+                    </div>
                     <div class="mesa-separador"></div>
 
 
@@ -2545,6 +2551,111 @@ document.addEventListener('DOMContentLoaded', function () {
     </script>
 @endif
 
+<script>
+(() => {
+    const elementos = [...document.querySelectorAll('[data-tiempo-pedido]')];
+    const usuarioAlertas = @json(auth()->id());
+    const pendientesAlertas = new Map();
+    const memoriaAlertas = new Map();
+    let mostrandoAlerta = false;
+    const claveAlerta = id => `puntobar:alerta-atencion:${usuarioAlertas}:${id}`;
+    function leerAlerta(id) {
+        try { return localStorage.getItem(claveAlerta(id)); }
+        catch (_) { return memoriaAlertas.get(String(id)) ?? null; }
+    }
+    function guardarAlerta(id, episodio) {
+        memoriaAlertas.set(String(id), episodio);
+        try { localStorage.setItem(claveAlerta(id), episodio); } catch (_) {}
+    }
+    function limpiarAlerta(id) {
+        memoriaAlertas.delete(String(id));
+        try { localStorage.removeItem(claveAlerta(id)); } catch (_) {}
+    }
+    function recibirAlertas(mesas) {
+        const visibles = new Set(mesas.map(mesa => String(mesa.id)));
+        for (const id of pendientesAlertas.keys()) {
+            if (!visibles.has(id)) pendientesAlertas.delete(id);
+        }
+        mesas.forEach(mesa => {
+            const id = String(mesa.id);
+            if (!mesa.alerta) {
+                pendientesAlertas.delete(id);
+                limpiarAlerta(id);
+                return;
+            }
+            if (leerAlerta(id) !== mesa.episodio) pendientesAlertas.set(id, mesa);
+        });
+        mostrarSiguienteAlerta();
+    }
+    async function mostrarSiguienteAlerta() {
+        // Esperar las confirmaciones y las ventanas de comandas que ya estén abiertas.
+        if (mostrandoAlerta || document.hidden || document.querySelector('dialog[open]')
+            || typeof window.avisar !== 'function') return;
+        for (const [id, mesa] of pendientesAlertas) {
+            pendientesAlertas.delete(id);
+            if (leerAlerta(id) === mesa.episodio) continue;
+            mostrandoAlerta = true;
+            guardarAlerta(id, mesa.episodio);
+            try {
+                await window.avisar(
+                    `La mesa ${mesa.numero}, que tenés asignada, pasó a Alerta de atención. Acercate para verificar si necesita atención.`,
+                    'Alerta de atención'
+                );
+            } finally { mostrandoAlerta = false; }
+            break;
+        }
+    }
+    setInterval(mostrarSiguienteAlerta, 1000);
+
+    let relojServidor = @json(now()->getTimestampMs());
+    let referencia = performance.now();
+    let consultando = false;
+    const formato = total => {
+        total = Math.max(0, Math.floor(total));
+        const segundos = String(total % 60).padStart(2, '0');
+        const minutos = String(Math.floor(total / 60) % 60).padStart(2, '0');
+        const horas = Math.floor(total / 3600);
+        return horas ? `${horas}:${minutos}:${segundos}` : `${minutos}:${segundos}`;
+    };
+    function dibujar() {
+        const ahora = relojServidor + performance.now() - referencia;
+        elementos.forEach(elemento => {
+            const desde = elemento.dataset.desde;
+            elemento.querySelector('[data-contador-pedido]').textContent = desde
+                ? formato((ahora - Number(desde)) / 1000) : 'Sin registro';
+        });
+    }
+    async function sincronizar() {
+        if (consultando || document.hidden) return;
+        consultando = true;
+        try {
+            const respuesta = await fetch(@json(route('mesas.tiempos', request()->only('vista'))), {
+                headers: { Accept: 'application/json' }, cache: 'no-store', credentials: 'same-origin'
+            });
+            if (!respuesta.ok) return;
+            const datos = await respuesta.json();
+            relojServidor = datos.servidor;
+            referencia = performance.now();
+            recibirAlertas(datos.mesas);
+            const mesas = new Map(datos.mesas.map(mesa => [String(mesa.id), mesa.desde]));
+            elementos.forEach(elemento => {
+                elemento.dataset.desde = mesas.get(elemento.dataset.tiempoPedido) ?? '';
+            });
+            dibujar();
+        } catch (_) {
+            // Si se pierde la conexión, conservar el último tiempo conocido.
+        } finally { consultando = false; }
+    }
+    dibujar();
+    setInterval(dibujar, 1000);
+    sincronizar();
+    setInterval(sincronizar, 5000);
+    document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) sincronizar();
+    });
+    window.addEventListener('online', sincronizar);
+})();
+</script>
 </body>
 
 </html>
