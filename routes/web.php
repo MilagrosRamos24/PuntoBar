@@ -56,6 +56,8 @@ Route::middleware(VerificarRol::class . ':mozo')->group(function () {
 
 Route::middleware(VerificarRol::class . ':admin,mozo')->group(function () {
 
+    Route::get('/mesas/tiempos', [MesaController::class, 'tiempos'])->name('mesas.tiempos');
+
     Route::get('/mesas', [MesaController::class, 'index'])
     ->name('mesas');
 

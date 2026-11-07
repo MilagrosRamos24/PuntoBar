@@ -142,6 +142,7 @@ class ComandaController extends Controller
             // El pedido ya tiene un producto: termina la espera
             // y la mesa pasa a "Mesa atendida".
             $comanda->mesa()->update([
+                'ultimo_pedido_en' => now(),
                 'estado' => 'reservada',
                 'inicio_espera' => null,
                 ]);
@@ -180,6 +181,10 @@ class ComandaController extends Controller
 
             $detalle->cambiarCantidad($nuevaCantidad);
             $comanda->recalcularTotales();
+
+            if ($diferencia > 0) {
+                $comanda->mesa()->update(['ultimo_pedido_en' => now()]);
+            }
         });
 
         return $this->volverAComanda($comanda)->with('success', 'Cantidad actualizada.');
@@ -231,6 +236,7 @@ class ComandaController extends Controller
             ]);
 
             $comanda->mesa->update([
+                'ultimo_pedido_en' => null,
                 'estado' => 'libre',
                 'mozo_id' => null,
                 'cantidad_personas' => 0,
