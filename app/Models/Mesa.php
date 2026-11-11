@@ -12,6 +12,11 @@ class Mesa extends Model
     'reservada' => 'Mesa atendida',
     'pendiente_de_cierre' => 'Alerta de atención',
 ];
+    /**
+     * Estados que significan "hay clientes esperando": solo tienen sentido
+     * si la mesa tiene un mozo asignado que los atienda.
+     */
+    public const ESTADOS_CON_MOZO = ['ocupada', 'pendiente_de_cierre'];
 
     protected $fillable = [
     'activa',

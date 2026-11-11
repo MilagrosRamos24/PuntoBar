@@ -97,6 +97,16 @@ class MesaController extends Controller
             ->firstOrFail();
 
         abort_unless($mesaActual->activa, 409, 'Esta mesa está desactivada. Actualizá la pantalla.');
+                // Una mesa con clientes esperando necesita un mozo asignado que los atienda.
+        if (
+            in_array($datos['estado'], Mesa::ESTADOS_CON_MOZO, true) &&
+            $mesaActual->mozo_id === null
+        ) {
+            throw ValidationException::withMessages([
+                'estado' =>
+                    'Asigná un mozo a la mesa antes de pasarla a «' . Mesa::ESTADOS[$datos['estado']] . '».',
+            ]);
+        }
             // El mozo debe cerrar la comanda antes de liberar la mesa.
             if (
                 request()->user()->role === 'mozo' &&
