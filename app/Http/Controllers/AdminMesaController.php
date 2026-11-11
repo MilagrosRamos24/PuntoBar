@@ -6,6 +6,7 @@ use App\Models\Mesa;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 
 class AdminMesaController extends Controller
 {
@@ -56,6 +57,17 @@ class AdminMesaController extends Controller
             'cantidad_personas.min' => 'La cantidad de personas no puede ser negativa.',
         ]);
         $datos['mozo_id'] = $datos['mozo_id'] ?? null;
+        // Una mesa con clientes esperando necesita un mozo asignado que los atienda.
+        // Se mira el resultado final: el estado y el mozo se pueden cambiar a la vez.
+        if (
+            in_array($datos['estado'], Mesa::ESTADOS_CON_MOZO, true) &&
+            $datos['mozo_id'] === null
+        ) {
+            throw ValidationException::withMessages([
+                'mozo_id' =>
+                    'Asigná un mozo a la mesa antes de pasarla a «' . Mesa::ESTADOS[$datos['estado']] . '».',
+            ]);
+        }
         return $datos;
     }
 
