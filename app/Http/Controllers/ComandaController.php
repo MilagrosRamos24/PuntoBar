@@ -7,6 +7,7 @@ use App\Models\DetalleComanda;
 use App\Models\Mesa;
 use App\Models\Producto;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
@@ -101,9 +102,15 @@ class ComandaController extends Controller
      * Si el producto ya está en la comanda, se suma la cantidad.
      * Si el producto lleva stock, se verifica que alcance y se descuenta.
      */
-    public function agregarProducto(Request $request, Comanda $comanda): RedirectResponse
+    public function agregarProducto(Request $request, Comanda $comanda): RedirectResponse|JsonResponse
     {
         $this->verificarAcceso($request, $comanda);
+
+        if ($request->expectsJson() && ! $comanda->estaAbierta()) {
+            throw ValidationException::withMessages([
+                'comanda' => 'La comanda está cerrada y ya no se puede modificar.',
+            ]);
+        }
 
         if ($respuesta = $this->rechazarSiEstaCerrada($comanda)) {
             return $respuesta;
@@ -148,16 +155,22 @@ class ComandaController extends Controller
                 ]);
         });
 
-        return $this->volverAComanda($comanda)->with('success', 'Producto agregado.');
+        return $this->responderProducto($request, $comanda, 'Producto agregado.');
     }
 
     /**
      * PB-12: cambiar la cantidad de un producto.
      * Si aumenta, se descuenta la diferencia del stock; si baja, se devuelve.
      */
-    public function actualizarDetalle(Request $request, Comanda $comanda, DetalleComanda $detalle): RedirectResponse
+    public function actualizarDetalle(Request $request, Comanda $comanda, DetalleComanda $detalle): RedirectResponse|JsonResponse
     {
         $this->verificarAcceso($request, $comanda);
+
+        if ($request->expectsJson() && ! $comanda->estaAbierta()) {
+            throw ValidationException::withMessages([
+                'comanda' => 'La comanda está cerrada y ya no se puede modificar.',
+            ]);
+        }
 
         if ($respuesta = $this->rechazarSiEstaCerrada($comanda)) {
             return $respuesta;
@@ -187,15 +200,21 @@ class ComandaController extends Controller
             }
         });
 
-        return $this->volverAComanda($comanda)->with('success', 'Cantidad actualizada.');
+        return $this->responderProducto($request, $comanda, 'Cantidad actualizada.');
     }
 
     /**
      * PB-12: quitar un producto de la comanda. Si lleva stock, se devuelve.
      */
-    public function quitarDetalle(Request $request, Comanda $comanda, DetalleComanda $detalle): RedirectResponse
+    public function quitarDetalle(Request $request, Comanda $comanda, DetalleComanda $detalle): RedirectResponse|JsonResponse
     {
         $this->verificarAcceso($request, $comanda);
+
+        if ($request->expectsJson() && ! $comanda->estaAbierta()) {
+            throw ValidationException::withMessages([
+                'comanda' => 'La comanda está cerrada y ya no se puede modificar.',
+            ]);
+        }
 
         if ($respuesta = $this->rechazarSiEstaCerrada($comanda)) {
             return $respuesta;
@@ -207,7 +226,7 @@ class ComandaController extends Controller
             $comanda->recalcularTotales();
         });
 
-        return $this->volverAComanda($comanda)->with('success', 'Producto quitado.');
+        return $this->responderProducto($request, $comanda, 'Producto quitado.');
     }
 
     /**
@@ -247,6 +266,41 @@ class ComandaController extends Controller
         return redirect()
             ->route('mesas')
             ->with('success', 'Comanda de la mesa '.$comanda->mesa->numero.' cerrada. Total: $'.number_format((float) $comanda->total, 2, ',', '.'));
+    }
+
+    /** Respuesta parcial para JavaScript; conserva la redirección de los formularios normales. */
+    private function responderProducto(Request $request, Comanda $comanda, string $mensaje): RedirectResponse|JsonResponse
+    {
+        if (! $request->expectsJson()) {
+            return $this->volverAComanda($comanda)->with('success', $mensaje);
+        }
+
+        $comanda->refresh()->load(['mesa', 'detalles.producto']);
+        $productos = Producto::activos()->orderBy('categoria')->orderBy('nombre')->get()->groupBy('categoria');
+        $pesos = function ($valor) {
+            $valor = (float) $valor;
+            return '$'.number_format($valor, fmod($valor, 1) == 0 ? 0 : 2, ',', '.');
+        };
+        $mesa = $comanda->mesa;
+
+        return response()->json([
+            'mensaje' => $mensaje,
+            'html' => view('comandas.partials.detalles', [
+                'comanda' => $comanda,
+                'productos' => $productos,
+                'pesos' => $pesos,
+                'esLaComandaActual' => false,
+            ])->render(),
+            'mesa' => [
+                'id' => $mesa->id,
+                'estado' => $mesa->estado,
+                'estado_visual' => $mesa->estado_visual,
+                'inicio_espera' => $mesa->estaEsperandoPrimerPedido() ? $mesa->inicio_espera->toIso8601String() : '',
+                'alerta_espera_en' => $mesa->alerta_espera_en ?? '',
+                'desde' => $mesa->ultimo_pedido_en?->getTimestampMs(),
+                'total' => $pesos($comanda->total),
+            ],
+        ])->header('Cache-Control', 'no-store');
     }
 
     /**
