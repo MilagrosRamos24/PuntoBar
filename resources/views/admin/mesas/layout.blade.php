@@ -11,7 +11,7 @@
 </head>
 <body>
 <x-admin-nav :titulo="trim($__env->yieldContent('title', 'Gestión de mesas'))" />
-<main class="contenido">
+<main class="contenido" data-admin-fluida="{{ request()->routeIs('admin.mozos.*') ? 'mozos' : 'mesas' }}" tabindex="-1">
     @if(session('success'))<p class="mensaje" role="status">{{ session('success') }}</p>@endif
     @if($errors->any())
         <div class="errores" role="alert"><strong>Revisá los datos:</strong><ul>@foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul></div>
@@ -19,5 +19,6 @@
     @yield('content')
 </main>
 <x-dialogo />
+<script src="{{ asset('js/admin-fluida.js') }}?v=20261112" defer></script>
 </body>
 </html>

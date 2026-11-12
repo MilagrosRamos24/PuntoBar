@@ -148,8 +148,29 @@ class MesaController extends Controller
             $datos['inicio_espera'] = null;
         }
 
-        $mesaActual->update($datos);
+        // Si el administrador libera una mesa sin comanda abierta,
+// limpiar los datos de la atención.
+if (
+    request()->user()->role === 'admin' &&
+    $datos['estado'] === 'libre' &&
+    ! $mesaActual->comandaAbierta()->exists()
+) {
+    $datos['mozo_id'] = null;
+    $datos['cantidad_personas'] = 0;
+    $datos['inicio_espera'] = null;
+    $datos['ultimo_pedido_en'] = null;
+}
+
+$mesaActual->update($datos);
     });
+
+    if ($request->expectsJson()) {
+        // Reutilizar la vista mantiene el estado, los permisos y los botones consistentes.
+        return response()->json([
+            'mensaje' => 'Estado actualizado correctamente.',
+            'html' => $this->index($request)->render(),
+        ])->header('Cache-Control', 'no-store');
+    }
 
     return redirect()
         ->route('mesas')

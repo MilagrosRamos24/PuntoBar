@@ -228,7 +228,7 @@
 
     <x-admin-nav titulo="Descuento" />
 
-    <main class="contenido">
+    <main class="contenido" data-admin-fluida="descuento" tabindex="-1">
         <a href="{{ route('mesas') }}" class="btn-volver con-icono">
             <x-icono nombre="volver" tamano="18" />
             Volver a mesas
@@ -349,6 +349,7 @@
 
     </main>
 <x-dialogo />
+<script src="{{ asset('js/admin-fluida.js') }}?v=20261112" defer></script>
 </body>
 
 </html>

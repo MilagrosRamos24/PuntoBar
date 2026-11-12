@@ -1,7 +1,8 @@
+(() => {
 /* Productos (admin): actualización masiva de precios.
    La cuenta la hace el servidor: la vista previa y el "aplicar" usan el mismo servicio,
    así que lo que se ve en pantalla es exactamente lo que se guarda. */
-(() => {
+function iniciar() {
   'use strict';
 
   const config = document.getElementById('pp-config');
@@ -9,6 +10,8 @@
   const form = document.getElementById('form-masiva');
   const confirmar = document.getElementById('dlg-confirmar');
   if (!config || !dialog || !form || !confirmar) return;
+    if (form.dataset.ppMasiva) return;
+    form.dataset.ppMasiva = '1';
 
   const el = (id) => document.getElementById(id);
   const items = Array.from(document.querySelectorAll('#m-lista .pp-check'));
@@ -31,6 +34,11 @@
   let temporizador = null;
   let numeroPedido = 0;
   let cancelar = null;
+  document.addEventListener('pb:antes-contenido', () => {
+    clearTimeout(temporizador);
+    numeroPedido += 1;
+    cancelar?.abort();
+  }, { once: true });
 
   const leer = () => ({
     dir: Number(form.elements.direccion.value),
@@ -191,7 +199,7 @@
         body: JSON.stringify(cuerpo(estado, sel)),
       });
       const datos = await respuesta.json().catch(() => ({}));
-      if (numero !== numeroPedido) return;
+      if (!config.isConnected || numero !== numeroPedido) return;
 
       if (respuesta.status === 422) {
         const primero = Object.values(datos.errors || {}).flat()[0];
@@ -221,7 +229,7 @@
       permitirAplicar(ultimo.aplicable);
     } catch (error) {
       if (error.name === 'AbortError') return;
-      if (numero !== numeroPedido) return;
+      if (!config.isConnected || numero !== numeroPedido) return;
       aviso('No se pudo calcular la vista previa. Revisá tu conexión e intentá de nuevo.');
     }
   }
@@ -302,11 +310,12 @@
     if (e.alcance === 'seleccionados') sel.marcados.forEach((i) => agregar('ids[]', i.dataset.id));
     else sel.desmarcados.forEach((i) => agregar('excluidos[]', i.dataset.id));
 
-    el('c-confirmar').disabled = true;
-    form.submit();
+    confirmar.close();
+    if (!window.PuntoBarAdmin?.enviar(form)) form.submit();
   });
 
-  window.addEventListener('pageshow', () => {
-    el('c-confirmar').disabled = false;
-  });
+
+}
+iniciar();
+document.addEventListener('pb:contenido', iniciar);
 })();

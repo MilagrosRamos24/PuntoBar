@@ -1,11 +1,14 @@
-/* Productos (admin): catálogo, alta, edición y avisos. */
 (() => {
+/* Productos (admin): catálogo, alta, edición y avisos. */
+function iniciar() {
   'use strict';
 
   const config = document.getElementById('pp-config');
   const dialog = document.getElementById('dlg-producto');
   const form = document.getElementById('form-producto');
   if (!config || !dialog || !form) return;
+    if (form.dataset.ppProductos) return;
+    form.dataset.ppProductos = '1';
 
   const el = (id) => document.getElementById(id);
   const soloDigitos = (input) =>
@@ -96,13 +99,6 @@
   soloDigitos(campos.precio);
   soloDigitos(campos.stock);
 
-  form.addEventListener('submit', () => {
-    el('fp-guardar').disabled = true;
-  });
-  window.addEventListener('pageshow', () => {
-    el('fp-guardar').disabled = false;
-  });
-
   // Si el servidor rechazó el formulario, se vuelve a abrir con los errores a la vista.
   if (config.dataset.reabrir === '1') {
     actualizarTipo();
@@ -118,4 +114,7 @@
     const cruz = aviso.querySelector('button');
     if (cruz) cruz.addEventListener('click', ocultar);
   });
+}
+iniciar();
+document.addEventListener('pb:contenido', iniciar);
 })();

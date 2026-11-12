@@ -401,6 +401,6 @@
 @endsection
 
 @push('scripts')
-    <script src="{{ asset('js/productos.js') }}" defer></script>
-    <script src="{{ asset('js/productos-masiva.js') }}" defer></script>
+    <script src="{{ asset('js/productos.js') }}?v=20261112" defer></script>
+    <script src="{{ asset('js/productos-masiva.js') }}?v=20261112" defer></script>
 @endpush
