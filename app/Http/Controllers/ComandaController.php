@@ -233,39 +233,64 @@ class ComandaController extends Controller
      * PB-14: cerrar la comanda. Calcula el total, la deja en el historial
      * y libera la mesa (vuelve a azul y queda sin mozo).
      */
-    public function cerrar(Request $request, Comanda $comanda): RedirectResponse
+    public function cerrar(Request $request, Comanda $comanda): RedirectResponse|JsonResponse
     {
         $this->verificarAcceso($request, $comanda);
 
-        if ($respuesta = $this->rechazarSiEstaCerrada($comanda)) {
-            return $respuesta;
+        if (! $comanda->estaAbierta()) {
+            if ($request->expectsJson()) {
+                throw ValidationException::withMessages([
+                    'comanda' => 'Esta comanda ya está cerrada. Actualizá la pantalla.',
+                ]);
+            }
+            return $this->rechazarSiEstaCerrada($comanda);
         }
 
         if (! $comanda->detalles()->exists()) {
+            if ($request->expectsJson()) {
+                throw ValidationException::withMessages([
+                    'comanda' => 'No se puede cerrar una comanda sin productos.',
+                ]);
+            }
             return $this->volverAComanda($comanda)
                 ->withErrors(['comanda' => 'No se puede cerrar una comanda sin productos.']);
         }
 
-        DB::transaction(function () use ($comanda) {
-            $comanda->recalcularTotales();
+        DB::transaction(function () use ($request, $comanda) {
+            // Mismo orden de bloqueo que al cambiar estado: primero la mesa.
+            $mesa = Mesa::whereKey($comanda->mesa_id)->lockForUpdate()->firstOrFail();
+            $actual = Comanda::whereKey($comanda->id)->lockForUpdate()->firstOrFail();
+            $this->verificarAcceso($request, $actual);
 
-            $comanda->update([
-                'estado' => 'cerrada',
-                'cerrada_en' => now(),
-            ]);
+            if (! $actual->estaAbierta() || ! $actual->detalles()->exists()) {
+                throw ValidationException::withMessages([
+                    'comanda' => 'La comanda cambió. Actualizá la pantalla antes de cerrarla.',
+                ]);
+            }
 
-            $comanda->mesa->update([
+            $actual->recalcularTotales();
+            $actual->update(['estado' => 'cerrada', 'cerrada_en' => now()]);
+            $mesa->update([
                 'ultimo_pedido_en' => null,
                 'estado' => 'libre',
                 'mozo_id' => null,
                 'cantidad_personas' => 0,
                 'inicio_espera' => null,
-                ]);
+            ]);
         });
 
-        return redirect()
-            ->route('mesas')
-            ->with('success', 'Comanda de la mesa '.$comanda->mesa->numero.' cerrada. Total: $'.number_format((float) $comanda->total, 2, ',', '.'));
+        $comanda->refresh();
+        if ($request->expectsJson()) {
+            return response()->json([
+                'mensaje' => 'Comanda cerrada correctamente. La mesa quedó libre.',
+                'comanda_cerrada_id' => $comanda->id,
+                'html' => app(MesaController::class)->index($request)->render(),
+            ])->header('Cache-Control', 'no-store');
+        }
+
+        return redirect()->route('mesas')->with('success',
+            'Comanda de la mesa '.$comanda->mesa->numero.' cerrada. Total: $'.number_format((float) $comanda->total, 2, ',', '.')
+        );
     }
 
     /** Respuesta parcial para JavaScript; conserva la redirección de los formularios normales. */
