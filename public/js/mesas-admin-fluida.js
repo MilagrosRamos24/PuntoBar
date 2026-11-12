@@ -3,6 +3,16 @@
     'use strict';
     if (!window.fetch) return;
     let guardando = false;
+
+    function mostrarAviso(mensaje, titulo, indicador) {
+        indicador?.remove();
+        if (typeof window.avisar === 'function') {
+            window.avisar(mensaje, titulo);
+        } else {
+            window.alert(mensaje);
+        }
+    }
+
     document.addEventListener('submit', async evento => {
         const form = evento.target;
         if (!(form instanceof HTMLFormElement) || !form.matches('.estado-form')) return;
@@ -25,39 +35,48 @@
         }
         aviso.textContent = 'Guardando…';
         try {
-            const respuesta = await fetch(form.action, {
+            let respuesta = await fetch(form.action, {
                 method: 'POST', body, credentials: 'same-origin', redirect: 'error',
                 headers: { Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
             });
-            const datos = await respuesta.json().catch(() => ({}));
+            let datos = await respuesta.json().catch(() => ({}));
+            if (respuesta.status === 409 && datos.codigo === 'cerrar_comanda') {
+                aviso.textContent = '';
+                const mensaje = '¿Estás seguro de cambiar la mesa a libre? Primero debes cerrar la comanda';
+                const acepto = typeof window.confirmar === 'function'
+                    ? await window.confirmar({
+                        titulo: 'Cerrar comanda para liberar la mesa',
+                        mensaje,
+                        textoAceptar: 'Cerrar comanda',
+                        textoCancelar: 'Cancelar',
+                    })
+                    : window.confirm(mensaje);
+                if (!acepto) {
+                    const selector = form.querySelector('select[name="estado"]');
+                    const anterior = selector && [...selector.options].find(opcion => opcion.defaultSelected);
+                    if (anterior) selector.value = anterior.value;
+                    aviso.remove();
+                    return;
+                }
+                const urlCerrar = new URL(datos.url_cerrar, location.href);
+                if (urlCerrar.origin !== location.origin) throw new Error('Dirección inválida');
+                const cierre = new FormData();
+                cierre.set('_token', body.get('_token') || '');
+                aviso.textContent = 'Cerrando comanda…';
+                respuesta = await fetch(urlCerrar.href, {
+                    method: 'POST', body: cierre, credentials: 'same-origin', redirect: 'error',
+                    headers: { Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+                });
+                datos = await respuesta.json().catch(() => ({}));
+            }
             if (!respuesta.ok) {
-    const errores = Object.values(datos.errors || {}).flat();
-
-    if (
-        respuesta.status === 422 &&
-        errores.length &&
-        typeof window.avisar === 'function'
-    ) {
-        aviso.remove();
-
-        window.avisar(
-            errores.join(' '),
-            'No se puede cambiar el estado'
-        );
-
-        return;
-    }
-
-    aviso.setAttribute('role', 'alert');
-
-    aviso.textContent = errores.join(' ') || (
-        respuesta.status === 419 || respuesta.status === 401
-            ? 'La sesión venció. Recargá la página para continuar.'
-            : datos.message || 'No se pudo actualizar el estado.'
-    );
-
-    return;
-}
+                const errores = Object.values(datos.errors || {}).flat();
+                const mensaje = respuesta.status === 419 || respuesta.status === 401
+                    ? 'La sesión venció. Recargá la página para continuar.'
+                    : errores.join(' ') || datos.message || 'No se pudo actualizar el estado.';
+                mostrarAviso(mensaje, 'No se puede cambiar el estado', aviso);
+                return;
+            }
             const pagina = new DOMParser().parseFromString(datos.html || '', 'text/html');
             const nueva = [...pagina.querySelectorAll('.mesa')].find(item => item.dataset.mesaId === mesa.dataset.mesaId);
             if (!nueva) throw new Error('Vista incompleta');
@@ -87,23 +106,20 @@
                 const actualizado = pagina.getElementById(id);
                 if (contador && actualizado) contador.textContent = actualizado.textContent;
             }
-            const mensaje = datos.mensaje || 'Estado actualizado correctamente.';
-
-if (typeof window.avisar === 'function') {
-    aviso.remove();
-
-    window.avisar(
-        mensaje,
-        'Estado actualizado'
-    );
-} else {
-    aviso.setAttribute('role', 'status');
-    aviso.textContent = mensaje;
-    mesa.append(aviso);
-}
+            if (datos.comanda_cerrada_id) {
+                document.getElementById('modal-comanda-' + datos.comanda_cerrada_id)?.remove();
+            }
+            mostrarAviso(
+                datos.mensaje || 'Estado actualizado correctamente.',
+                datos.comanda_cerrada_id ? 'Comanda cerrada' : 'Estado actualizado',
+                aviso
+            );
         } catch (_) {
-            aviso.setAttribute('role', 'alert');
-            aviso.textContent = 'No se pudo confirmar el resultado. Recargá y comprobá el estado antes de repetir la operación.';
+            mostrarAviso(
+                'No se pudo confirmar el resultado. Recargá y comprobá el estado antes de repetir la operación.',
+                'No se pudo confirmar el cambio',
+                aviso
+            );
         } finally {
             guardando = false;
             mesa.removeAttribute('aria-busy');

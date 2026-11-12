@@ -119,10 +119,20 @@ class MesaController extends Controller
             ]);
         }
             if (
-                request()->user()->role === 'mozo' &&
                 $datos['estado'] === 'libre' &&
                 $mesaActual->comandaAbierta()->exists()
                 ) {
+                    if (request()->expectsJson() && request()->user()->role === 'admin') {
+                        $abierta = $mesaActual->comandaAbierta()->firstOrFail();
+                        throw new \Illuminate\Http\Exceptions\HttpResponseException(
+                            response()->json([
+                                'codigo' => 'cerrar_comanda',
+                                'message' => '¿Estás seguro de cambiar la mesa a libre? Primero debes cerrar la comanda',
+                                'comanda_id' => $abierta->id,
+                                'url_cerrar' => route('comandas.cerrar', $abierta),
+                            ], 409)
+                        );
+                    }
                      throw ValidationException::withMessages([
                         'estado' =>
                         'Primero debés cerrar la comanda antes de pasar la mesa a libre.',
@@ -148,20 +158,15 @@ class MesaController extends Controller
             $datos['inicio_espera'] = null;
         }
 
-        // Si el administrador libera una mesa sin comanda abierta,
-// limpiar los datos de la atención.
-if (
-    request()->user()->role === 'admin' &&
-    $datos['estado'] === 'libre' &&
-    ! $mesaActual->comandaAbierta()->exists()
-) {
-    $datos['mozo_id'] = null;
-    $datos['cantidad_personas'] = 0;
-    $datos['inicio_espera'] = null;
-    $datos['ultimo_pedido_en'] = null;
-}
+        // Sin comanda abierta, liberar la mesa también termina la atención.
+        if ($datos['estado'] === 'libre' && request()->user()->role === 'admin') {
+            $datos['mozo_id'] = null;
+            $datos['cantidad_personas'] = 0;
+            $datos['inicio_espera'] = null;
+            $datos['ultimo_pedido_en'] = null;
+        }
 
-$mesaActual->update($datos);
+        $mesaActual->update($datos);
     });
 
     if ($request->expectsJson()) {
