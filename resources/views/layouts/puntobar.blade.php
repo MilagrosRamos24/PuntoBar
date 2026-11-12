@@ -11,7 +11,10 @@
 </head>
 <body>
     @yield('admin-header')
-    <main class="pb-shell @yield('shell-class')">
+    <main class="pb-shell @yield('shell-class')"
+        @if(request()->routeIs('admin.productos.*', 'admin.notificaciones.*'))
+            data-admin-fluida="{{ request()->routeIs('admin.productos.*') ? 'productos' : 'notificaciones' }}" tabindex="-1"
+        @endif>
         @hasSection('admin-header')
         @else
         <img class="logo" src="{{ asset('img/punto-bar-logo-transparente.png') }}" alt="Punto Bar">
@@ -20,5 +23,8 @@
     </main>
     @stack('scripts')
     <x-dialogo />
+@if(request()->routeIs('admin.productos.*', 'admin.notificaciones.*'))
+    <script src="{{ asset('js/admin-fluida.js') }}?v=20261112" defer></script>
+    @endif
 </body>
 </html>

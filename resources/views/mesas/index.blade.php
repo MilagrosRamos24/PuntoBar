@@ -1583,7 +1583,7 @@
             <div class="separador"></div>
 
             <div class="estadistica">
-                <strong>{{ $mesasLibres }}</strong>
+                <strong id="cantidad-mesas-libres">{{ $mesasLibres }}</strong>
                 <span>Libres</span>
             </div>
 
@@ -2515,6 +2515,9 @@ document.addEventListener('DOMContentLoaded', function () {
 })();
 </script>
 <script src="{{ asset('js/comanda-fluida.js') }}?v=20261111" defer></script>
+@if($esAdmin)
+<script src="{{ asset('js/mesas-admin-fluida.js') }}?v=20261112" defer></script>
+@endif
 </body>
 
 </html>

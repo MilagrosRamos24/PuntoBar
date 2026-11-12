@@ -4,7 +4,7 @@
 </div>
 <div class="campo">
     <label for="estado">Estado</label>
-    <select id="estado" name="estado" required>
+    <select id="estado" name="estado" data-estados-con-mozo='@json(\App\Models\Mesa::ESTADOS_CON_MOZO)' required>
         @foreach($estados as $valor => $texto)
             <option value="{{ $valor }}" @selected(old('estado', $mesa?->estado ?? 'libre') === $valor)>{{ $texto }}</option>
         @endforeach

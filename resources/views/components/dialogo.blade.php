@@ -204,7 +204,8 @@
             textoCancelar: form.dataset.confirmarCancelar || 'Cancelar',
         }).then(function (acepto) {
             if (acepto) {
-                form.submit();
+                if (!form.isConnected) return;
+                if (!window.PuntoBarAdmin?.enviar(form)) form.submit();
             }
         });
     });

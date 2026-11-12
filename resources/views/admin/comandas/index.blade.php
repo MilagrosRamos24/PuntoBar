@@ -219,7 +219,7 @@
 
     <x-admin-nav titulo="Comandas" />
 
-    <main class="contenido">
+    <main class="contenido" data-admin-fluida="comandas" tabindex="-1">
 
         {{-- Filtros: estado, fecha y mozo --}}
         <form method="GET" action="{{ route('admin.comandas.index') }}" class="filtros" aria-label="Filtrar comandas">
@@ -342,6 +342,7 @@
     </main>
 
 <x-dialogo />
+<script src="{{ asset('js/admin-fluida.js') }}?v=20261112" defer></script>
 </body>
 
 </html>

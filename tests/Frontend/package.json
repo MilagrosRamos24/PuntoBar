@@ -1,0 +1,12 @@
+{
+  "private": true,
+  "scripts": {
+    "test": "node --test admin-fluida.test.cjs"
+  },
+  "devDependencies": {
+    "jsdom": "31.0.0"
+  },
+  "engines": {
+    "node": "^22.22.2 || ^24.15.0 || >=26.0.0"
+  }
+}
