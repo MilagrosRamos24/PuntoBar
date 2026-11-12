@@ -2108,7 +2108,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
             if (mesaSeleccionada.dataset.puedeAtender !== '1') {
                 evento.preventDefault();
-                alert('Solo podés tomar una mesa libre sin encargado o asignada a vos.');
+                const tieneComanda = !!mesaSeleccionada.dataset.comandaId;
+                const estadoMesa = mesaSeleccionada.dataset.mesaEstado || '';
+
+                if (tieneComanda) {
+                    alert('Esta mesa ya tiene una comanda abierta. Tocá «Ver comanda» para seguir cargando productos.');
+                } else if (estadoMesa !== 'Libre') {
+                    alert('Esta mesa ya está en «' + estadoMesa + '». «Registrar atención» es solo para mesas libres. Para cargar el pedido, tocá «Abrir comanda» en la tarjeta de la mesa.');
+                } else {
+                    alert('Solo podés tomar una mesa libre sin encargado o asignada a vos.');
+                }
                 return;
             }
 
