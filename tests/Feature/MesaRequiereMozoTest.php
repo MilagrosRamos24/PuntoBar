@@ -29,10 +29,22 @@ class MesaRequiereMozoTest extends TestCase
         ], $cambios));
     }
 
-    /** El aviso que tiene que ver el administrador para cada estado. */
+    /** El aviso por falta de mozo, igual en la pantalla de Mesas y en el formulario. */
     private function mensaje(string $estado): string
     {
         return 'Asigná un mozo a la mesa antes de pasarla a «' . Mesa::ESTADOS[$estado] . '».';
+    }
+
+    /** El aviso por falta de personas en el desplegable de la pantalla de Mesas. */
+    private function mensajePersonasTarjeta(string $estado): string
+    {
+        return 'Indicá cuántas personas hay en la mesa antes de pasarla a «' . Mesa::ESTADOS[$estado] . '»: usá «Registrar atención» (mozo) o «Editar» (administrador).';
+    }
+
+    /** El aviso por falta de personas en el formulario de crear y editar mesa. */
+    private function mensajePersonasFormulario(string $estado): string
+    {
+        return 'Indicá cuántas personas hay en la mesa (al menos 1) antes de pasarla a «' . Mesa::ESTADOS[$estado] . '».';
     }
 
     /** Datos tal como los manda el formulario de edición, con los cambios que se quieran probar. */
@@ -46,11 +58,11 @@ class MesaRequiereMozoTest extends TestCase
         ], $cambios);
     }
 
-    // ---------- Desde la pantalla de Mesas (el desplegable de cada tarjeta) ----------
+    // ---------- Falta el mozo: desde la pantalla de Mesas (el desplegable de cada tarjeta) ----------
 
     public function test_una_mesa_sin_mozo_no_pasa_a_espera_ni_a_alerta_desde_la_pantalla_de_mesas(): void
     {
-        $mesa = $this->mesa();
+        $mesa = $this->mesa(['cantidad_personas' => 2]);
         $this->actingAs($this->usuario());
 
         foreach (['ocupada', 'pendiente_de_cierre'] as $estado) {
@@ -62,10 +74,10 @@ class MesaRequiereMozoTest extends TestCase
         }
     }
 
-    public function test_con_mozo_asignado_la_mesa_si_pasa_a_espera_y_a_alerta(): void
+    public function test_con_mozo_y_personas_la_mesa_si_pasa_a_espera_y_a_alerta(): void
     {
         $mozo = $this->usuario('mozo');
-        $mesa = $this->mesa(['mozo_id' => $mozo->id]);
+        $mesa = $this->mesa(['mozo_id' => $mozo->id, 'cantidad_personas' => 2]);
         $this->actingAs($this->usuario());
 
         foreach (['ocupada', 'pendiente_de_cierre'] as $estado) {
@@ -87,7 +99,7 @@ class MesaRequiereMozoTest extends TestCase
         $this->assertDatabaseHas('mesas', ['id' => $mesa->id, 'estado' => 'libre']);
     }
 
-    // ---------- Desde el formulario de alta ----------
+    // ---------- Falta el mozo: formularios de alta y de edición ----------
 
     public function test_el_alta_rechaza_una_mesa_en_espera_o_en_alerta_sin_mozo(): void
     {
@@ -105,7 +117,7 @@ class MesaRequiereMozoTest extends TestCase
         $this->assertSame(0, Mesa::count());
     }
 
-    public function test_el_alta_acepta_el_estado_y_el_mozo_juntos(): void
+    public function test_el_alta_acepta_el_estado_el_mozo_y_las_personas_juntos(): void
     {
         $mozo = $this->usuario('mozo');
 
@@ -121,9 +133,7 @@ class MesaRequiereMozoTest extends TestCase
         $this->assertDatabaseHas('mesas', ['numero' => 300, 'estado' => 'ocupada', 'mozo_id' => $mozo->id]);
     }
 
-    // ---------- Desde el formulario de edición ----------
-
-    public function test_editar_permite_poner_el_estado_y_el_mozo_en_el_mismo_guardado(): void
+    public function test_editar_permite_poner_el_estado_el_mozo_y_las_personas_en_el_mismo_guardado(): void
     {
         $mozo = $this->usuario('mozo');
         $mesa = $this->mesa();
@@ -165,5 +175,77 @@ class MesaRequiereMozoTest extends TestCase
             ->assertSessionHasNoErrors();
 
         $this->assertDatabaseHas('mesas', ['id' => $mesa->id, 'estado' => 'libre', 'mozo_id' => null]);
+    }
+
+    // ---------- Falta la cantidad de personas ----------
+
+    public function test_una_mesa_sin_personas_no_pasa_a_espera_ni_a_alerta_desde_la_pantalla_de_mesas(): void
+    {
+        $mozo = $this->usuario('mozo');
+        $mesa = $this->mesa(['mozo_id' => $mozo->id, 'cantidad_personas' => 0]);
+        $this->actingAs($this->usuario());
+
+        foreach (['ocupada', 'pendiente_de_cierre'] as $estado) {
+            $this->from(route('mesas'))
+                ->put('/mesas/'.$mesa->id.'/estado', ['estado' => $estado])
+                ->assertSessionHasErrors(['estado' => $this->mensajePersonasTarjeta($estado)]);
+
+            $this->assertDatabaseHas('mesas', ['id' => $mesa->id, 'estado' => 'libre']);
+        }
+    }
+
+    public function test_el_alta_rechaza_una_mesa_en_espera_o_en_alerta_sin_personas(): void
+    {
+        $mozo = $this->usuario('mozo');
+        $this->actingAs($this->usuario());
+
+        foreach (['ocupada', 'pendiente_de_cierre'] as $i => $estado) {
+            $this->post('/admin/mesas', [
+                'numero'            => 400 + $i,
+                'estado'            => $estado,
+                'mozo_id'           => $mozo->id,
+                'cantidad_personas' => 0,
+            ])->assertSessionHasErrors(['cantidad_personas' => $this->mensajePersonasFormulario($estado)]);
+        }
+
+        $this->assertSame(0, Mesa::count());
+    }
+
+    public function test_editar_no_permite_dejar_sin_personas_una_mesa_en_espera(): void
+    {
+        $mozo = $this->usuario('mozo');
+        $mesa = $this->mesa(['estado' => 'ocupada', 'mozo_id' => $mozo->id, 'cantidad_personas' => 2]);
+
+        $this->actingAs($this->usuario())
+            ->put('/admin/mesas/'.$mesa->id, $this->formulario($mesa, ['cantidad_personas' => 0]))
+            ->assertSessionHasErrors(['cantidad_personas' => $this->mensajePersonasFormulario('ocupada')]);
+
+        $this->assertDatabaseHas('mesas', ['id' => $mesa->id, 'estado' => 'ocupada', 'cantidad_personas' => 2]);
+    }
+
+    public function test_una_mesa_en_espera_sin_personas_se_corrige_liberandola_y_registrando_la_atencion(): void
+    {
+        $mozo = $this->usuario('mozo');
+        $mesa = $this->mesa(['estado' => 'ocupada', 'mozo_id' => $mozo->id, 'cantidad_personas' => 0]);
+
+        $this->actingAs($mozo);
+
+        // Registrar atención no sirve: la mesa no está libre.
+        $this->post(route('mesas.atender', $mesa), ['cantidad_personas' => 5])
+            ->assertSessionHasErrors('mesa');
+
+        // Se la pasa a Libre con el desplegable y después sí se registra la atención.
+        $this->put('/mesas/'.$mesa->id.'/estado', ['estado' => 'libre'])
+            ->assertSessionHasNoErrors();
+
+        $this->post(route('mesas.atender', $mesa), ['cantidad_personas' => 5])
+            ->assertSessionHasNoErrors();
+
+        $this->assertDatabaseHas('mesas', [
+            'id'                => $mesa->id,
+            'estado'            => 'ocupada',
+            'mozo_id'           => $mozo->id,
+            'cantidad_personas' => 5,
+        ]);
     }
 }

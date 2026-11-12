@@ -68,6 +68,16 @@ class AdminMesaController extends Controller
                     'Asigná un mozo a la mesa antes de pasarla a «' . Mesa::ESTADOS[$datos['estado']] . '».',
             ]);
         }
+                // También hace falta saber cuántas personas hay: una mesa en espera sin personas no tiene sentido.
+        if (
+            in_array($datos['estado'], Mesa::ESTADOS_CON_MOZO, true) &&
+            (int) $datos['cantidad_personas'] < 1
+        ) {
+            throw ValidationException::withMessages([
+                'cantidad_personas' =>
+                    'Indicá cuántas personas hay en la mesa (al menos 1) antes de pasarla a «' . Mesa::ESTADOS[$datos['estado']] . '».',
+            ]);
+        }
         return $datos;
     }
 

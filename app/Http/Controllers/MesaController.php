@@ -108,6 +108,16 @@ class MesaController extends Controller
             ]);
         }
             // El mozo debe cerrar la comanda antes de liberar la mesa.
+                    // Una mesa con clientes esperando también necesita saber cuántas personas hay.
+        if (
+            in_array($datos['estado'], Mesa::ESTADOS_CON_MOZO, true) &&
+            (int) $mesaActual->cantidad_personas < 1
+        ) {
+            throw ValidationException::withMessages([
+                'estado' =>
+                    'Indicá cuántas personas hay en la mesa antes de pasarla a «' . Mesa::ESTADOS[$datos['estado']] . '»: usá «Registrar atención» (mozo) o «Editar» (administrador).',
+            ]);
+        }
             if (
                 request()->user()->role === 'mozo' &&
                 $datos['estado'] === 'libre' &&
