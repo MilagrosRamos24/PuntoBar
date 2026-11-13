@@ -1792,7 +1792,7 @@
                                     <x-icono nombre="comanda" tamano="16" />
                                     Ver comanda
                                 </button>
-                            @elseif ($mesa->mozo_id)
+                            @elseif ($mesa->mozo_id && $mesa->estado !== 'libre' && (int) $mesa->cantidad_personas >= 1)
                                 <form method="POST" action="{{ route('comandas.store', $mesa) }}">
                                     @csrf
                                     <button type="submit" class="btn-mesa btn-comanda">
