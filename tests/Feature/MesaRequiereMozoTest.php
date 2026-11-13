@@ -248,4 +248,34 @@ class MesaRequiereMozoTest extends TestCase
             'cantidad_personas' => 5,
         ]);
     }
+        // ---------- El administrador asigna mozo y personas a una mesa libre ----------
+
+    public function test_editar_una_mesa_libre_con_mozo_y_personas_la_pasa_a_espera(): void
+    {
+        $mozo = $this->usuario('mozo');
+        $mesa = $this->mesa();
+
+        $this->actingAs($this->usuario())
+            ->put('/admin/mesas/'.$mesa->id, $this->formulario($mesa, [
+                'mozo_id'           => $mozo->id,
+                'cantidad_personas' => 3,
+            ]))
+            ->assertSessionHasNoErrors();
+
+        $mesa->refresh();
+        $this->assertSame('ocupada', $mesa->estado);
+        $this->assertNotNull($mesa->inicio_espera);
+    }
+
+    public function test_editar_una_mesa_libre_con_mozo_pero_sin_personas_sigue_libre(): void
+    {
+        $mozo = $this->usuario('mozo');
+        $mesa = $this->mesa();
+
+        $this->actingAs($this->usuario())
+            ->put('/admin/mesas/'.$mesa->id, $this->formulario($mesa, ['mozo_id' => $mozo->id]))
+            ->assertSessionHasNoErrors();
+
+        $this->assertDatabaseHas('mesas', ['id' => $mesa->id, 'estado' => 'libre', 'mozo_id' => $mozo->id]);
+    }
 }
