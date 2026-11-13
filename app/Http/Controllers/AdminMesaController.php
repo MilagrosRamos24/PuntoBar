@@ -57,6 +57,16 @@ class AdminMesaController extends Controller
             'cantidad_personas.min' => 'La cantidad de personas no puede ser negativa.',
         ]);
         $datos['mozo_id'] = $datos['mozo_id'] ?? null;
+
+        // Si el administrador deja una mesa libre con mozo y al menos 1 persona,
+// hay gente sentada: pasa sola a «En espera de pedido».
+if (
+    $datos['estado'] === 'libre' &&
+    $datos['mozo_id'] !== null &&
+    (int) $datos['cantidad_personas'] >= 1
+) {
+    $datos['estado'] = 'ocupada';
+}
         // Una mesa con clientes esperando necesita un mozo asignado que los atienda.
         // Se mira el resultado final: el estado y el mozo se pueden cambiar a la vez.
         if (
